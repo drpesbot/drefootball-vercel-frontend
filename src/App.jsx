@@ -122,11 +122,11 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden pt-4 pb-8">
       {/* خلفية متحركة */}
+      <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-10 w-32 h-32 bg-blue-500 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-10 w-40 h-40 bg-purple-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/2 w-24 h-24 bg-green-500 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
-
       <div className="max-w-md mx-auto relative z-10">
         {/* الشريط العلوي المحسن */}
         <div className="flex justify-between items-center mb-4 pt-2">
