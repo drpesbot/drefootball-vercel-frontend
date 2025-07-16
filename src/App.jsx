@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card.jsx'
 import { Search, Phone, Settings, Trophy, X, Star, Zap, Target, Dribble, Shield, Gauge, Eye, Heart, Footprints, Users, Sparkles, Crown, Award } from 'lucide-react'
 import './App.css'
 
-import appIcon from './assets/images/football_icon_shiny.png'
+import appIcon from './assets/images/football_icon_transparent.png'
 import PasswordProtection from './components/PasswordProtection.jsx'
 import AddPlayerPage from './components/AddPlayerPage.jsx'
 
@@ -268,7 +268,7 @@ function App() {
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               {players.map((player, index) => (
                   <Card 
                   key={index}
@@ -289,7 +289,7 @@ function App() {
                           <img 
                             src={player.image} 
                             alt={player.name}
-                            className="relative w-32 h-44 object-cover object-center border-3 border-blue-500/40 group-hover:border-blue-400/60 transition-all duration-300"
+                            className="relative w-28 h-40 object-cover object-center border-2 border-blue-500/40 group-hover:border-blue-400/60 transition-all duration-300"
                             style={{
                               objectFit: 'cover',
                               objectPosition: 'center center',
