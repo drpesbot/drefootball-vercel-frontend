@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card.jsx'
 import { Search, Phone, Settings, Trophy, X, Star, Zap, Target, Dribble, Shield, Gauge, Eye, Heart, Footprints, Users, Sparkles, Crown, Award } from 'lucide-react'
 import './App.css'
 
-import appIcon from './assets/images/football_icon_shimmer.png'
+import appIcon from './assets/images/football_icon_shiny.png'
 import PasswordProtection from './components/PasswordProtection.jsx'
 import AddPlayerPage from './components/AddPlayerPage.jsx'
 
@@ -120,7 +120,7 @@ function App() {
 
   // الصفحة الرئيسية
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden pt-4 pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden pt-2 pb-8">
       {/* خلفية متحركة */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-10 w-32 h-32 bg-blue-500 rounded-full blur-3xl animate-pulse"></div>
@@ -221,7 +221,7 @@ function App() {
         {/* شريط البحث المحسن */}
         <div className="relative mb-4">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 rounded-3xl blur-xl"></div>
-          <div className="relative bg-gradient-to-r from-gray-800/60 to-gray-700/60 backdrop-blur-2xl border border-gray-500/30 rounded-3xl p-1 shadow-2xl">
+          <div className="relative bg-gradient-to-r from-gray-800/60 to-gray-700/60 backdrop-blur-2xl border border-gray-500/30 rounded-full p-1 shadow-2xl">
             <div className="flex items-center gap-4 px-6 py-4 bg-gray-800/40 rounded-3xl">
               <div className="p-2 bg-blue-500/20 rounded-full">
                 <Search className="w-5 h-5 text-blue-400" />
@@ -242,7 +242,7 @@ function App() {
         {/* زر التواصل المحسن */}
         <Button 
           onClick={handleContactUs}
-          className="w-full bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:via-emerald-600 hover:to-green-700 text-white font-black py-6 text-xl rounded-3xl shadow-2xl shadow-green-500/40 transition-all duration-300 hover:scale-[1.02] hover:shadow-green-500/60 mb-10 relative overflow-hidden group"
+          className="w-full bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:via-emerald-600 hover:to-green-700 text-white font-black py-6 text-xl rounded-full shadow-2xl shadow-green-500/40 transition-all duration-300 hover:scale-[1.02] hover:shadow-green-500/60 mb-10 relative overflow-hidden group"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
           <div className="flex items-center justify-center gap-3 relative z-10">
@@ -250,7 +250,7 @@ function App() {
               <Phone className="w-6 h-6" />
             </div>
             <span>تواصل معنا</span>
-            <Sparkles className="w-5 h-5" />
+            <Sparkles className="w-5 h-5 group-hover:animate-pulse" />
           </div>
         </Button>
 
@@ -270,13 +270,15 @@ function App() {
             
             <div className="grid grid-cols-2 gap-4">
               {players.map((player, index) => (
-                <Card 
+                  <Card 
                   key={index}
                   className="bg-gradient-to-br from-gray-800/60 via-gray-900/70 to-gray-800/60 border border-gray-600/40 backdrop-blur-xl hover:border-blue-500/60 transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden shadow-xl hover:shadow-2xl"
                   onClick={() => showPlayerDetails(player)}
                 >
                   {/* تأثير الإضاءة عند التمرير */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  {/* تأثير الإضاءة المائل */}
+                  <div className="absolute inset-0 transform -skew-y-12 scale-150 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 animate-shine"></div>
                   
                   <CardContent className="p-5 text-center relative z-10">
                     {/* صورة اللاعب */}
@@ -287,10 +289,11 @@ function App() {
                           <img 
                             src={player.image} 
                             alt={player.name}
-                            className="relative w-18 h-18 rounded-full object-cover object-center border-3 border-blue-500/40 group-hover:border-blue-400/60 transition-all duration-300"
+                            className="relative w-32 h-44 object-cover object-center border-3 border-blue-500/40 group-hover:border-blue-400/60 transition-all duration-300"
                             style={{
                               objectFit: 'cover',
-                              objectPosition: 'center center'
+                              objectPosition: 'center center',
+                              aspectRatio: '3/4'
                             }}
                           />
                           <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center">

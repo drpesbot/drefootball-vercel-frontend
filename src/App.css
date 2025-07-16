@@ -118,3 +118,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) skewX(-45deg);
+  }
+  100% {
+    transform: translateX(100%) skewX(-45deg);
+  }
+}
+
+.animate-shine {
+  animation: shine 1.5s infinite;
+}
+
+
