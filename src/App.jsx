@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input.jsx'
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent } from '@/components/ui/card.jsx'
-import { Search, Phone, Settings, Trophy, X, Star, Zap, Target, Dribble, Shield, Gauge, Eye, Heart, Footprints, Users, Sparkles, Crown, Award } from 'lucide-react'
+import { Search, Phone, Settings, Trophy, X, Star, Zap, Target, Shield, Gauge, Eye, Heart, Footprints, Users, Sparkles, Crown, Award } from 'lucide-react'
 import './App.css'
 
 import appIcon from './assets/images/football_icon_no_white_edges.png'
@@ -26,8 +26,10 @@ function App() {
   const [currentPage, setCurrentPage] = useState('home') // 'home', 'password', 'admin'
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [players, setPlayers] = useState([])
+  const [filteredPlayers, setFilteredPlayers] = useState([]) // حالة جديدة للاعبين المفلترين
   const [selectedPlayer, setSelectedPlayer] = useState(null)
   const [showPlayerModal, setShowPlayerModal] = useState(false)
+  const [showNotificationPopup, setShowNotificationPopup] = useState(false)
 
   // تحميل اللاعبين من localStorage عند بدء التطبيق
   useEffect(() => {
@@ -37,6 +39,13 @@ function App() {
       // ترتيب عشوائي للاعبين
       const shuffledPlayers = [...parsedPlayers].sort(() => Math.random() - 0.5)
       setPlayers(shuffledPlayers)
+      setFilteredPlayers(shuffledPlayers) // تعيين اللاعبين المفلترين عند التحميل الأولي
+    }
+
+    // التحقق من LocalStorage لعرض النافذة المنبثقة
+    const hasSeenPopup = localStorage.getItem('hasSeenNotificationPopup')
+    if (!hasSeenPopup) {
+      // setShowNotificationPopup(true); // سيتم تفعيلها عند الضغط على البحث
     }
   }, [])
 
@@ -77,7 +86,18 @@ function App() {
   }
 
   const handleSearch = () => {
-    alert(`البحث عن: ${searchTerm}`)
+    // عرض النافذة المنبثقة عند أول بحث
+    const hasSeenPopup = localStorage.getItem('hasSeenNotificationPopup')
+    if (!hasSeenPopup) {
+      setShowNotificationPopup(true)
+      return // لا تقم بالبحث حتى يتم التعامل مع النافذة المنبثقة
+    }
+
+    const lowerCaseSearchTerm = searchTerm.toLowerCase()
+    const results = players.filter(player => 
+      player.name.toLowerCase().includes(lowerCaseSearchTerm)
+    )
+    setFilteredPlayers(results)
   }
 
   const handleContactUs = () => {
@@ -105,7 +125,27 @@ function App() {
       const parsedPlayers = JSON.parse(savedPlayers)
       const shuffledPlayers = [...parsedPlayers].sort(() => Math.random() - 0.5)
       setPlayers(shuffledPlayers)
+      setFilteredPlayers(shuffledPlayers)
     }
+  }
+
+  const handleNotificationPopupContinue = () => {
+    // تفعيل الإشعارات (هذا الجزء يتطلب واجهة برمجة تطبيقات متصفح حقيقية)
+    // For demonstration, we'll just simulate it.
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          console.log('Notification permission granted.')
+          // هنا يمكنك إرسال إشعار تجريبي أو تسجيل خدمة عامل
+        } else {
+          console.log('Notification permission denied.')
+        }
+      })
+    }
+
+    localStorage.setItem('hasSeenNotificationPopup', 'true')
+    setShowNotificationPopup(false)
+    handleSearch() // قم بإجراء البحث بعد إغلاق النافذة المنبثقة
   }
 
   // عرض صفحة الحماية
@@ -145,6 +185,21 @@ function App() {
           >
             <Settings className="w-5 h-5 text-gray-300" />
           </button>
+        </div>
+
+        {/* زر التواصل المحسن (تم نقله وتصغيره) */}
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50">
+          <Button 
+            onClick={handleContactUs}
+            className="bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:via-emerald-600 hover:to-green-700 text-white font-black py-1 px-3 text-xs rounded-full shadow-lg shadow-green-500/40 transition-all duration-300 hover:scale-[1.05] relative overflow-hidden group"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 animate-shimmer-light"></div>
+            <div className="flex items-center justify-center gap-1 relative z-10">
+              <Phone className="w-3 h-3" />
+              <span>تواصل معنا</span>
+              <Sparkles className="w-3 h-3 group-hover:animate-pulse" />
+            </div>
+          </Button>
         </div>
 
         {/* المحتوى الرئيسي المحسن */}
@@ -222,40 +277,25 @@ function App() {
         <div className="relative mb-4">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 rounded-3xl blur-xl"></div>
           <div className="relative bg-gradient-to-r from-gray-800/60 to-gray-700/60 backdrop-blur-2xl border border-gray-500/30 rounded-full p-1 shadow-2xl">
-            <div className="flex items-center gap-4 px-6 py-4 bg-gray-800/40 rounded-3xl">
-              <div className="p-2 bg-blue-500/20 rounded-full">
-                <Search className="w-5 h-5 text-blue-400" />
+            <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/40 rounded-3xl">
+              <div className="p-1 bg-blue-500/20 rounded-full">
+                <Search className="w-4 h-4 text-blue-400" />
               </div>
               <Input
                 type="text"
                 placeholder="ابحث عن لاعب..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-transparent border-none text-white placeholder-gray-400 focus:ring-0 text-lg font-medium flex-1"
+                className="bg-transparent border-none text-white placeholder-gray-400 focus:ring-0 text-sm font-medium flex-1"
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
-              <div className="w-2 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full opacity-50"></div>
+              <Button onClick={handleSearch} className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-3 py-1 text-sm">بحث</Button>
             </div>
           </div>
         </div>
 
-        {/* زر التواصل المحسن */}
-        <Button 
-          onClick={handleContactUs}
-          className="w-full bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:via-emerald-600 hover:to-green-700 text-white font-black py-6 text-xl rounded-full shadow-2xl shadow-green-500/40 transition-all duration-300 hover:scale-[1.02] hover:shadow-green-500/60 mb-10 relative overflow-hidden group"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-          <div className="flex items-center justify-center gap-3 relative z-10">
-            <div className="p-2 bg-white/20 rounded-full">
-              <Phone className="w-6 h-6" />
-            </div>
-            <span>تواصل معنا</span>
-            <Sparkles className="w-5 h-5 group-hover:animate-pulse" />
-          </div>
-        </Button>
-
         {/* عرض اللاعبين المحسن */}
-        {players.length > 0 ? (
+        {filteredPlayers.length > 0 ? (
           <div className="space-y-6">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-3">
@@ -269,7 +309,7 @@ function App() {
             </div>
             
             <div className="grid grid-cols-2 gap-2">
-              {players.map((player, index) => (
+              {filteredPlayers.map((player, index) => (
                   <Card 
                   key={index}
                   className="bg-gradient-to-br from-gray-800/60 via-gray-900/70 to-gray-800/60 border border-gray-600/40 backdrop-blur-xl hover:border-blue-500/60 transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden shadow-xl hover:shadow-2xl"
@@ -289,7 +329,7 @@ function App() {
                           <img 
                             src={player.image} 
                             alt={player.name}
-                            className="relative w-24 h-36 object-cover object-center border-2 border-blue-500/40 group-hover:border-blue-400/60 transition-all duration-300"
+                            className="relative w-20 h-30 object-cover object-center border-2 border-blue-500/40 group-hover:border-blue-400/60 transition-all duration-300"
                             style={{
                               objectFit: 'cover',
                               objectPosition: 'center center',
@@ -560,10 +600,33 @@ function App() {
             </Card>
           </div>
         )}
+
+        {/* Notification Popup */}
+        {showNotificationPopup && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
+            <Card className="bg-gradient-to-br from-gray-800/95 via-gray-900/95 to-black/95 border border-gray-600/50 backdrop-blur-2xl max-w-sm w-full shadow-2xl relative text-center">
+              <CardContent className="p-6">
+                <h2 className="text-2xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
+                  مرحباً بك في eFootball Mobile! 💥
+                </h2>
+                <p className="text-gray-300 mb-6">
+                  استمتع بتطوير لاعبيك بشكل احترافي واحصل على إشعارات بالتحديثات الجديدة مجانًا 🎯
+                </p>
+                <Button 
+                  onClick={handleNotificationPopupContinue}
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
+                >
+                  اضغط هنا للمتابعة
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   )
 }
 
 export default App
+
 

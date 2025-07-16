@@ -134,3 +134,19 @@
 }
 
 
+
+
+@keyframes shimmer-light {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer-light {
+  animation: shimmer-light 1.5s infinite;
+}
+
+
