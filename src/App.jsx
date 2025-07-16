@@ -85,21 +85,20 @@ function App() {
     setSelectedPlayer(null)
   }
 
-  const handleSearch = () => {
+  const handleSearch = (term = searchTerm) => {
     // عرض النافذة المنبثقة عند أول بحث
-    const hasSeenPopup = localStorage.getItem('hasSeenNotificationPopup')
+    const hasSeenPopup = localStorage.getItem("hasSeenNotificationPopup");
     if (!hasSeenPopup) {
-      setShowNotificationPopup(true)
-      return // لا تقم بالبحث حتى يتم التعامل مع النافذة المنبثقة
+      setShowNotificationPopup(true);
+      return; // لا تقم بالبحث حتى يتم التعامل مع النافذة المنبثقة
     }
 
-    const lowerCaseSearchTerm = searchTerm.toLowerCase()
-    const results = players.filter(player => 
+    const lowerCaseSearchTerm = term.toLowerCase();
+    const results = players.filter((player) =>
       player.name.toLowerCase().includes(lowerCaseSearchTerm)
-    )
-    setFilteredPlayers(results)
-  }
-
+    );
+    setFilteredPlayers(results);
+  };
   const handleContactUs = () => {
     window.open('https://linktr.ee/Drefootball26', '_blank')
   }
@@ -285,11 +284,12 @@ function App() {
                 type="text"
                 placeholder="ابحث عن لاعب..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  handleSearch(e.target.value);
+                }}
                 className="bg-transparent border-none text-white placeholder-gray-400 focus:ring-0 text-sm font-medium flex-1"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
-              <Button onClick={handleSearch} className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-3 py-1 text-sm">بحث</Button>
             </div>
           </div>
         </div>

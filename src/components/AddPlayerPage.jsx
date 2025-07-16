@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input.jsx'
 import { Label } from '@/components/ui/label.jsx'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
-import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X } from 'lucide-react'
+import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X, Bell, Send } from 'lucide-react'
 
 import appIcon from '../assets/images/app_icon.jpg'
 
@@ -42,6 +42,8 @@ function AddPlayerPage({ onBack }) {
   const [successMessage, setSuccessMessage] = useState('')
   const [showAllPlayers, setShowAllPlayers] = useState(false)
   const [allPlayers, setAllPlayers] = useState([])
+  const [notificationMessage, setNotificationMessage] = useState('')
+  const [showNotificationForm, setShowNotificationForm] = useState(false)
 
   const handleInputChange = (field, value) => {
     // التحقق من أن القيمة بين 0 و 150
@@ -152,6 +154,61 @@ function AddPlayerPage({ onBack }) {
     return Math.round(total / stats.length)
   }
 
+  // دالة لإرسال الإشعارات اليدوية
+  const handleSendNotification = () => {
+    if (!notificationMessage.trim()) {
+      alert('يجب إدخال رسالة الإشعار')
+      return
+    }
+
+    // التحقق من دعم الإشعارات في المتصفح
+    if ('Notification' in window) {
+      // طلب الإذن إذا لم يكن ممنوحاً
+      if (Notification.permission === 'default') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            sendNotificationToUsers()
+          } else {
+            alert('يجب السماح بالإشعارات لإرسال الرسائل')
+          }
+        })
+      } else if (Notification.permission === 'granted') {
+        sendNotificationToUsers()
+      } else {
+        alert('الإشعارات محظورة في هذا المتصفح')
+      }
+    } else {
+      alert('هذا المتصفح لا يدعم الإشعارات')
+    }
+  }
+
+  const sendNotificationToUsers = () => {
+    try {
+      // إرسال الإشعار
+      new Notification('eFootball Mobile - إشعار جديد', {
+        body: notificationMessage,
+        icon: appIcon,
+        badge: appIcon,
+        tag: 'efootball-notification',
+        requireInteraction: true
+      })
+
+      // عرض رسالة نجاح
+      setSuccessMessage('تم إرسال الإشعار بنجاح ✅')
+      setNotificationMessage('')
+      setShowNotificationForm(false)
+
+      // إخفاء الرسالة بعد 4 ثوان
+      setTimeout(() => {
+        setSuccessMessage('')
+      }, 4000)
+
+    } catch (error) {
+      console.error('خطأ في إرسال الإشعار:', error)
+      alert('حدث خطأ في إرسال الإشعار')
+    }
+  }
+
   const boosterOptions = [
     'No Booster', 'Aerial +1', 'Agility +1', 'Ball-carrying +1', 'Crossing +1',
     'Defending +1', 'Duelling +1', 'Fantasista +1', 'Free-kick Taking +1',
@@ -219,6 +276,14 @@ function AddPlayerPage({ onBack }) {
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 حذف لاعب
+              </Button>
+              <Button 
+                variant="outline" 
+                className="bg-orange-600/20 border-orange-500 text-orange-300 hover:bg-orange-600/30"
+                onClick={() => setShowNotificationForm(true)}
+              >
+                <Bell className="w-4 h-4 mr-2" />
+                إرسال إشعار يدوي
               </Button>
             </div>
           </CardContent>
@@ -483,6 +548,73 @@ function AddPlayerPage({ onBack }) {
                     <p className="text-gray-500 text-sm">قم بإضافة لاعبين أولاً</p>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* النافذة المنبثقة لإرسال الإشعارات اليدوية */}
+        {showNotificationForm && (
+          <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
+            <Card className="bg-gradient-to-br from-gray-800/95 via-gray-900/95 to-black/95 border border-gray-600/50 backdrop-blur-2xl max-w-md w-full shadow-2xl relative">
+              <CardContent className="p-6 relative z-10">
+                {/* زر الإغلاق */}
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex items-center gap-2">
+                    <Bell className="w-6 h-6 text-orange-400" />
+                    <h2 className="text-xl font-black bg-gradient-to-r from-orange-400 to-yellow-400 bg-clip-text text-transparent">
+                      إرسال إشعار يدوي
+                    </h2>
+                  </div>
+                  <button 
+                    onClick={() => setShowNotificationForm(false)}
+                    className="bg-gradient-to-r from-red-500/20 to-red-600/20 hover:from-red-500/30 hover:to-red-600/30 p-2 rounded-full transition-all duration-300 border border-red-500/30 hover:border-red-400/50"
+                  >
+                    <X className="w-5 h-5 text-red-400" />
+                  </button>
+                </div>
+
+                {/* نموذج الإشعار */}
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="notificationMessage" className="text-white text-lg font-semibold mb-3 block">
+                      رسالة الإشعار
+                    </Label>
+                    <textarea
+                      id="notificationMessage"
+                      placeholder="اكتب رسالة الإشعار هنا..."
+                      value={notificationMessage}
+                      onChange={(e) => setNotificationMessage(e.target.value)}
+                      className="w-full h-32 bg-gray-700/50 border border-gray-500 text-white placeholder-gray-400 focus:border-orange-400 rounded-lg p-3 resize-none"
+                      maxLength={200}
+                    />
+                    <p className="text-gray-400 text-sm mt-2">
+                      {notificationMessage.length}/200 حرف
+                    </p>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-orange-500/20 via-yellow-500/30 to-orange-500/20 rounded-xl p-4 border border-orange-500/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Bell className="w-4 h-4 text-orange-400" />
+                      <span className="text-orange-400 font-semibold text-sm">معاينة الإشعار</span>
+                    </div>
+                    <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-600/30">
+                      <p className="text-white font-semibold text-sm mb-1">eFootball Mobile - إشعار جديد</p>
+                      <p className="text-gray-300 text-sm">
+                        {notificationMessage || 'رسالة الإشعار ستظهر هنا...'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button 
+                    onClick={handleSendNotification}
+                    disabled={!notificationMessage.trim()}
+                    className="w-full bg-gradient-to-r from-orange-500 to-yellow-600 hover:from-orange-600 hover:to-yellow-700 text-white font-bold py-3 text-lg rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Send className="w-5 h-5 mr-2" />
+                    إرسال الإشعار للمشتركين
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
