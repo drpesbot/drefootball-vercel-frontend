@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent } from '@/components/ui/card.jsx'
 import { Search, Phone, Settings, Trophy, X, Star, Zap, Target, Shield, Gauge, Eye, Heart, Footprints, Users, Sparkles, Crown, Award } from 'lucide-react'
 import './App.css'
+import ApiService from './services/api.js'
 
 import appIcon from './assets/images/football_icon_no_white_edges.png'
 import PasswordProtection from './components/PasswordProtection.jsx'
@@ -31,16 +32,9 @@ function App() {
   const [showPlayerModal, setShowPlayerModal] = useState(false)
   const [showNotificationPopup, setShowNotificationPopup] = useState(false)
 
-  // تحميل اللاعبين من localStorage عند بدء التطبيق
+  // تحميل اللاعبين من API عند بدء التطبيق
   useEffect(() => {
-    const savedPlayers = localStorage.getItem('efootball_players')
-    if (savedPlayers) {
-      const parsedPlayers = JSON.parse(savedPlayers)
-      // ترتيب عشوائي للاعبين
-      const shuffledPlayers = [...parsedPlayers].sort(() => Math.random() - 0.5)
-      setPlayers(shuffledPlayers)
-      setFilteredPlayers(shuffledPlayers) // تعيين اللاعبين المفلترين عند التحميل الأولي
-    }
+    loadPlayers();
 
     // التحقق من LocalStorage لعرض النافذة المنبثقة
     const hasSeenPopup = localStorage.getItem('hasSeenNotificationPopup')
@@ -48,6 +42,27 @@ function App() {
       // setShowNotificationPopup(true); // سيتم تفعيلها عند الضغط على البحث
     }
   }, [])
+
+  // دالة لتحميل اللاعبين من API
+  const loadPlayers = async () => {
+    try {
+      const playersData = await ApiService.getPlayers();
+      // ترتيب عشوائي للاعبين
+      const shuffledPlayers = [...playersData].sort(() => Math.random() - 0.5);
+      setPlayers(shuffledPlayers);
+      setFilteredPlayers(shuffledPlayers);
+    } catch (error) {
+      console.error('Error loading players:', error);
+      // في حالة فشل تحميل البيانات من API، استخدم localStorage كبديل
+      const savedPlayers = localStorage.getItem('efootball_players');
+      if (savedPlayers) {
+        const parsedPlayers = JSON.parse(savedPlayers);
+        const shuffledPlayers = [...parsedPlayers].sort(() => Math.random() - 0.5);
+        setPlayers(shuffledPlayers);
+        setFilteredPlayers(shuffledPlayers);
+      }
+    }
+  };
 
   // دالة لحساب القوة الإجمالية للاعب
   const calculateOverallRating = (playerStats) => {
@@ -118,14 +133,8 @@ function App() {
 
   const handleBackToHome = () => {
     setCurrentPage('home')
-    // إعادة تحميل اللاعبين مع ترتيب عشوائي جديد
-    const savedPlayers = localStorage.getItem('efootball_players')
-    if (savedPlayers) {
-      const parsedPlayers = JSON.parse(savedPlayers)
-      const shuffledPlayers = [...parsedPlayers].sort(() => Math.random() - 0.5)
-      setPlayers(shuffledPlayers)
-      setFilteredPlayers(shuffledPlayers)
-    }
+    // إعادة تحميل اللاعبين من API مع ترتيب عشوائي جديد
+    loadPlayers();
   }
 
   const handleNotificationPopupContinue = () => {

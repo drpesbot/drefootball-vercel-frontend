@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Input } from '@/components/ui/input.jsx'
 import { Label } from '@/components/ui/label.jsx'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X, Bell, Send } from 'lucide-react'
+import ApiService from '../services/api.js'
 
 import appIcon from '../assets/images/app_icon.jpg'
 
@@ -44,6 +45,7 @@ function AddPlayerPage({ onBack }) {
   const [allPlayers, setAllPlayers] = useState([])
   const [notificationMessage, setNotificationMessage] = useState('')
   const [showNotificationForm, setShowNotificationForm] = useState(false)
+  const [editingPlayerId, setEditingPlayerId] = useState(null)
 
   const handleInputChange = (field, value) => {
     // التحقق من أن القيمة بين 0 و 150
@@ -62,7 +64,61 @@ function AddPlayerPage({ onBack }) {
     }
   }
 
-  const handleSubmit = (e) => {
+
+  // دالة لعرض جميع اللاعبين
+  const handleShowAllPlayers = async () => {
+    try {
+      const players = await ApiService.getPlayers();
+      setAllPlayers(players);
+      setShowAllPlayers(true);
+    } catch (error) {
+      console.error('Error loading players:', error);
+      alert('حدث خطأ أثناء تحميل اللاعبين');
+    }
+  };
+
+  // دالة لحذف لاعب
+  const handleDeletePlayer = async (playerId) => {
+    if (window.confirm('هل أنت متأكد من حذف هذا اللاعب؟')) {
+      try {
+        await ApiService.deletePlayer(playerId);
+        // إعادة تحميل قائمة اللاعبين
+        const updatedPlayers = await ApiService.getPlayers();
+        setAllPlayers(updatedPlayers);
+        setSuccessMessage('تم حذف اللاعب بنجاح ✅');
+        setTimeout(() => setSuccessMessage(''), 3000);
+      } catch (error) {
+        console.error('Error deleting player:', error);
+        alert('حدث خطأ أثناء حذف اللاعب');
+      }
+    }
+  };
+
+  // دالة لتعديل لاعب
+  const handleEditPlayer = (player) => {
+    setPlayerData({
+      name: player.name,
+      image: null,
+      overallRating: player.overallRating.toString(),
+      finishing: player.finishing.toString(),
+      passing: player.passing.toString(),
+      dribbling: player.dribbling.toString(),
+      dexterity: player.dexterity.toString(),
+      lowerBodyStrength: player.lowerBodyStrength.toString(),
+      aerialStrength: player.aerialStrength.toString(),
+      defending: player.defending.toString(),
+      gk1: player.gk1.toString(),
+      gk2: player.gk2.toString(),
+      gk3: player.gk3.toString(),
+      booster: player.booster
+    });
+    setImagePreview(player.image);
+    setEditingPlayerId(player.id);
+    setShowAllPlayers(false);
+  };
+
+  // تعديل دالة handleSubmit لدعم التعديل
+  const handleSubmit = async (e) => {
     e.preventDefault()
     
     if (!playerData.name.trim()) {
@@ -70,11 +126,19 @@ function AddPlayerPage({ onBack }) {
       return
     }
 
-    // تحويل الصورة إلى base64 إذا كانت موجودة
-    const processPlayerData = () => {
+    try {
+      let imageUrl = imagePreview; // استخدام الصورة الحالية إذا لم يتم تغييرها
+      
+      // رفع الصورة إلى S3 إذا كانت موجودة وجديدة
+      if (playerData.image) {
+        const uploadResult = await ApiService.uploadImage(playerData.image);
+        imageUrl = uploadResult.image_url;
+      }
+
+      // إعداد بيانات اللاعب
       const finalData = {
-        ...playerData,
-        overallRating: Number(playerData.overallRating) || 0, // إضافة القوة الإجمالية
+        name: playerData.name,
+        overallRating: Number(playerData.overallRating) || 0,
         finishing: Number(playerData.finishing) || 0,
         passing: Number(playerData.passing) || 0,
         dribbling: Number(playerData.dribbling) || 0,
@@ -85,29 +149,33 @@ function AddPlayerPage({ onBack }) {
         gk1: Number(playerData.gk1) || 0,
         gk2: Number(playerData.gk2) || 0,
         gk3: Number(playerData.gk3) || 0,
-        image: imagePreview // استخدام الصورة المحولة إلى base64
+        booster: playerData.booster,
+        image: imageUrl
+      };
+
+      if (editingPlayerId) {
+        // تعديل لاعب موجود
+        await ApiService.updatePlayer(editingPlayerId, finalData);
+        setSuccessMessage('تم تعديل اللاعب بنجاح ✅');
+        setEditingPlayerId(null);
+      } else {
+        // إضافة لاعب جديد
+        await ApiService.addPlayer(finalData);
+        setSuccessMessage('تم إضافة اللاعب بنجاح ✅');
       }
 
-      // حفظ البيانات في localStorage
-      const existingPlayers = JSON.parse(localStorage.getItem('efootball_players') || '[]')
-      existingPlayers.push(finalData)
-      localStorage.setItem('efootball_players', JSON.stringify(existingPlayers))
-
-      console.log('تم حفظ اللاعب:', finalData)
-      
-      // عرض رسالة النجاح
-      setSuccessMessage('تم إضافة اللاعب بنجاح ✅')
+      console.log('تم حفظ اللاعب:', finalData);
       
       // إخفاء الرسالة بعد 4 ثوان
       setTimeout(() => {
-        setSuccessMessage('')
-      }, 4000)
+        setSuccessMessage('');
+      }, 4000);
       
       // إعادة تعيين النموذج
       setPlayerData({
         name: '',
         image: null,
-        overallRating: '', // إضافة القوة الإجمالية
+        overallRating: '',
         finishing: '',
         passing: '',
         dribbling: '',
@@ -119,22 +187,14 @@ function AddPlayerPage({ onBack }) {
         gk2: '',
         gk3: '',
         booster: 'No Booster'
-      })
-      setImagePreview(null)
-
-      // إرسال حدث مخصص لتحديث الصفحة الرئيسية
-      window.dispatchEvent(new CustomEvent('playerAdded', { detail: finalData }))
+      });
+      setImagePreview(null);
+      
+    } catch (error) {
+      console.error('Error saving player:', error);
+      alert('حدث خطأ أثناء حفظ اللاعب. يرجى المحاولة مرة أخرى.');
     }
-
-    processPlayerData()
-  }
-
-  // دالة لعرض جميع اللاعبين
-  const handleShowAllPlayers = () => {
-    const savedPlayers = JSON.parse(localStorage.getItem('efootball_players') || '[]')
-    setAllPlayers(savedPlayers)
-    setShowAllPlayers(true)
-  }
+  };
 
   // دالة لحساب القوة الإجمالية للاعب
   const calculateOverallRating = (playerStats) => {
@@ -236,8 +296,12 @@ function AddPlayerPage({ onBack }) {
               <img src={appIcon} alt="App Icon" className="w-16 h-16 rounded-full" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">eFootball Mobile</h1>
-          <p className="text-blue-200">إضافة لاعب جديد</p>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
+            {editingPlayerId ? 'تعديل اللاعب' : 'eFootball Mobile'}
+          </h1>
+          <p className="text-blue-200">
+            {editingPlayerId ? 'قم بتعديل بيانات اللاعب' : 'إضافة لاعب جديد'}
+          </p>
         </div>
 
         {/* لوحة التحكم */}
@@ -264,7 +328,7 @@ function AddPlayerPage({ onBack }) {
               <Button 
                 variant="outline" 
                 className="bg-green-600/20 border-green-500 text-green-300 hover:bg-green-600/30"
-                onClick={() => alert('سيتم إضافة وظيفة تعديل اللاعب قريباً')}
+                onClick={handleShowAllPlayers}
               >
                 <Edit className="w-4 h-4 mr-2" />
                 تعديل لاعب
@@ -272,7 +336,7 @@ function AddPlayerPage({ onBack }) {
               <Button 
                 variant="outline" 
                 className="bg-red-600/20 border-red-500 text-red-300 hover:bg-red-600/30"
-                onClick={() => alert('سيتم إضافة وظيفة حذف اللاعب قريباً')}
+                onClick={handleShowAllPlayers}
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 حذف لاعب
@@ -464,7 +528,7 @@ function AddPlayerPage({ onBack }) {
             type="submit" 
             className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-3 text-lg rounded-xl shadow-lg"
           >
-            إضافة اللاعب
+            {editingPlayerId ? 'تحديث اللاعب' : 'إضافة اللاعب'}
           </Button>
         </form>
 
@@ -529,10 +593,32 @@ function AddPlayerPage({ onBack }) {
 
                           {/* البوستر */}
                           {player.booster && player.booster !== 'No Booster' && (
-                            <div className="bg-gradient-to-r from-purple-500/20 via-pink-500/30 to-purple-500/20 rounded-xl p-2 border border-purple-500/30">
+                            <div className="bg-gradient-to-r from-purple-500/20 via-pink-500/30 to-purple-500/20 rounded-xl p-2 border border-purple-500/30 mb-3">
                               <p className="text-xs text-purple-400 font-semibold">{player.booster}</p>
                             </div>
                           )}
+
+                          {/* أزرار التعديل والحذف */}
+                          <div className="flex gap-2 mt-4">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="flex-1 bg-green-600/20 border-green-500 text-green-300 hover:bg-green-600/30"
+                              onClick={() => handleEditPlayer(player)}
+                            >
+                              <Edit className="w-3 h-3 mr-1" />
+                              تعديل
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="flex-1 bg-red-600/20 border-red-500 text-red-300 hover:bg-red-600/30"
+                              onClick={() => handleDeletePlayer(player.id)}
+                            >
+                              <Trash2 className="w-3 h-3 mr-1" />
+                              حذف
+                            </Button>
+                          </div>
                         </CardContent>
                       </Card>
                     ))}
