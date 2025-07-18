@@ -419,12 +419,10 @@ function AddPlayerPage({ onBack }) {
                 <Label htmlFor="image" className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
                   <Upload className="w-4 h-4" />
                   اضغط لرفع الصورة
-                  <span className="text-xs text-blue-200">PNG, JPG أو GIF</span>
                 </Label>
                 <Input
                   id="image"
                   type="file"
-                  accept="image/*"
                   onChange={handleImageUpload}
                   className="hidden"
                 />
