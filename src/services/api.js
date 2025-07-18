@@ -1,5 +1,7 @@
 // API service for communicating with the backend
-const API_BASE_URL = 'https://u0d962e8d3.execute-api.us-east-1.amazonaws.com/default/efootball-api';
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? '/api' 
+  : 'http://localhost:3000/api';
 
 class ApiService {
   // Get all players
