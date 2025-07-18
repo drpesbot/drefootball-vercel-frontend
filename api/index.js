@@ -1,8 +1,26 @@
 const express = require('express');
-const AWS = require('aws-sdk');
 const cors = require('cors');
+const AWS = require('aws-sdk');
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
-const app = express();
+// دالة لتحويل قيم Decimal من DynamoDB
+function sanitize(data) {
+    const Decimal = AWS.DynamoDB.DocumentClient.Converter.unmarshall;
+    if (Array.isArray(data)) {
+        return data.map(sanitize);
+    } else if (data !== null && typeof data === 'object') {
+        if (data.constructor && data.constructor.name === 'Decimal') {
+            return data % 1 === 0 ? parseInt(data.toString()) : parseFloat(data.toString());
+        }
+        const result = {};
+        for (const key in data) {
+            result[key] = sanitize(data[key]);
+        }
+        return result;
+    }
+    return data;
+}
 
 // Enable CORS for all origins
 app.use(cors());
@@ -22,7 +40,7 @@ const TABLE_NAME = 'drefotball_players';
 const BUCKET_NAME = 'drefotball-player-images';
 
 // Helper function to sanitize DynamoDB response
-function sanitizePlayer(player) {
+function sanitize(player) {
   const sanitized = {};
   for (const [key, value] of Object.entries(player)) {
     if (typeof value === 'object' && value !== null && 'N' in value) {
@@ -53,21 +71,20 @@ app.post('/api/authenticate', async (req, res) => {
   }
 });
 
-// Get all players
+/// Get all players
 app.get('/api/players', async (req, res) => {
-  try {
-    const params = {
-      TableName: TABLE_NAME
-    };
-    
-    const result = await dynamodb.scan(params).promise();
-    const players = result.Items.map(sanitizePlayer);
-    
-    res.json(players);
-  } catch (error) {
-    console.error('Error fetching players:', error);
-    res.status(500).json({ error: 'Failed to fetch players' });
-  }
+    try {
+        const params = {
+            TableName: 'drefotball_players'
+        };
+        
+        const result = await dynamodb.scan(params).promise();
+        const sanitizedPlayers = sanitize(result.Items);
+        res.json(sanitizedPlayers);
+    } catch (error) {
+        console.error('Error fetching players:', error);
+        res.status(500).json({ error: 'Failed to fetch players' });
+    }
 });
 
 // Add new player
@@ -93,7 +110,7 @@ app.post('/api/players', async (req, res) => {
     };
 
     await dynamodb.put(params).promise();
-    res.json({ success: true, player: sanitizePlayer(playerData) });
+    res.json({ success: true, player: sanitize(playerData) });
   } catch (error) {
     console.error('Error adding player:', error);
     res.status(500).json({ error: 'Failed to add player' });
@@ -123,7 +140,7 @@ app.put('/api/players/:id', async (req, res) => {
     };
 
     await dynamodb.put(params).promise();
-    res.json({ success: true, player: sanitizePlayer(playerData) });
+    res.json({ success: true, player: sanitize(playerData) });
   } catch (error) {
     console.error('Error updating player:', error);
     res.status(500).json({ error: 'Failed to update player' });
