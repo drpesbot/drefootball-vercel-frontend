@@ -4,9 +4,10 @@ const AWS = require('aws-sdk');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 
+const app = express();
+
 // دالة لتحويل قيم Decimal من DynamoDB
 function sanitize(data) {
-    const Decimal = AWS.DynamoDB.DocumentClient.Converter.unmarshall;
     if (Array.isArray(data)) {
         return data.map(sanitize);
     } else if (data !== null && typeof data === 'object') {
@@ -39,43 +40,36 @@ const s3 = new AWS.S3();
 const TABLE_NAME = 'drefotball_players';
 const BUCKET_NAME = 'drefotball-player-images';
 
-// Helper function to sanitize DynamoDB response
-function sanitize(player) {
-  const sanitized = {};
-  for (const [key, value] of Object.entries(player)) {
-    if (typeof value === 'object' && value !== null && 'N' in value) {
-      sanitized[key] = parseFloat(value.N);
-    } else if (typeof value === 'object' && value !== null && 'S' in value) {
-      sanitized[key] = value.S;
-    } else {
-      sanitized[key] = value;
-    }
-  }
-  return sanitized;
-}
+// Configure multer for file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+});
 
 // Authentication endpoint
-app.post('/api/authenticate', async (req, res) => {
+app.post('/api/auth', async (req, res) => {
   try {
     const { password } = req.body;
     const adminPassword = process.env.ADMIN_PASSWORD || 'killer8speed';
     
     if (password === adminPassword) {
-      res.json({ success: true });
+      res.json({ success: true, message: 'Authentication successful' });
     } else {
       res.status(401).json({ success: false, message: 'Invalid password' });
     }
   } catch (error) {
-    console.error('Authentication error:', error);
+    console.error('Auth error:', error);
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
-/// Get all players
+// Get all players
 app.get('/api/players', async (req, res) => {
     try {
         const params = {
-            TableName: 'drefotball_players'
+            TableName: TABLE_NAME
         };
         
         const result = await dynamodb.scan(params).promise();
@@ -110,7 +104,8 @@ app.post('/api/players', async (req, res) => {
     };
 
     await dynamodb.put(params).promise();
-    res.json({ success: true, player: sanitize(playerData) });
+    const sanitizedPlayer = sanitize(playerData);
+    res.json({ success: true, player: sanitizedPlayer });
   } catch (error) {
     console.error('Error adding player:', error);
     res.status(500).json({ error: 'Failed to add player' });
@@ -127,10 +122,10 @@ app.put('/api/players/:id', async (req, res) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const playerId = req.params.id;
+    const { id } = req.params;
     const playerData = {
-      id: playerId,
       ...player,
+      id,
       updatedAt: new Date().toISOString()
     };
 
@@ -140,7 +135,8 @@ app.put('/api/players/:id', async (req, res) => {
     };
 
     await dynamodb.put(params).promise();
-    res.json({ success: true, player: sanitize(playerData) });
+    const sanitizedPlayer = sanitize(playerData);
+    res.json({ success: true, player: sanitizedPlayer });
   } catch (error) {
     console.error('Error updating player:', error);
     res.status(500).json({ error: 'Failed to update player' });
@@ -157,43 +153,45 @@ app.delete('/api/players/:id', async (req, res) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const playerId = req.params.id;
+    const { id } = req.params;
+
     const params = {
       TableName: TABLE_NAME,
-      Key: { id: playerId }
+      Key: { id }
     };
 
     await dynamodb.delete(params).promise();
-    res.json({ success: true });
+    res.json({ success: true, message: 'Player deleted successfully' });
   } catch (error) {
     console.error('Error deleting player:', error);
     res.status(500).json({ error: 'Failed to delete player' });
   }
 });
 
-// Upload image to S3
-app.post('/api/upload', async (req, res) => {
+// Upload image
+app.post('/api/upload', upload.single('image'), async (req, res) => {
   try {
-    const { password, image, fileName } = req.body;
+    const { password } = req.body;
     const adminPassword = process.env.ADMIN_PASSWORD || 'killer8speed';
     
     if (password !== adminPassword) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // Convert base64 to buffer
-    const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
-    const buffer = Buffer.from(base64Data, 'base64');
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const fileName = `${uuidv4()}-${req.file.originalname}`;
     
-    const key = `players/${Date.now()}-${fileName}`;
-    const params = {
+    const uploadParams = {
       Bucket: BUCKET_NAME,
-      Key: key,
-      Body: buffer,
-      ContentType: 'image/jpeg'
+      Key: fileName,
+      Body: req.file.buffer,
+      ContentType: req.file.mimetype
     };
 
-    const result = await s3.upload(params).promise();
+    const result = await s3.upload(uploadParams).promise();
     res.json({ success: true, imageUrl: result.Location });
   } catch (error) {
     console.error('Error uploading image:', error);
@@ -201,19 +199,11 @@ app.post('/api/upload', async (req, res) => {
   }
 });
 
-// Health check
+// Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// For Vercel serverless functions
+// Export the Express app
 module.exports = app;
-
-// For local development
-if (require.main === module) {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}
 
