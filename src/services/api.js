@@ -5,7 +5,7 @@ class ApiService {
   // Get all players
   async getPlayers() {
     try {
-      const response = await fetch(`${API_BASE_URL}/players`);
+      const response = await fetch(`${API_BASE_URL}/api/players`);
       if (!response.ok) {
         throw new Error("Failed to fetch players");
       }
@@ -19,12 +19,15 @@ class ApiService {
   // Add a new player
   async addPlayer(playerData) {
     try {
-      const response = await fetch(`${API_BASE_URL}/players`, {
+      const response = await fetch(`${API_BASE_URL}/api/players`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(playerData),
+        body: JSON.stringify({
+          password: "killer8speed",
+          player: playerData
+        }),
       });
       if (!response.ok) {
         throw new Error("Failed to add player");
@@ -39,12 +42,15 @@ class ApiService {
   // Update a player
   async updatePlayer(playerId, playerData) {
     try {
-      const response = await fetch(`${API_BASE_URL}/players/${playerId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/players/${playerId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(playerData),
+        body: JSON.stringify({
+          password: "killer8speed",
+          player: playerData
+        }),
       });
       if (!response.ok) {
         throw new Error("Failed to update player");
@@ -59,8 +65,14 @@ class ApiService {
   // Delete a player
   async deletePlayer(playerId) {
     try {
-      const response = await fetch(`${API_BASE_URL}/players/${playerId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/players/${playerId}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: "killer8speed"
+        }),
       });
       if (!response.ok) {
         throw new Error("Failed to delete player");
@@ -76,9 +88,10 @@ class ApiService {
   async uploadImage(file) {
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("image", file);
+      formData.append("password", "killer8speed");
 
-      const response = await fetch(`${API_BASE_URL}/upload`, {
+      const response = await fetch(`${API_BASE_URL}/api/upload`, {
         method: "POST",
         body: formData,
       });
