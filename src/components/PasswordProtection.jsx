@@ -3,9 +3,7 @@ import { Button } from '@/components/ui/button.jsx'
 import { Input } from '@/components/ui/input.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Shield, Lock, AlertTriangle, Eye, EyeOff } from 'lucide-react'
-
-// Hash مشفر لكلمة المرور killer8speed باستخدام bcrypt
-const HASHED_PASSWORD = '$2b$12$LQv3c1yqBWVHxkd0LQ4YNu5JTgHRZpXIpBVchvimjl5bEaYBr9H6m'
+import ApiService from '../services/api.js'
 
 function PasswordProtection({ onAuthenticated }) {
   const [password, setPassword] = useState('')
@@ -15,7 +13,7 @@ function PasswordProtection({ onAuthenticated }) {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     
     if (isBlocked) {
@@ -23,43 +21,46 @@ function PasswordProtection({ onAuthenticated }) {
       return
     }
 
-    // التحقق من كلمة المرور باستخدام bcrypt (محاكاة)
-    // في التطبيق الحقيقي، يجب استخدام مكتبة bcrypt.js للمقارنة
-    if (password === 'killer8speed') { // هنا نقوم بمقارنة مباشرة لغرض الاختبار
-      // كلمة مرور صحيحة
-      setError('')
-      setAttempts(0)
-      onAuthenticated()
-    } else {
-      // كلمة مرور خاطئة
-      const newAttempts = attempts + 1
-      setAttempts(newAttempts)
-      
-      if (newAttempts >= 3) {
-        // حظر لمدة 5 دقائق
-        setIsBlocked(true)
-        setBlockTimeLeft(300) // 5 دقائق بالثواني
-        setError('تم تجاوز الحد الأقصى للمحاولات. تم حظر الوصول لمدة 5 دقائق')
-        
-        // عداد تنازلي للحظر
-        const blockTimer = setInterval(() => {
-          setBlockTimeLeft(prev => {
-            if (prev <= 1) {
-              clearInterval(blockTimer)
-              setIsBlocked(false)
-              setAttempts(0)
-              setError('')
-              return 0
-            }
-            return prev - 1
-          })
-        }, 1000)
+    try {
+      const response = await ApiService.authenticate(password);
+      if (response.success) {
+        setError('');
+        setAttempts(0);
+        onAuthenticated();
       } else {
-        setError(`كلمة مرور خاطئة. المحاولات المتبقية: ${3 - newAttempts}`)
+        // كلمة مرور خاطئة
+        const newAttempts = attempts + 1;
+        setAttempts(newAttempts);
+        
+        if (newAttempts >= 3) {
+          // حظر لمدة 5 دقائق
+          setIsBlocked(true);
+          setBlockTimeLeft(300); // 5 دقائق بالثواني
+          setError('تم تجاوز الحد الأقصى للمحاولات. تم حظر الوصول لمدة 5 دقائق');
+          
+          // عداد تنازلي للحظر
+          const blockTimer = setInterval(() => {
+            setBlockTimeLeft(prev => {
+              if (prev <= 1) {
+                clearInterval(blockTimer);
+                setIsBlocked(false);
+                setAttempts(0);
+                setError('');
+                return 0;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+        } else {
+          setError(`كلمة مرور خاطئة. المحاولات المتبقية: ${3 - newAttempts}`);
+        }
       }
+    } catch (err) {
+      console.error('Authentication error:', err);
+      setError('حدث خطأ أثناء التحقق من كلمة المرور. يرجى المحاولة مرة أخرى.');
     }
     
-    setPassword('')
+    setPassword('');
   }
 
   return (
@@ -155,4 +156,5 @@ function PasswordProtection({ onAuthenticated }) {
 }
 
 export default PasswordProtection
+
 

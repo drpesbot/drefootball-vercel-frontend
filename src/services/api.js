@@ -2,6 +2,28 @@
 const API_BASE_URL = "https://drefootball-backend.onrender.com";
 
 class ApiService {
+  // Authenticate user
+  async authenticate(password) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      });
+      if (!response.ok) {
+        // If response is not ok, it means authentication failed on backend
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Authentication failed");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error during authentication:", error);
+      throw error;
+    }
+  }
+
   // Get all players
   async getPlayers() {
     try {
@@ -17,7 +39,7 @@ class ApiService {
   }
 
   // Add a new player
-  async addPlayer(playerData) {
+  async addPlayer(playerData, password) {
     try {
       const response = await fetch(`${API_BASE_URL}/api/players`, {
         method: "POST",
@@ -25,7 +47,7 @@ class ApiService {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          password: "killer8speed",
+          password: password,
           player: playerData
         }),
       });
@@ -40,15 +62,15 @@ class ApiService {
   }
 
   // Update a player
-  async updatePlayer(playerId, playerData) {
+  async updatePlayer(playerId, playerData, password) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/players/${playerId}`, {
+      const response = await await fetch(`${API_BASE_URL}/api/players/${playerId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          password: "killer8speed",
+          password: password,
           player: playerData
         }),
       });
@@ -63,7 +85,7 @@ class ApiService {
   }
 
   // Delete a player
-  async deletePlayer(playerId) {
+  async deletePlayer(playerId, password) {
     try {
       const response = await fetch(`${API_BASE_URL}/api/players/${playerId}`, {
         method: "DELETE",
@@ -71,7 +93,7 @@ class ApiService {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          password: "killer8speed"
+          password: password
         }),
       });
       if (!response.ok) {
@@ -85,11 +107,11 @@ class ApiService {
   }
 
   // Upload image
-  async uploadImage(file) {
+  async uploadImage(file, password) {
     try {
       const formData = new FormData();
       formData.append("image", file);
-      formData.append("password", "killer8speed");
+      formData.append("password", password);
 
       const response = await fetch(`${API_BASE_URL}/api/upload`, {
         method: "POST",
