@@ -42,28 +42,40 @@ function App() {
   useEffect(() => {
     loadPlayers();
 
-    // التحقق من حالة تفعيل الإشعارات
-    const notificationActivated = localStorage.getItem('notificationActivated')
-    const activationTime = localStorage.getItem('notificationActivationTime')
+    // التحقق من حالة عرض الشاشة الترحيبية
+    const lastPopupTime = localStorage.getItem('lastNotificationPopup');
+    const notificationsEnabled = localStorage.getItem('notificationsEnabled') === 'true';
     
-    if (notificationActivated && activationTime) {
-      const currentTime = new Date().getTime()
-      const timeDiff = currentTime - parseInt(activationTime)
-      const hoursDiff = timeDiff / (1000 * 60 * 60)
+    if (lastPopupTime) {
+      const currentTime = new Date().getTime();
+      const timeDiff = currentTime - parseInt(lastPopupTime);
+      const hoursDiff = timeDiff / (1000 * 60 * 60);
       
-      // إذا مر أقل من 24 ساعة، لا نحجب التصفح
-      if (hoursDiff < 24) {
-        setIsNotificationActivated(true)
-        setShowBlockingOverlay(false)
+      // تحديد متى تظهر الشاشة مرة أخرى
+      const hoursThreshold = notificationsEnabled ? 24 : 4;
+      
+      console.log('⏰ فحص وقت آخر ظهور للشاشة الترحيبية:', {
+        lastPopupTime: new Date(parseInt(lastPopupTime)).toLocaleString(),
+        hoursPassed: hoursDiff.toFixed(2),
+        notificationsEnabled: notificationsEnabled,
+        hoursThreshold: hoursThreshold,
+        shouldShowPopup: hoursDiff >= hoursThreshold
+      });
+      
+      if (hoursDiff >= hoursThreshold) {
+        console.log(`✅ مر أكثر من ${hoursThreshold} ساعة، سيتم عرض الشاشة الترحيبية`);
+        setShowNotificationActivationModal(true);
+        setShowBlockingOverlay(true);
       } else {
-        // إذا مر أكثر من 24 ساعة، نحجب التصفح مرة أخرى
-        setIsNotificationActivated(false)
-        setShowBlockingOverlay(true)
-        setShowNotificationActivationModal(true)
+        console.log(`⏳ لم يمر ${hoursThreshold} ساعة بعد، لن تظهر الشاشة الترحيبية`);
+        setShowBlockingOverlay(false);
+        setIsNotificationActivated(true);
       }
     } else {
-      // إذا لم يتم تفعيل الإشعارات من قبل، نحجب التصفح
-      setShowNotificationActivationModal(true)
+      // أول زيارة للموقع
+      console.log('🆕 أول زيارة للموقع، سيتم عرض الشاشة الترحيبية');
+      setShowNotificationActivationModal(true);
+      setShowBlockingOverlay(true);
     }
   }, [])
 
@@ -162,57 +174,118 @@ function App() {
     );
     setFilteredPlayers(results);
   };
-  // دالة تفعيل الإشعارات الجديدة
+  // دالة تفعيل الإشعارات المحسنة مع المنطق الجديد
   const handleNotificationActivation = async () => {
     try {
-      // تفعيل الإشعارات
+      console.log('🚀 بدء عملية تفعيل الإشعارات...');
+      
+      let notificationsEnabled = false;
+      
+      // تفعيل الإشعارات وحفظ التوكن
       if ('Notification' in window) {
         const permission = await Notification.requestPermission();
+        console.log('Notification permission result:', permission);
+        
         if (permission === 'granted') {
-          console.log('Notification permission granted.');
+          console.log('✅ تم منح إذن الإشعارات بنجاح');
+          notificationsEnabled = true;
+          
+          // محاولة الحصول على service worker token (إذا كان متاحاً)
+          let userToken = null;
+          try {
+            if ('serviceWorker' in navigator) {
+              // تسجيل service worker إذا لم يكن مسجلاً
+              const registration = await navigator.serviceWorker.register('/sw.js').catch(() => null);
+              if (registration) {
+                console.log('Service Worker registered successfully');
+              }
+            }
+            
+            // إنشاء توكن فريد للمستخدم
+            userToken = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            console.log('Generated user token:', userToken);
+            
+          } catch (swError) {
+            console.log('Service Worker not available, using fallback token generation');
+            userToken = 'fallback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+          }
+          
+          // حفظ التوكن في localStorage
+          const existingTokens = JSON.parse(localStorage.getItem('userNotificationTokens') || '[]');
+          if (!existingTokens.includes(userToken)) {
+            existingTokens.push(userToken);
+            localStorage.setItem('userNotificationTokens', JSON.stringify(existingTokens));
+            console.log('تم حفظ التوكن:', userToken);
+          }
+          
+          // إظهار إشعار تأكيد
+          new Notification('🎉 تم تفعيل الإشعارات بنجاح!', {
+            body: 'ستصلك الآن جميع الأخبار والتحديثات الحصرية',
+            icon: '/favicon.ico',
+            tag: 'activation-success'
+          });
+          
+          // تتبع المشتركين في localStorage
+          const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
+          const newCount = currentSubscribers + 1;
+          localStorage.setItem('notificationSubscribers', newCount.toString());
+          console.log('تم تحديث عدد المشتركين:', newCount);
+          
+          // إرسال طلب للواجهة الخلفية لتحديث عدد المشتركين
+          try {
+            const response = await ApiService.incrementNotificationSubscribers();
+            console.log('تم تحديث عدد المشتركين في الواجهة الخلفية:', response);
+          } catch (error) {
+            console.error('خطأ في تحديث عدد المشتركين في الواجهة الخلفية:', error);
+            console.log('تم الاحتفاظ بالعدد في localStorage فقط');
+          }
+        } else {
+          console.log('❌ لم يتم منح إذن الإشعارات');
+          notificationsEnabled = false;
         }
+      } else {
+        console.log('❌ المتصفح لا يدعم الإشعارات');
+        notificationsEnabled = false;
       }
       
-      // تتبع المشتركين في localStorage
-      const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
-      localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
-      
-      // إرسال طلب للواجهة الخلفية لتحديث عدد المشتركين
-      try {
-        const response = await ApiService.incrementNotificationSubscribers();
-        console.log('Notification subscriber count updated on backend:', response);
-      } catch (error) {
-        console.error('Error updating subscriber count on backend:', error);
-        // في حالة فشل الإرسال للواجهة الخلفية، نحتفظ بالعدد في localStorage فقط
-        console.log('Fallback: Subscriber count saved in localStorage only');
-      }
-      
-      // حفظ حالة التفعيل مع الوقت الحالي
+      // حفظ حالة الضغط على الزر والوقت الحالي (بغض النظر عن تفعيل الإشعارات)
       const currentTime = new Date().getTime();
-      localStorage.setItem('notificationActivated', 'true');
-      localStorage.setItem('notificationActivationTime', currentTime.toString());
+      localStorage.setItem('lastNotificationPopup', currentTime.toString());
+      localStorage.setItem('notificationsEnabled', notificationsEnabled.toString());
       
-      // تحديث الحالة وإزالة الحجب
+      console.log('💾 تم حفظ حالة الضغط على الزر:', {
+        time: new Date(currentTime).toLocaleString(),
+        notificationsEnabled: notificationsEnabled
+      });
+      
+      // السماح بالتصفح دائماً بعد الضغط على الزر
+      console.log('🔓 السماح بالتصفح وإغلاق النوافذ المنبثقة...');
       setIsNotificationActivated(true);
       setShowBlockingOverlay(false);
       setShowNotificationActivationModal(false);
+      setShowNotificationPopup(false);
+      setShowNotificationModal(false);
       
-      // إظهار رسالة تأكيد
-      alert('تم تفعيل الإشعارات بنجاح! يمكنك الآن تصفح الموقع بحرية.');
+      if (notificationsEnabled) {
+        console.log('✅ تم تفعيل الإشعارات بنجاح - ستظهر الشاشة مرة أخرى بعد 24 ساعة');
+      } else {
+        console.log('⚠️ لم يتم تفعيل الإشعارات - ستظهر الشاشة مرة أخرى بعد 4 ساعات');
+      }
       
     } catch (error) {
-      console.error('Error in notification activation:', error);
+      console.error('❌ خطأ في عملية تفعيل الإشعارات:', error);
       
       // حتى في حالة الخطأ، نسمح للمستخدم بالمتابعة
       const currentTime = new Date().getTime();
-      localStorage.setItem('notificationActivated', 'true');
-      localStorage.setItem('notificationActivationTime', currentTime.toString());
+      localStorage.setItem('lastNotificationPopup', currentTime.toString());
+      localStorage.setItem('notificationsEnabled', 'false');
       
+      console.log('🔓 السماح للمستخدم بالمتابعة رغم الخطأ');
       setIsNotificationActivated(true);
       setShowBlockingOverlay(false);
       setShowNotificationActivationModal(false);
-      
-      alert('تم تفعيل الإشعارات! يمكنك الآن تصفح الموقع بحرية.');
+      setShowNotificationPopup(false);
+      setShowNotificationModal(false);
     }
   }
 
@@ -891,12 +964,11 @@ function App() {
                 {/* الزر الكبير */}
                 <Button 
                   onClick={handleNotificationPopupContinue}
-                  className="bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600 hover:from-emerald-500 hover:via-green-600 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-full shadow-xl shadow-emerald-500/40 transition-all duration-300 hover:scale-105 relative overflow-hidden group mb-6 w-full"
-                >
+                className="w-full bg-gradient-to-r from-green-500 via-emerald-400 to-green-600 hover:from-green-600 hover:via-emerald-500 hover:to-green-700 text-white font-bold py-4 px-6 rounded-2xl shadow-xl shadow-green-500/30 transition-all duration-300 hover:scale-105 relative overflow-hidden group mb-6 w-full"            >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                   <div className="flex items-center justify-center gap-2 relative z-10">
                     <Bell className="w-5 h-5" />
-                    <span>تفعيل الإشعارات الآن</span>
+                    <span>فعل الإشعارات للاستمرار</span>
                     <Sparkles className="w-5 h-5 group-hover:animate-pulse" />
                   </div>
                 </Button>
@@ -989,40 +1061,13 @@ function App() {
                 
                 {/* زر الاشتراك */}
                 <Button 
-                  onClick={async () => {
-                    try {
-                      // تفعيل الإشعارات
-                      if ('Notification' in window) {
-                        const permission = await Notification.requestPermission();
-                        if (permission === 'granted') {
-                          // زيادة عداد المشتركين
-                          const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
-                          localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
-                          
-                          // إظهار إشعار تأكيد
-                          new Notification('تم تفعيل الإشعارات بنجاح!', {
-                            body: 'ستصلك الآن جميع الأخبار والتحديثات',
-                            icon: '/favicon.ico'
-                          });
-                          
-                          setShowNotificationModal(false);
-                        } else {
-                          alert('يرجى السماح بالإشعارات من إعدادات المتصفح');
-                        }
-                      } else {
-                        alert('متصفحك لا يدعم الإشعارات');
-                      }
-                    } catch (error) {
-                      console.error('خطأ في تفعيل الإشعارات:', error);
-                      alert('حدث خطأ، يرجى المحاولة مرة أخرى');
-                    }
-                  }}
+                  onClick={handleNotificationActivation}
                   className="w-full bg-gradient-to-r from-green-500 via-emerald-400 to-green-600 hover:from-green-600 hover:via-emerald-500 hover:to-green-700 text-white font-bold py-4 px-6 rounded-2xl shadow-xl shadow-green-500/30 transition-all duration-300 hover:scale-105 relative overflow-hidden group"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                   <div className="flex items-center justify-center gap-3 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
                     <Bell className="w-5 h-5" />
-                    <span>اضغط هنا للمتابعة</span>
+                    <span>فعل الإشعارات للاستمرار</span>
                   </div>
                 </Button>
                 
@@ -1127,40 +1172,13 @@ function App() {
 
                 {/* زر التفعيل الرئيسي */}
                 <Button
-                  onClick={async () => {
-                    try {
-                      if ('Notification' in window) {
-                        const permission = await Notification.requestPermission();
-                        if (permission === 'granted') {
-                          // زيادة عداد المشتركين
-                          const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
-                          localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
-                          
-                          // إظهار إشعار تأكيد
-                          new Notification('🎉 تم تفعيل الإشعارات بنجاح!', {
-                            body: 'ستصلك الآن جميع الأخبار والتحديثات الحصرية',
-                            icon: '/favicon.ico'
-                          });
-                          
-                          setShowNotificationActivationModal(false);
-                          setNotificationsBlocked(false);
-                        } else {
-                          alert('يرجى السماح بالإشعارات من إعدادات المتصفح للحصول على التحديثات');
-                        }
-                      } else {
-                        alert('متصفحك لا يدعم الإشعارات');
-                      }
-                    } catch (error) {
-                      console.error('خطأ في تفعيل الإشعارات:', error);
-                      alert('حدث خطأ، يرجى المحاولة مرة أخرى');
-                    }
-                  }}
-                  className="w-full bg-gradient-to-r from-orange-500 via-red-400 to-pink-500 hover:from-orange-600 hover:via-red-500 hover:to-pink-600 text-white font-black py-4 px-6 rounded-2xl shadow-2xl shadow-orange-500/50 transition-all duration-300 hover:scale-105 relative overflow-hidden group animate-pulse"
+                  onClick={handleNotificationActivation}
+                  className="w-full bg-gradient-to-r from-green-500 via-emerald-400 to-green-600 hover:from-green-600 hover:via-emerald-500 hover:to-green-700 text-white font-black py-4 px-6 rounded-2xl shadow-2xl shadow-green-500/50 transition-all duration-300 hover:scale-105 relative overflow-hidden group animate-pulse"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                   <div className="flex items-center justify-center gap-3 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
                     <Bell className="w-6 h-6 animate-pulse" />
-                    <span className="text-lg">🚀 تفعيل الإشعارات الآن</span>
+                    <span className="text-lg">فعل الإشعارات للاستمرار</span>
                     <Sparkles className="w-6 h-6 animate-pulse" />
                   </div>
                 </Button>

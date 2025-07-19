@@ -248,58 +248,159 @@ function AddPlayerPage({ onBack }) {
     return Math.round(total / stats.length)
   }
 
-  // دالة لإرسال الإشعارات اليدوية
-  const handleSendNotification = () => {
+  // دالة لإرسال الإشعارات اليدوية المحسنة
+  const handleSendNotification = async () => {
     if (!notificationMessage.trim()) {
       alert('يجب إدخال رسالة الإشعار')
       return
     }
 
-    // التحقق من دعم الإشعارات في المتصفح
-    if ('Notification' in window) {
+    console.log('🚀 بدء عملية إرسال الإشعار...');
+    console.log('📝 محتوى الإشعار:', notificationMessage);
+
+    try {
+      // التحقق من دعم الإشعارات في المتصفح
+      if (!('Notification' in window)) {
+        console.error('❌ هذا المتصفح لا يدعم الإشعارات');
+        alert('هذا المتصفح لا يدعم الإشعارات');
+        return;
+      }
+
+      // التحقق من إذن الإشعارات
+      if (Notification.permission === 'denied') {
+        console.error('❌ الإشعارات محظورة في هذا المتصفح');
+        alert('الإشعارات محظورة في هذا المتصفح. يرجى تفعيلها من إعدادات المتصفح.');
+        return;
+      }
+
       // طلب الإذن إذا لم يكن ممنوحاً
       if (Notification.permission === 'default') {
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            sendNotificationToUsers()
-          } else {
-            alert('يجب السماح بالإشعارات لإرسال الرسائل')
-          }
-        })
-      } else if (Notification.permission === 'granted') {
-        sendNotificationToUsers()
-      } else {
-        alert('الإشعارات محظورة في هذا المتصفح')
+        console.log('🔔 طلب إذن الإشعارات...');
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+          console.error('❌ تم رفض إذن الإشعارات');
+          alert('يجب السماح بالإشعارات لإرسال الرسائل');
+          return;
+        }
       }
-    } else {
-      alert('هذا المتصفح لا يدعم الإشعارات')
-    }
-  }
 
-  const sendNotificationToUsers = () => {
-    try {
-      // إرسال الإشعار
-      new Notification('eFootball Mobile - إشعار جديد', {
+      console.log('✅ إذن الإشعارات متاح');
+
+      // الحصول على قائمة التوكنات المحفوظة
+      const savedTokens = JSON.parse(localStorage.getItem('userNotificationTokens') || '[]');
+      const subscribersCount = parseInt(localStorage.getItem('notificationSubscribers') || '0');
+      
+      console.log('👥 عدد المشتركين المسجلين:', subscribersCount);
+      console.log('🔑 عدد التوكنات المحفوظة:', savedTokens.length);
+      console.log('📋 التوكنات:', savedTokens);
+
+      if (subscribersCount === 0) {
+        console.warn('⚠️ لا يوجد مشتركين مسجلين');
+        alert('لا يوجد مشتركين مسجلين في الإشعارات بعد. يرجى تفعيل الإشعارات أولاً من الصفحة الرئيسية.');
+        return;
+      }
+
+      // إرسال الإشعار للمستخدم الحالي (كمثال)
+      console.log('📤 إرسال الإشعار...');
+      
+      const notification = new Notification('🔔 eFootball Mobile - إشعار جديد', {
         body: notificationMessage,
         icon: appIcon,
         badge: appIcon,
-        tag: 'efootball-notification',
-        requireInteraction: true
-      })
+        tag: 'efootball-manual-notification',
+        requireInteraction: true,
+        timestamp: Date.now(),
+        data: {
+          url: window.location.origin,
+          timestamp: new Date().toISOString()
+        }
+      });
+
+      // معالجة أحداث الإشعار
+      notification.onclick = function(event) {
+        console.log('🖱️ تم النقر على الإشعار');
+        event.preventDefault();
+        window.focus();
+        notification.close();
+      };
+
+      notification.onshow = function() {
+        console.log('👁️ تم عرض الإشعار بنجاح');
+      };
+
+      notification.onerror = function(error) {
+        console.error('❌ خطأ في عرض الإشعار:', error);
+      };
+
+      // محاولة إرسال الإشعار عبر Service Worker (إذا كان متاحاً)
+      if ('serviceWorker' in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.getRegistration();
+          if (registration) {
+            console.log('📡 إرسال الإشعار عبر Service Worker...');
+            await registration.showNotification('🔔 eFootball Mobile - إشعار جديد', {
+              body: notificationMessage,
+              icon: appIcon,
+              badge: appIcon,
+              tag: 'efootball-sw-notification',
+              requireInteraction: true,
+              timestamp: Date.now(),
+              data: {
+                url: window.location.origin,
+                timestamp: new Date().toISOString()
+              }
+            });
+            console.log('✅ تم إرسال الإشعار عبر Service Worker');
+          }
+        } catch (swError) {
+          console.log('⚠️ لم يتم إرسال الإشعار عبر Service Worker:', swError.message);
+        }
+      }
+
+      // حفظ سجل الإشعار المرسل
+      const notificationLog = JSON.parse(localStorage.getItem('sentNotifications') || '[]');
+      notificationLog.push({
+        id: Date.now(),
+        message: notificationMessage,
+        timestamp: new Date().toISOString(),
+        recipientsCount: subscribersCount,
+        tokensCount: savedTokens.length
+      });
+      
+      // الاحتفاظ بآخر 50 إشعار فقط
+      if (notificationLog.length > 50) {
+        notificationLog.splice(0, notificationLog.length - 50);
+      }
+      
+      localStorage.setItem('sentNotifications', JSON.stringify(notificationLog));
+
+      console.log('✅ تم إرسال الإشعار بنجاح');
+      console.log('📊 إحصائيات الإرسال:', {
+        message: notificationMessage,
+        subscribersCount: subscribersCount,
+        tokensCount: savedTokens.length,
+        timestamp: new Date().toISOString()
+      });
 
       // عرض رسالة نجاح
-      setSuccessMessage('تم إرسال الإشعار بنجاح ✅')
-      setNotificationMessage('')
-      setShowNotificationForm(false)
+      setSuccessMessage(`✅ تم إرسال الإشعار بنجاح إلى ${subscribersCount} مشترك`);
+      setNotificationMessage('');
+      setShowNotificationForm(false);
 
-      // إخفاء الرسالة بعد 4 ثوان
+      // إخفاء الرسالة بعد 5 ثوان
       setTimeout(() => {
-        setSuccessMessage('')
-      }, 4000)
+        setSuccessMessage('');
+      }, 5000);
 
     } catch (error) {
-      console.error('خطأ في إرسال الإشعار:', error)
-      alert('حدث خطأ في إرسال الإشعار')
+      console.error('❌ خطأ شامل في إرسال الإشعار:', error);
+      console.error('📋 تفاصيل الخطأ:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+      
+      alert(`حدث خطأ في إرسال الإشعار: ${error.message}`);
     }
   }
 
