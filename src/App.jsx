@@ -154,12 +154,14 @@ function App() {
           // تتبع المشتركين في localStorage
           const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
           localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
+        } else {
+          console.log('Notification permission denied.')
         }
       });
     }
     
-    // إغلاق النافذة المنبثقة والسماح بالبحث
-    setShowNotificationPopup(false);
+    localStorage.setItem('hasSeenNotificationPopup', 'true')
+    setShowNotificationPopup(false)
     
     // تنفيذ البحث الآن
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -168,17 +170,6 @@ function App() {
     );
     setFilteredPlayers(results);
   };
-          localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
-        } else {
-          console.log('Notification permission denied.')
-        }
-      })
-    }
-
-    localStorage.setItem('hasSeenNotificationPopup', 'true')
-    setShowNotificationPopup(false)
-    handleSearch() // قم بإجراء البحث بعد إغلاق النافذة المنبثقة
-  }
 
   // عرض صفحة الحماية
   if (currentPage === 'password') {
