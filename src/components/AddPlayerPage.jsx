@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input.jsx'
 import { Label } from '@/components/ui/label.jsx'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
-import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X, Bell, Send } from 'lucide-react'
+import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X, Bell, Send, Users, Eye, BarChart3 } from 'lucide-react'
 import ApiService from '../services/api.js'
 
 import appIcon from '../assets/images/app_icon.jpg'
@@ -45,7 +45,19 @@ function AddPlayerPage({ onBack }) {
   const [allPlayers, setAllPlayers] = useState([])
   const [notificationMessage, setNotificationMessage] = useState('')
   const [showNotificationForm, setShowNotificationForm] = useState(false)
+  const [showSubscribersCount, setShowSubscribersCount] = useState(false)
+  const [subscribersCount, setSubscribersCount] = useState(0)
   const [editingPlayerId, setEditingPlayerId] = useState(null)
+
+  // تحميل عدد المشتركين عند بدء التطبيق
+  useEffect(() => {
+    loadSubscribersCount()
+  }, [])
+
+  const loadSubscribersCount = () => {
+    const count = parseInt(localStorage.getItem('notificationSubscribers') || '0')
+    setSubscribersCount(count)
+  }
 
   const handleInputChange = (field, value) => {
     // التحقق من أن القيمة بين 0 و 150
@@ -64,6 +76,11 @@ function AddPlayerPage({ onBack }) {
     }
   }
 
+  // دالة لعرض عدد المشتركين في الإشعارات
+  const handleShowSubscribersCount = () => {
+    loadSubscribersCount() // تحديث العدد قبل العرض
+    setShowSubscribersCount(true)
+  }
 
   // دالة لعرض جميع اللاعبين
   const handleShowAllPlayers = async () => {
@@ -312,7 +329,7 @@ function AddPlayerPage({ onBack }) {
               لوحة التحكم
             </CardTitle>
             <CardDescription className="text-gray-300">
-              إدارة اللاعبين المحفوظين
+              إدارة اللاعبين المحفوظين والإشعارات
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -348,6 +365,14 @@ function AddPlayerPage({ onBack }) {
               >
                 <Bell className="w-4 h-4 mr-2" />
                 إرسال إشعار يدوي
+              </Button>
+              <Button 
+                variant="outline" 
+                className="bg-purple-600/20 border-purple-500 text-purple-300 hover:bg-purple-600/30"
+                onClick={handleShowSubscribersCount}
+              >
+                <BarChart3 className="w-4 h-4 mr-2" />
+                عدد المشتركين
               </Button>
             </div>
           </CardContent>
@@ -703,6 +728,82 @@ function AddPlayerPage({ onBack }) {
             </Card>
           </div>
         )}
+
+        {/* النافذة المنبثقة لعرض عدد المشتركين */}
+        {showSubscribersCount && (
+          <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
+            <Card className="bg-gradient-to-br from-gray-800/95 via-gray-900/95 to-black/95 border border-gray-600/50 backdrop-blur-2xl max-w-md w-full shadow-2xl relative">
+              <CardContent className="p-6 relative z-10">
+                {/* زر الإغلاق */}
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="w-6 h-6 text-purple-400" />
+                    <h2 className="text-xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                      إحصائيات الإشعارات
+                    </h2>
+                  </div>
+                  <button 
+                    onClick={() => setShowSubscribersCount(false)}
+                    className="bg-gradient-to-r from-red-500/20 to-red-600/20 hover:from-red-500/30 hover:to-red-600/30 p-2 rounded-full transition-all duration-300 border border-red-500/30 hover:border-red-400/50"
+                  >
+                    <X className="w-5 h-5 text-red-400" />
+                  </button>
+                </div>
+
+                {/* عرض الإحصائيات */}
+                <div className="space-y-6">
+                  {/* عدد المشتركين */}
+                  <div className="bg-gradient-to-r from-purple-500/20 via-pink-500/30 to-purple-500/20 rounded-3xl p-6 border-2 border-purple-500/40 relative overflow-hidden text-center">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/10 to-transparent animate-pulse"></div>
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-center gap-3 mb-4">
+                        <Users className="w-8 h-8 text-purple-400" />
+                        <h3 className="text-lg font-bold text-white">عدد المشتركين في الإشعارات</h3>
+                      </div>
+                      <div className="bg-gradient-to-r from-purple-600/30 to-pink-600/30 rounded-2xl p-4 border border-purple-500/50">
+                        <span className="text-5xl font-black bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
+                          {subscribersCount}
+                        </span>
+                        <p className="text-purple-200 font-semibold mt-2">مشترك</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* معلومات إضافية */}
+                  <div className="bg-gradient-to-r from-blue-500/20 via-cyan-500/30 to-blue-500/20 rounded-2xl p-4 border border-blue-500/40">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Eye className="w-5 h-5 text-blue-400" />
+                      <h4 className="text-white font-semibold">معلومات الإشعارات</h4>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300">حالة الإشعارات:</span>
+                        <span className="text-green-400 font-semibold">
+                          {Notification.permission === 'granted' ? 'مفعلة' : 'غير مفعلة'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300">دعم المتصفح:</span>
+                        <span className="text-blue-400 font-semibold">
+                          {'Notification' in window ? 'مدعوم' : 'غير مدعوم'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* زر تحديث العدد */}
+                  <Button 
+                    onClick={loadSubscribersCount}
+                    className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold py-3 text-lg rounded-xl shadow-lg"
+                  >
+                    <BarChart3 className="w-5 h-5 mr-2" />
+                    تحديث الإحصائيات
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
 
       {/* Toast Message */}
@@ -725,5 +826,4 @@ function AddPlayerPage({ onBack }) {
 }
 
 export default AddPlayerPage
-
 
