@@ -307,6 +307,7 @@ function App() {
       // حفظ حالة الفشل
       localStorage.setItem('notificationsEnabled', 'false');
       localStorage.setItem('lastNotificationPopup', Date.now().toString());
+    }
     
     // في جميع الحالات، إغلاق النوافذ المنبثقة والسماح بالتصفح
     console.log('🚪 إغلاق النوافذ المنبثقة والسماح بالتصفح');
@@ -1255,10 +1256,6 @@ function App() {
   )
 }
 
-
-
-
-
-export default App
+export default App;
 
 
