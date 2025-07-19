@@ -247,8 +247,8 @@ function App() {
           </div>
 
           {/* العنوان الرئيسي مصغر للموبايل */}
-          <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent mb-2 leading-tight">
-            eFootball Mobile
+          <h1 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight">
+            eFootball <br /> Mobile
           </h1>
           
           {/* النص الفرعي مصغر */}
@@ -370,6 +370,8 @@ function App() {
                           
                           {/* فلاش إضافي حول الإطار */}
                           <div className="absolute inset-0 rounded-lg border border-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+                          {/* فلاش أبيض خفيف حول الكارت */}
+                          <div className="absolute inset-0 rounded-lg border-2 border-white/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse-slow"></div>
                         </div>
                       </div>
                     )}
