@@ -9,7 +9,7 @@ import ApiService from './services/api.js'
 
 import appIcon from './assets/images/football_icon_no_black_edges.png'
 import PasswordProtection from './components/PasswordProtection.jsx'
-import AddPlayerPage from './components/AddPlayerPage.jsx'
+
 
 // استيراد الأيقونات
 import finishingIcon from './assets/icons/finishing.jpg'
