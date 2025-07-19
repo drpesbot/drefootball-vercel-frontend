@@ -132,7 +132,7 @@ function AddPlayerPage({ onBack }) {
       // رفع الصورة إلى S3 إذا كانت موجودة وجديدة
       if (playerData.image) {
         const uploadResult = await ApiService.uploadImage(playerData.image);
-        imageUrl = uploadResult.image_url;
+        imageUrl = uploadResult.imageUrl;
       }
 
       // إعداد بيانات اللاعب
@@ -419,12 +419,10 @@ function AddPlayerPage({ onBack }) {
                 <Label htmlFor="image" className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
                   <Upload className="w-4 h-4" />
                   اضغط لرفع الصورة
-                  <span className="text-xs text-blue-200">PNG, JPG أو GIF</span>
                 </Label>
                 <Input
                   id="image"
                   type="file"
-                  accept="image/*"
                   onChange={handleImageUpload}
                   className="hidden"
                 />
@@ -528,7 +526,7 @@ function AddPlayerPage({ onBack }) {
             type="submit" 
             className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-3 text-lg rounded-xl shadow-lg"
           >
-            {editingPlayerId ? 'تحديث اللاعب' : 'إضافة اللاعب'}
+            {editingPlayerId ? 'تعديل اللاعب' : 'إضافة اللاعب'}
           </Button>
         </form>
 
@@ -727,4 +725,5 @@ function AddPlayerPage({ onBack }) {
 }
 
 export default AddPlayerPage
+
 
