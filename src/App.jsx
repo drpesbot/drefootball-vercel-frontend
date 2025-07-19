@@ -6,7 +6,7 @@ import { Search, Phone, Settings, Trophy, X, Star, Zap, Target, Shield, Gauge, E
 import './App.css'
 import ApiService from './services/api.js'
 
-import appIcon from './assets/images/football_icon_no_white_edges.png'
+import appIcon from './assets/images/football_icon_no_black_edges.png'
 import PasswordProtection from './components/PasswordProtection.jsx'
 import AddPlayerPage from './components/AddPlayerPage.jsx'
 
