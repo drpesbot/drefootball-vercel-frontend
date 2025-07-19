@@ -199,6 +199,12 @@ function App() {
       <div className="max-w-md mx-auto relative z-10 px-4">
         {/* الشريط العلوي المحسن - ترتيب جديد للأزرار */}
         <div className="flex justify-between items-center mb-4 pt-2 relative">
+          {/* مؤشر Live Updates في المنتصف */}
+          <div className="flex items-center gap-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 px-3 py-1.5 rounded-full border border-green-500/30 backdrop-blur-sm">
+            <span className="text-green-400 text-sm font-medium">Live Updates</span>
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+          </div>
+
           {/* زر الإعدادات على اليمين */}
           <button 
             onClick={handleControlPanel}
@@ -206,14 +212,6 @@ function App() {
           >
             <Settings className="w-5 h-5 text-white" />
           </button>
-
-          {/* مؤشر Live Updates في المنتصف */}
-          <div className="flex items-center gap-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 px-3 py-1.5 rounded-full border border-green-500/30 backdrop-blur-sm">
-            <span className="text-green-400 text-sm font-medium">Live Updates</span>
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
-          </div>
-
-
         </div>
         {/* Hero Section محسن مع صورة بحجم مناسب للموبايل */}
         <div className="text-center mb-4 relative">
