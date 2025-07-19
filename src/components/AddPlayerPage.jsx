@@ -457,11 +457,11 @@ function AddPlayerPage({ onBack }) {
 
           {/* الإحصائيات الأساسية */}
           <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-white">الإحصائيات الأساسية</CardTitle>
-              <CardDescription className="text-gray-300">القيم من 0 إلى 150</CardDescription>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white text-lg">الإحصائيات الأساسية</CardTitle>
+              <CardDescription className="text-gray-300 text-sm">القيم من 0 إلى 150</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-4">
+            <CardContent className="grid grid-cols-2 gap-3">
               {[
                 { key: 'finishing', label: 'Finishing', icon: finishingIcon },
                 { key: 'passing', label: 'Passing', icon: passingIcon },
@@ -471,9 +471,9 @@ function AddPlayerPage({ onBack }) {
                 { key: 'aerialStrength', label: 'Aerial Strength', icon: aerialIcon },
                 { key: 'defending', label: 'Defending', icon: defendingIcon }
               ].map(({ key, label, icon }) => (
-                <div key={key} className="space-y-2">
-                  <Label className="text-white flex items-center gap-2">
-                    <img src={icon} alt={label} className="w-6 h-6 rounded" />
+                <div key={key} className="space-y-1">
+                  <Label className="text-white flex items-center gap-2 text-sm">
+                    <img src={icon} alt={label} className="w-4 h-4 rounded" />
                     {label}
                   </Label>
                   <Input
@@ -483,7 +483,7 @@ function AddPlayerPage({ onBack }) {
                     placeholder="0"
                     value={playerData[key]}
                     onChange={(e) => handleInputChange(key, e.target.value)}
-                    className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400"
+                    className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 h-8 text-sm"
                   />
                 </div>
               ))}
@@ -492,19 +492,19 @@ function AddPlayerPage({ onBack }) {
 
           {/* إحصائيات حراسة المرمى */}
           <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-white">إحصائيات حراسة المرمى</CardTitle>
-              <CardDescription className="text-gray-300">القيم من 0 إلى 150</CardDescription>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white text-lg">إحصائيات حراسة المرمى</CardTitle>
+              <CardDescription className="text-gray-300 text-sm">القيم من 0 إلى 150</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-3 gap-4">
+            <CardContent className="grid grid-cols-3 gap-3">
               {[
                 { key: 'gk1', label: 'GK 1', icon: gk1Icon },
                 { key: 'gk2', label: 'GK 2', icon: gk2Icon },
                 { key: 'gk3', label: 'GK 3', icon: gk3Icon }
               ].map(({ key, label, icon }) => (
-                <div key={key} className="space-y-2">
-                  <Label className="text-white flex items-center gap-2">
-                    <img src={icon} alt={label} className="w-6 h-6 rounded" />
+                <div key={key} className="space-y-1">
+                  <Label className="text-white flex items-center gap-2 text-sm">
+                    <img src={icon} alt={label} className="w-4 h-4 rounded" />
                     {label}
                   </Label>
                   <Input
@@ -514,7 +514,7 @@ function AddPlayerPage({ onBack }) {
                     placeholder="0"
                     value={playerData[key]}
                     onChange={(e) => handleInputChange(key, e.target.value)}
-                    className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400"
+                    className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 h-8 text-sm"
                   />
                 </div>
               ))}
@@ -523,9 +523,9 @@ function AddPlayerPage({ onBack }) {
 
           {/* البوستر */}
           <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Crown className="w-5 h-5 text-yellow-400" />
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white flex items-center gap-2 text-lg">
+                <Crown className="w-4 h-4 text-yellow-400" />
                 البوستر
               </CardTitle>
               <CardDescription className="text-gray-300">اختر بوستر واحد للاعب</CardDescription>

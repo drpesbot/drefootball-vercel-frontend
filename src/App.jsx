@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input.jsx'
 import { Button } from '@/components/ui/button.jsx'
 import { Card, CardContent } from '@/components/ui/card.jsx'
-import { Search, Phone, Settings, Trophy, X, Star, Zap, Target, Shield, Gauge, Eye, Heart, Footprints, Users, Sparkles, Crown, Award } from 'lucide-react'
+import { Search, Phone, Settings, Trophy, X, Star, Zap, Target, Shield, Gauge, Eye, Heart, Footprints, Users, Sparkles, Crown, Award, Bell } from 'lucide-react'
 import './App.css'
 import ApiService from './services/api.js'
 
@@ -101,10 +101,15 @@ function App() {
   }
 
   const handleSearch = (term = searchTerm) => {
-    // عرض النافذة المنبثقة عند أول بحث
-    const hasSeenPopup = localStorage.getItem("hasSeenNotificationPopup");
-    if (!hasSeenPopup) {
+    // التحقق من آخر مرة ظهرت فيها النافذة المنبثقة
+    const lastPopupTime = localStorage.getItem("lastNotificationPopupTime");
+    const currentTime = new Date().getTime();
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 ساعة بالميلي ثانية
+    
+    // إظهار النافذة المنبثقة إذا مر 24 ساعة أو أكثر من آخر مرة
+    if (term.trim() !== '' && (!lastPopupTime || (currentTime - parseInt(lastPopupTime)) >= twentyFourHours)) {
       setShowNotificationPopup(true);
+      localStorage.setItem("lastNotificationPopupTime", currentTime.toString());
       return; // لا تقم بالبحث حتى يتم التعامل مع النافذة المنبثقة
     }
 
@@ -149,6 +154,21 @@ function App() {
           // تتبع المشتركين في localStorage
           const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
           localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
+        }
+      });
+    }
+    
+    // إغلاق النافذة المنبثقة والسماح بالبحث
+    setShowNotificationPopup(false);
+    
+    // تنفيذ البحث الآن
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    const results = players.filter((player) =>
+      player.name.toLowerCase().includes(lowerCaseSearchTerm)
+    );
+    setFilteredPlayers(results);
+  };
+          localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
         } else {
           console.log('Notification permission denied.')
         }
@@ -181,134 +201,126 @@ function App() {
       </div>
       
       <div className="max-w-md mx-auto relative z-10 px-4">
-        {/* الشريط العلوي المحسن */}
-        <div className="flex justify-between items-center mb-10 pt-4">
-          <div className="flex items-center gap-4 bg-gradient-to-r from-emerald-500/15 to-green-500/15 backdrop-blur-xl rounded-full px-6 py-4 border-2 border-emerald-500/40 shadow-xl hover:border-emerald-400/60 transition-all duration-300">
-            <div className="relative">
-              <div className="w-4 h-4 bg-emerald-300 rounded-full animate-ping"></div>
-              <div className="absolute inset-0 w-4 h-4 bg-emerald-300 rounded-full"></div>
-            </div>
-            <span className="text-base font-bold bg-gradient-to-r from-emerald-300 to-green-300 bg-clip-text text-transparent">
-              تحديث مباشر
-            </span>
-          </div>
+        {/* الشريط العلوي المحسن - حذف تحديث مباشر */}
+        <div className="flex justify-center items-center mb-4 pt-2">
           <button 
             onClick={handleControlPanel}
-            className="bg-gradient-to-r from-slate-700/90 to-slate-600/90 hover:from-slate-600/90 hover:to-slate-500/90 p-4 rounded-full transition-all duration-300 hover:scale-110 backdrop-blur-sm border-2 border-slate-500/40 shadow-xl hover:shadow-2xl hover:border-slate-400/60"
+            className="bg-gradient-to-r from-slate-700/90 to-slate-600/90 hover:from-slate-600/90 hover:to-slate-500/90 p-3 rounded-full transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-slate-500/40 shadow-lg hover:shadow-xl hover:border-slate-400/60"
           >
-            <Settings className="w-6 h-6 text-slate-200" />
+            <Settings className="w-5 h-5 text-slate-200" />
           </button>
         </div>
 
-        {/* زر التواصل المحسن */}
+        {/* زر التواصل المصغر */}
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50">
           <Button 
             onClick={handleContactUs}
-            className="bg-gradient-to-r from-emerald-400 via-green-400 to-emerald-500 hover:from-emerald-500 hover:via-green-500 hover:to-emerald-600 text-white font-bold py-3 px-6 text-base rounded-full shadow-xl shadow-emerald-500/50 transition-all duration-300 hover:scale-105 relative overflow-hidden group border-2 border-emerald-300/30 hover:border-emerald-200/50"
+            className="bg-gradient-to-r from-emerald-400 via-green-400 to-emerald-500 hover:from-emerald-500 hover:via-green-500 hover:to-emerald-600 text-white font-bold py-2 px-4 text-sm rounded-full shadow-lg shadow-emerald-500/40 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-emerald-300/30 hover:border-emerald-200/50"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-            <div className="flex items-center justify-center gap-3 relative z-10">
-              <Phone className="w-5 h-5" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+            <div className="flex items-center justify-center gap-2 relative z-10">
+              <Phone className="w-4 h-4" />
               <span>تواصل معنا</span>
-              <Sparkles className="w-5 h-5 group-hover:animate-pulse" />
             </div>
           </Button>
         </div>
 
-        {/* Hero Section المحسن بالكامل */}
-        <Card className="bg-gradient-to-br from-slate-800/50 via-slate-900/70 to-black/90 border-2 border-slate-600/40 backdrop-blur-2xl shadow-2xl mb-10 relative overflow-hidden hover:border-slate-500/60 transition-all duration-500">
+        {/* Hero Section المصغر */}
+        <Card className="bg-gradient-to-br from-slate-800/50 via-slate-900/70 to-black/90 border border-slate-600/40 backdrop-blur-2xl shadow-xl mb-6 relative overflow-hidden hover:border-slate-500/60 transition-all duration-500">
           {/* تأثيرات الإضاءة المحسنة */}
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/8 via-purple-500/12 to-blue-500/8 animate-pulse"></div>
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400"></div>
           
-          <CardContent className="p-10 text-center relative z-10">
-            {/* الأيقونة الرئيسية المحسنة بشكل كبير */}
-            <div className="flex justify-center mb-8">
+          <CardContent className="p-6 text-center relative z-10">
+            {/* الأيقونة الرئيسية المصغرة */}
+            <div className="flex justify-center mb-4">
               <div className="relative group">
-                {/* تأثير الهالة الخارجية المحسن */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 rounded-full blur-3xl opacity-70 group-hover:opacity-90 transition-opacity duration-500 scale-125 animate-pulse"></div>
+                {/* تأثير الهالة الخارجية */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 rounded-full blur-2xl opacity-60 group-hover:opacity-80 transition-opacity duration-500 scale-110 animate-pulse"></div>
                 
-                {/* الكرة الرئيسية المحسنة */}
-                <div className="relative w-36 h-36 bg-gradient-to-br from-blue-400 via-purple-400 to-emerald-400 rounded-full flex items-center justify-center shadow-2xl shadow-purple-500/60 hover:shadow-purple-400/80 transition-all duration-500 hover:scale-110 group">
-                  {/* تأثير الإضاءة الداخلية المحسن */}
-                  <div className="absolute inset-3 bg-gradient-to-br from-white/30 to-transparent rounded-full"></div>
-                  <div className="absolute inset-6 bg-gradient-to-tl from-white/20 to-transparent rounded-full"></div>
+                {/* الكرة الرئيسية المصغرة */}
+                <div className="relative w-24 h-24 bg-gradient-to-br from-blue-400 via-purple-400 to-emerald-400 rounded-full flex items-center justify-center shadow-xl shadow-purple-500/50 hover:shadow-purple-400/70 transition-all duration-500 hover:scale-110 group">
+                  {/* تأثير الإضاءة الداخلية */}
+                  <div className="absolute inset-2 bg-gradient-to-br from-white/25 to-transparent rounded-full"></div>
+                  <div className="absolute inset-4 bg-gradient-to-tl from-white/15 to-transparent rounded-full"></div>
                   
                   {/* الأيقونة */}
                   <img 
                     src={appIcon} 
                     alt="eFootball Mobile" 
-                    className="w-28 h-28 object-contain relative z-10 group-hover:animate-pulse drop-shadow-2xl"
+                    className="w-16 h-16 object-cover relative z-10 group-hover:animate-pulse drop-shadow-xl rounded-full"
                     style={{
-                      filter: 'drop-shadow(0 0 30px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 60px rgba(147, 51, 234, 0.4))',
+                      filter: 'drop-shadow(0 0 15px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 30px rgba(147, 51, 234, 0.2))',
+                      objectFit: 'cover',
+                      objectPosition: 'center'
                     }}
                   />
                   
-                  {/* تأثير الدوران المحسن */}
-                  <div className="absolute inset-0 border-2 border-white/40 rounded-full animate-spin-slow"></div>
-                  <div className="absolute inset-2 border border-white/20 rounded-full animate-spin-slow" style={{ animationDirection: 'reverse' }}></div>
+                  {/* تأثير الدوران */}
+                  <div className="absolute inset-0 border border-white/30 rounded-full animate-spin-slow"></div>
+                  <div className="absolute inset-1 border border-white/15 rounded-full animate-spin-slow" style={{ animationDirection: 'reverse' }}></div>
                 </div>
                 
-                {/* شارات الإنجاز المحسنة */}
-                <div className="absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-r from-yellow-300 to-orange-400 rounded-full flex items-center justify-center shadow-xl animate-bounce">
-                  <Crown className="w-6 h-6 text-white drop-shadow-lg" />
+                {/* شارات الإنجاز المصغرة */}
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-300 to-orange-400 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                  <Crown className="w-4 h-4 text-white drop-shadow-lg" />
                 </div>
-                <div className="absolute -bottom-3 -left-3 w-10 h-10 bg-gradient-to-r from-emerald-300 to-green-400 rounded-full flex items-center justify-center shadow-xl">
-                  <Sparkles className="w-5 h-5 text-white animate-pulse drop-shadow-lg" />
+                <div className="absolute -bottom-1 -left-1 w-6 h-6 bg-gradient-to-r from-emerald-300 to-green-400 rounded-full flex items-center justify-center shadow-lg">
+                  <Sparkles className="w-3 h-3 text-white animate-pulse drop-shadow-lg" />
                 </div>
                 
                 {/* تأثيرات إضافية للعمق */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-44 h-44 border border-blue-300/20 rounded-full animate-ping"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-blue-300/15 rounded-full animate-ping"></div>
               </div>
             </div>
 
-            {/* العنوان المحسن بشكل كبير */}
-            <div className="mb-8">
-              <h1 className="text-5xl md:text-6xl font-black mb-6 bg-gradient-to-r from-blue-300 via-purple-300 to-emerald-300 bg-clip-text text-transparent leading-tight tracking-tight drop-shadow-2xl">
+            {/* العنوان المصغر */}
+            <div className="mb-4">
+              <h1 className="text-3xl md:text-4xl font-black mb-3 bg-gradient-to-r from-blue-300 via-purple-300 to-emerald-300 bg-clip-text text-transparent leading-tight tracking-tight drop-shadow-xl">
                 eFootball Mobile
               </h1>
-              <div className="flex items-center justify-center gap-4 mb-6">
-                <p className="text-slate-200 text-xl font-bold bg-gradient-to-r from-slate-200 to-slate-50 bg-clip-text text-transparent">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <p className="text-slate-200 text-base font-bold bg-gradient-to-r from-slate-200 to-slate-50 bg-clip-text text-transparent">
                   الدليل الشامل للاعبين المحترفين
                 </p>
               </div>
-              <div className="w-40 h-1.5 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 mx-auto rounded-full shadow-lg"></div>
+              <div className="w-24 h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 mx-auto rounded-full shadow-lg"></div>
             </div>
 
-            {/* مربع الإنجاز المحسن بشكل كبير */}
-            <div className="relative bg-gradient-to-r from-yellow-500/20 via-orange-500/30 to-yellow-500/20 border-2 border-yellow-400/60 rounded-3xl p-8 mb-6 backdrop-blur-sm overflow-hidden group hover:border-yellow-300/80 transition-all duration-500 hover:scale-105 shadow-2xl">
+            {/* مربع الإنجاز المصغر مع كأسين */}
+            <div className="relative bg-gradient-to-r from-yellow-500/15 via-orange-500/25 to-yellow-500/15 border border-yellow-400/50 rounded-2xl p-4 mb-4 backdrop-blur-sm overflow-hidden group hover:border-yellow-300/70 transition-all duration-500 hover:scale-105 shadow-xl">
               {/* تأثيرات الخلفية المتحركة */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/15 to-transparent animate-pulse"></div>
-              <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400"></div>
-              <div className="absolute bottom-0 right-0 w-full h-1.5 bg-gradient-to-l from-yellow-400 via-orange-400 to-yellow-400"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/10 to-transparent animate-pulse"></div>
+              <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400"></div>
+              <div className="absolute bottom-0 right-0 w-full h-0.5 bg-gradient-to-l from-yellow-400 via-orange-400 to-yellow-400"></div>
               
               <div className="relative z-10">
-                <div className="flex items-center justify-center gap-6 mb-6">
-                  <Trophy className="w-10 h-10 text-yellow-400 animate-bounce" />
-                  <span className="text-2xl font-black bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent text-center leading-tight">
+                <div className="flex items-center justify-center gap-3 mb-2">
+                  <Trophy className="w-6 h-6 text-yellow-400 animate-bounce" />
+                  <span className="text-lg font-black bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent text-center leading-tight">
                     رقم 1 في تطوير لاعبي eFootball
                   </span>
-                  <Trophy className="w-10 h-10 text-yellow-400 animate-bounce" />
+                  <Trophy className="w-6 h-6 text-yellow-400 animate-bounce" />
                 </div>
-                <div className="flex items-center justify-center gap-4">
-                  <Award className="w-6 h-6 text-orange-400" />
-                  <p className="text-slate-100 font-bold text-lg text-center">
+                <div className="flex items-center justify-center gap-2">
+                  <Award className="w-4 h-4 text-orange-400" />
+                  <p className="text-slate-100 font-bold text-sm text-center">
                     تطوير لجميع لاعبيه بشكل علمي ومدروس
                   </p>
-                  <Award className="w-6 h-6 text-orange-400" />
+                  <Award className="w-4 h-4 text-orange-400" />
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* شريط البحث المحسن */}
-        <div className="relative mb-8">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/25 via-purple-500/25 to-emerald-500/25 rounded-3xl blur-xl"></div>
-          <div className="relative bg-gradient-to-r from-slate-800/80 to-slate-700/80 backdrop-blur-2xl border-2 border-slate-500/50 rounded-full p-1.5 shadow-2xl hover:border-blue-400/60 transition-all duration-300">
-            <div className="flex items-center gap-4 px-6 py-4 bg-slate-800/60 rounded-3xl">
-              <div className="p-3 bg-blue-500/25 rounded-full shadow-lg">
-                <Search className="w-6 h-6 text-blue-300" />
+        {/* شريط البحث المصغر */}
+        <div className="relative mb-6">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/15 via-purple-500/15 to-emerald-500/15 rounded-2xl blur-lg"></div>
+          <div className="relative bg-gradient-to-r from-slate-800/70 to-slate-700/70 backdrop-blur-xl border border-slate-500/30 rounded-full p-1 shadow-lg hover:border-blue-400/50 transition-all duration-300">
+            <div className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-3xl">
+              <div className="p-2 bg-blue-500/20 rounded-full">
+                <Search className="w-4 h-4 text-blue-400" />
               </div>
               <Input
                 type="text"
@@ -318,7 +330,7 @@ function App() {
                   setSearchTerm(e.target.value);
                   handleSearch(e.target.value);
                 }}
-                className="bg-transparent border-none text-white placeholder-slate-300 focus:ring-0 text-lg font-medium flex-1 focus:placeholder-slate-400"
+                className="bg-transparent border-none text-white placeholder-slate-400 focus:ring-0 text-sm font-medium flex-1"
               />
             </div>
           </div>
@@ -327,14 +339,14 @@ function App() {
         {/* عرض اللاعبين المحسن */}
         {filteredPlayers.length > 0 ? (
           <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent mb-4">
-                اللاعبين المتاحين
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent mb-3">
+                قسم التطويرات الأسطورية
               </h2>
-              <div className="flex items-center justify-center gap-3">
-                <div className="w-12 h-1 bg-gradient-to-r from-transparent to-blue-500 rounded-full"></div>
-                <Users className="w-7 h-7 text-blue-400" />
-                <div className="w-12 h-1 bg-gradient-to-l from-transparent to-blue-500 rounded-full"></div>
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-8 h-0.5 bg-gradient-to-r from-transparent to-blue-500 rounded-full"></div>
+                <Users className="w-5 h-5 text-blue-400" />
+                <div className="w-8 h-0.5 bg-gradient-to-l from-transparent to-blue-500 rounded-full"></div>
               </div>
             </div>
             
@@ -349,11 +361,14 @@ function App() {
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
                   <CardContent className="p-5 text-center relative z-10">
-                    {/* صورة اللاعب */}
+                    {/* صورة اللاعب مع الفلاش المتحرك */}
                     {player.image && (
                       <div className="mb-4">
                         <div className="relative inline-block">
+                          {/* الهالة الخلفية */}
                           <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg blur-md opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                          
+                          {/* الصورة */}
                           <img 
                             src={player.image} 
                             alt={player.name}
@@ -364,9 +379,19 @@ function App() {
                               aspectRatio: '3/4'
                             }}
                           />
-                          <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full flex items-center justify-center">
+                          
+                          {/* الفلاش المتحرك المائل */}
+                          <div className="absolute inset-0 overflow-hidden rounded-lg">
+                            <div className="absolute -top-2 -left-2 w-6 h-full bg-gradient-to-r from-transparent via-white/60 to-transparent transform rotate-12 translate-x-[-100%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-out"></div>
+                          </div>
+                          
+                          {/* النجمة */}
+                          <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full flex items-center justify-center animate-pulse">
                             <Star className="w-2.5 h-2.5 text-white" />
                           </div>
+                          
+                          {/* فلاش إضافي حول الإطار */}
+                          <div className="absolute inset-0 rounded-lg border border-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
                         </div>
                       </div>
                     )}
@@ -629,23 +654,74 @@ function App() {
           </div>
         )}
 
-        {/* Notification Popup المحسن */}
+        {/* النافذة المنبثقة المحسنة للإشعارات */}
         {showNotificationPopup && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-            <Card className="bg-gradient-to-br from-slate-800/95 via-slate-900/95 to-black/95 border border-slate-600/50 backdrop-blur-2xl max-w-sm w-full shadow-2xl relative text-center">
-              <CardContent className="p-6">
-                <h2 className="text-2xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
-                  مرحباً بك في eFootball Mobile! 💥
-                </h2>
-                <p className="text-slate-300 mb-6">
-                  استمتع بتطوير لاعبيك بشكل احترافي واحصل على إشعارات بالتحديثات الجديدة مجانًا 🎯
+          <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-500">
+            <Card className="bg-gradient-to-br from-slate-800/95 via-slate-900/95 to-black/95 border-2 border-slate-600/60 backdrop-blur-2xl max-w-sm w-full shadow-2xl relative overflow-hidden">
+              {/* فلاش متحرك */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent animate-pulse"></div>
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 animate-pulse"></div>
+              <div className="absolute -top-2 -right-2 w-20 h-20 bg-gradient-to-r from-yellow-400/30 to-orange-400/30 rounded-full blur-xl animate-ping"></div>
+              
+              <CardContent className="p-6 text-center relative z-10">
+                {/* عنوان الترحيب */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <Sparkles className="w-6 h-6 text-yellow-400 animate-bounce" />
+                    <h2 className="text-2xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent">
+                      مرحباً بك في eFootball Mobile!
+                    </h2>
+                    <Sparkles className="w-6 h-6 text-yellow-400 animate-bounce" />
+                  </div>
+                  <div className="flex items-center justify-center gap-1">
+                    <Star className="w-4 h-4 text-yellow-400" />
+                    <Star className="w-4 h-4 text-yellow-400" />
+                    <Star className="w-4 h-4 text-yellow-400" />
+                  </div>
+                </div>
+
+                {/* النص التشجيعي */}
+                <p className="text-slate-200 mb-4 text-base font-medium">
+                  المكان الأفضل لتطوير لاعبيك المفضلين
                 </p>
+
+                {/* طلب تفعيل الإشعارات */}
+                <p className="text-slate-300 mb-6 text-sm leading-relaxed">
+                  للاستمتاع بتجربة كاملة والوصول إلى جميع الميزات، قم بتفعيل الإشعارات الآن مجانًا
+                </p>
+
+                {/* الزر الكبير */}
                 <Button 
                   onClick={handleNotificationPopupContinue}
-                  className="bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
+                  className="bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600 hover:from-emerald-500 hover:via-green-600 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-full shadow-xl shadow-emerald-500/40 transition-all duration-300 hover:scale-105 relative overflow-hidden group mb-6 w-full"
                 >
-                  اضغط هنا للمتابعة
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                  <div className="flex items-center justify-center gap-2 relative z-10">
+                    <Bell className="w-5 h-5" />
+                    <span>تفعيل الإشعارات الآن</span>
+                    <Sparkles className="w-5 h-5 group-hover:animate-pulse" />
+                  </div>
                 </Button>
+
+                {/* النقاط التشجيعية */}
+                <div className="space-y-2 text-xs text-slate-400">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div>
+                    <span>كن أول من يعرف عن اللاعبين الجدد</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+                    <span>تحديثات ومعلومات حصرية للمحترفين</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-purple-400 rounded-full"></div>
+                    <span>أحدث التسريبات الحصرية</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div>
+                    <span>محتوى حصري مجاني</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
