@@ -56,23 +56,37 @@ function AddPlayerPage({ onBack }) {
 
   const loadSubscribersCount = async () => {
     try {
-      console.log('Loading subscribers count from backend...');
+      console.log('🔄 تحميل عدد المشتركين من الخلفية...');
+      
+      // محاولة الحصول على عدد التوكنات الفعلية
+      const tokensResponse = await ApiService.getNotificationTokens();
+      console.log('📊 استجابة التوكنات:', tokensResponse);
+      
+      if (tokensResponse && Array.isArray(tokensResponse.tokens)) {
+        const actualCount = tokensResponse.tokens.length;
+        setSubscribersCount(actualCount);
+        console.log('✅ تم تحميل عدد المشتركين الفعلي:', actualCount);
+        return;
+      }
+      
+      // إذا فشل، جرب الطريقة القديمة
       const response = await ApiService.getNotificationSubscribers();
-      console.log('Backend response:', response);
+      console.log('📈 استجابة العدد التقليدي:', response);
       
       if (response && typeof response.count === 'number') {
         setSubscribersCount(response.count);
-        console.log('Subscribers count loaded from backend:', response.count);
+        console.log('✅ تم تحميل عدد المشتركين من الخلفية:', response.count);
       } else {
         throw new Error('Invalid response format from backend');
       }
     } catch (error) {
-      console.error('Error loading subscribers count from backend:', error);
+      console.error('❌ خطأ في تحميل عدد المشتركين من الخلفية:', error);
       
       // Fallback to localStorage if backend fails
-      const count = parseInt(localStorage.getItem('notificationSubscribers') || '0');
-      setSubscribersCount(count);
-      console.log('Fallback: Using localStorage count:', count);
+      const localTokens = JSON.parse(localStorage.getItem('userNotificationTokens') || '[]');
+      const localCount = localTokens.length;
+      setSubscribersCount(localCount);
+      console.log('🔄 استخدام العدد المحلي:', localCount);
     }
   }
 
@@ -259,6 +273,33 @@ function AddPlayerPage({ onBack }) {
     console.log('📝 محتوى الإشعار:', notificationMessage);
 
     try {
+      // أولاً: محاولة إرسال الإشعار عبر الخلفية للمشتركين الفعليين
+      console.log('📡 محاولة إرسال الإشعار عبر الخلفية...');
+      
+      const notificationData = {
+        title: 'eFootball Mobile - إشعار جديد',
+        message: notificationMessage,
+        icon: '/favicon.ico',
+        url: window.location.origin
+      };
+
+      try {
+        const backendResponse = await ApiService.sendNotificationToSubscribers(notificationData);
+        console.log('✅ تم إرسال الإشعار عبر الخلفية بنجاح:', backendResponse);
+        
+        if (backendResponse && backendResponse.success) {
+          setSuccessMessage(`✅ تم إرسال الإشعار بنجاح إلى ${backendResponse.recipientsCount || 'جميع'} المشتركين`);
+          setNotificationMessage('');
+          setTimeout(() => setSuccessMessage(''), 5000);
+          return;
+        }
+      } catch (backendError) {
+        console.warn('⚠️ فشل الإرسال عبر الخلفية، سيتم المحاولة محلياً:', backendError);
+      }
+
+      // ثانياً: الإرسال المحلي كبديل
+      console.log('🔄 محاولة الإرسال المحلي...');
+      
       // التحقق من دعم الإشعارات في المتصفح
       if (!('Notification' in window)) {
         console.error('❌ هذا المتصفح لا يدعم الإشعارات');

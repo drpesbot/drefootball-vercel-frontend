@@ -218,6 +218,15 @@ function App() {
             console.log('تم حفظ التوكن:', userToken);
           }
           
+          // حفظ التوكن في الخلفية
+          try {
+            const saveResponse = await ApiService.saveNotificationToken(userToken);
+            console.log('✅ تم حفظ التوكن في الخلفية بنجاح:', saveResponse);
+          } catch (saveError) {
+            console.error('❌ خطأ في حفظ التوكن في الخلفية:', saveError);
+            console.log('📝 تم الاحتفاظ بالتوكن في localStorage فقط');
+          }
+          
           // إظهار إشعار تأكيد
           new Notification('🎉 تم تفعيل الإشعارات بنجاح!', {
             body: 'ستصلك الآن جميع الأخبار والتحديثات الحصرية',
@@ -248,46 +257,33 @@ function App() {
         notificationsEnabled = false;
       }
       
-      // حفظ حالة الضغط على الزر والوقت الحالي (بغض النظر عن تفعيل الإشعارات)
-      const currentTime = new Date().getTime();
-      localStorage.setItem('lastNotificationPopup', currentTime.toString());
+      // حفظ حالة التفعيل والوقت
       localStorage.setItem('notificationsEnabled', notificationsEnabled.toString());
+      localStorage.setItem('lastNotificationPopup', Date.now().toString());
+      localStorage.setItem('notificationActivationTime', Date.now().toString());
       
-      console.log('💾 تم حفظ حالة الضغط على الزر:', {
-        time: new Date(currentTime).toLocaleString(),
-        notificationsEnabled: notificationsEnabled
-      });
-      
-      // السماح بالتصفح دائماً بعد الضغط على الزر
-      console.log('🔓 السماح بالتصفح وإغلاق النوافذ المنبثقة...');
+      // تحديث الحالة المحلية
       setIsNotificationActivated(true);
-      setShowBlockingOverlay(false);
-      setShowNotificationActivationModal(false);
-      setShowNotificationPopup(false);
-      setShowNotificationModal(false);
-      
-      if (notificationsEnabled) {
-        console.log('✅ تم تفعيل الإشعارات بنجاح - ستظهر الشاشة مرة أخرى بعد 24 ساعة');
-      } else {
-        console.log('⚠️ لم يتم تفعيل الإشعارات - ستظهر الشاشة مرة أخرى بعد 4 ساعات');
-      }
       
     } catch (error) {
-      console.error('❌ خطأ في عملية تفعيل الإشعارات:', error);
-      
-      // حتى في حالة الخطأ، نسمح للمستخدم بالمتابعة
-      const currentTime = new Date().getTime();
-      localStorage.setItem('lastNotificationPopup', currentTime.toString());
+      console.error('خطأ في تفعيل الإشعارات:', error);
+      // حفظ حالة الفشل
       localStorage.setItem('notificationsEnabled', 'false');
-      
-      console.log('🔓 السماح للمستخدم بالمتابعة رغم الخطأ');
-      setIsNotificationActivated(true);
-      setShowBlockingOverlay(false);
-      setShowNotificationActivationModal(false);
-      setShowNotificationPopup(false);
-      setShowNotificationModal(false);
+      localStorage.setItem('lastNotificationPopup', Date.now().toString());
     }
-  }
+    
+    // في جميع الحالات، إغلاق النوافذ المنبثقة والسماح بالتصفح
+    console.log('🚪 إغلاق النوافذ المنبثقة والسماح بالتصفح');
+    setShowNotificationActivationModal(false);
+    setShowBlockingOverlay(false);
+    setShowNotificationPopup(false);
+    setShowWelcomePopup(false);
+  };
+
+  // دالة للتعامل مع النافذة المنبثقة الترحيبية
+  const handleNotificationPopupContinue = async () => {
+    await handleNotificationActivation();
+  };
 
   const handleContactUs = () => {
     window.open('https://linktr.ee/Drefootball26', '_blank')

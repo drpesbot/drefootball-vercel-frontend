@@ -105,6 +105,74 @@ class ApiService {
     }
   }
 
+  // Save notification token
+  async saveNotificationToken(token) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/notifications/save-token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: "killer8speed",
+          token: token,
+          timestamp: Date.now()
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to save notification token");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error saving notification token:", error);
+      throw error;
+    }
+  }
+
+  // Get all notification tokens
+  async getNotificationTokens() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/notifications/tokens`, {
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      if (!response.ok) {
+        throw new Error("Failed to get notification tokens");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error getting notification tokens:", error);
+      throw error;
+    }
+  }
+
+  // Send notification to all subscribers
+  async sendNotificationToSubscribers(notificationData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/notifications/send-to-all`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: "killer8speed",
+          title: notificationData.title || "eFootball Mobile",
+          message: notificationData.message,
+          icon: notificationData.icon || "/favicon.ico",
+          url: notificationData.url || window.location.origin
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to send notification to subscribers");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error sending notification to subscribers:", error);
+      throw error;
+    }
+  }
+
   // Increment notification subscribers count
   async incrementNotificationSubscribers() {
     try {
