@@ -366,6 +366,14 @@ function AddPlayerPage({ onBack }) {
                 <Bell className="w-3 h-3 mr-1" />
                 إرسال إشعار يدوي
               </Button>
+              <Button 
+                variant="outline" 
+                className="bg-purple-600/20 border-purple-500 text-purple-300 hover:bg-purple-600/30 text-xs py-1 px-2 h-7"
+                onClick={handleShowSubscribersCount}
+              >
+                <Users className="w-3 h-3 mr-1" />
+                عدد المشتركين
+              </Button>
             </div>
           </CardContent>
         </Card>

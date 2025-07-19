@@ -199,6 +199,91 @@ function App() {
             onClick={handleControlPanel}
             className="bg-gradient-to-r from-slate-700/90 to-slate-600/90 hover:from-slate-600/90 hover:to-slate-500/90 p-2.5 rounded-full transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-slate-500/40 shadow-lg hover:shadow-xl hover:border-slate-400/60"
           >
+            <Settings className="w-4 h-4 text-green-400" />
+          </button>
+
+          {/* مؤشر التحديث المباشر في المنتصف */}
+          <div className="flex items-center gap-2 bg-gradient-to-r from-green-800/40 to-emerald-800/40 px-3 py-1.5 rounded-full border border-green-500/30 backdrop-blur-sm">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+            <span className="text-green-300 text-xs font-medium">تحديث مباشر</span>
+          </div>
+
+          {/* زر تواصل معنا */}
+          <button 
+            onClick={handleContactUs}
+            className="bg-gradient-to-r from-blue-600/90 to-cyan-600/90 hover:from-blue-500/90 hover:to-cyan-500/90 px-4 py-2 rounded-full transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-blue-400/40 shadow-lg hover:shadow-xl hover:border-blue-300/60 flex items-center gap-2"
+          >
+            <Phone className="w-3 h-3" />
+            <span className="text-xs font-medium">تواصل معنا</span>
+          </button>
+        </div>
+
+        {/* Hero Section محسن مع صورة بحجم مناسب */}
+        <div className="text-center mb-6 relative">
+          {/* الكرة الرئيسية بحجم مناسب */}
+          <div className="relative inline-block mb-4">
+            <div className="relative w-20 h-20 mx-auto">
+              <img 
+                src={appIcon} 
+                alt="Football" 
+                className="w-full h-full rounded-full object-cover shadow-2xl"
+                style={{
+                  filter: 'drop-shadow(0 0 20px rgba(139, 92, 246, 0.6)) drop-shadow(0 0 40px rgba(139, 92, 246, 0.4))',
+                  objectFit: 'cover',
+                  objectPosition: 'center'
+                }}
+              />
+              {/* فلاش متحرك على الصورة */}
+              <div className="absolute inset-0 rounded-full overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 -translate-x-full animate-[flash_2s_ease-in-out_infinite] pointer-events-none"></div>
+              </div>
+              {/* هالة خارجية متحركة */}
+              <div className="absolute inset-0 rounded-full border-2 border-white/20 animate-pulse"></div>
+            </div>
+            
+            {/* التاج والنجوم */}
+            <div className="absolute -top-1 -right-1">
+              <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                <Crown className="w-3 h-3 text-white" />
+              </div>
+            </div>
+            
+            <div className="absolute -bottom-1 -left-1">
+              <div className="w-6 h-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                <Sparkles className="w-3 h-3 text-white" />
+              </div>
+            </div>
+          </div>
+
+          {/* العنوان الرئيسي */}
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent mb-2 leading-tight">
+            eFootball Mobile
+          </h1>
+          
+          {/* النص الفرعي */}
+          <p className="text-yellow-300 text-sm mb-4 flex items-center justify-center gap-1">
+            <Star className="w-4 h-4 text-yellow-400 animate-pulse" />
+            الدليل الشامل للاعبين المحترفين
+            <Star className="w-4 h-4 text-yellow-400 animate-pulse" />
+          </p>
+
+          {/* مربع الإنجاز الذهبي المحسن */}
+          <div className="bg-gradient-to-r from-yellow-600/20 to-amber-600/20 border-2 border-yellow-500/40 rounded-xl p-3 mb-4 backdrop-blur-sm shadow-xl relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 to-amber-500/10 animate-pulse"></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Trophy className="w-5 h-5 text-yellow-400" />
+                <h2 className="text-lg font-bold text-yellow-300">رقم 1 في تطوير لاعبي eFootball</h2>
+                <Trophy className="w-5 h-5 text-yellow-400" />
+              </div>
+              <div className="flex items-center justify-center gap-1 text-amber-200 text-sm">
+                <Award className="w-4 h-4 text-amber-400" />
+                <span>تطوير لجميع لاعبيه بشكل علمي ومدروس</span>
+              </div>
+            </div>
+          </div>
+        </div>
+          >
             <Settings className="w-4 h-4 text-slate-200" />
           </button>
 
