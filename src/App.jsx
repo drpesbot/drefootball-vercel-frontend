@@ -280,10 +280,6 @@ function App() {
               </div>
             </div>
           </div>
-        </div>
-          >
-            <Settings className="w-4 h-4 text-slate-200" />
-          </button>
 
           {/* زر التواصل في المنتصف */}
           <Button 
