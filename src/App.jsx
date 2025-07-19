@@ -142,25 +142,26 @@ function App() {
     loadPlayers();
   }
 
-  const handleNotificationPopupContinue = () => {
+  const handleNotificationPopupContinue = async () => {
     // تفعيل الإشعارات (هذا الجزء يتطلب واجهة برمجة تطبيقات متصفح حقيقية)
     // For demonstration, we'll just simulate it.
     if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission().then(permission => {
+      Notification.requestPermission().then(async permission => {
         if (permission === 'granted') {
           console.log('Notification permission granted.')
           // هنا يمكنك إرسال إشعار تجريبي أو تسجيل خدمة عامل
           
           // تتبع المشتركين في localStorage
-          const currentSubscribers = parseInt(localStorage.getItem(\'notificationSubscribers\') || \'0\');
-          localStorage.setItem(\'notificationSubscribers\', (currentSubscribers + 1).toString());
+          const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
+          localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
           // إرسال طلب للواجهة الخلفية لتحديث عدد المشتركين
           try {
             await ApiService.incrementNotificationSubscribers();
-            console.log(\'Notification subscriber count updated on backend.\');
+            console.log('Notification subscriber count updated on backend.');
           } catch (error) {
-            console.error(\'Error updating subscriber count on backend:\', error);
-          }   } else {
+            console.error('Error updating subscriber count on backend:', error);
+          }
+        } else {
           console.log('Notification permission denied.');
         }
       });
@@ -199,7 +200,7 @@ function App() {
       <div className="max-w-md mx-auto relative z-10 px-4">
         {/* الشريط العلوي المحسن - ترتيب جديد للأزرار */}
         <div className="flex justify-between items-center mb-4 pt-2 relative">
-          {/* مؤشر Live Updates في المنتصف */}
+          {/* زر Live Updates على اليسار */}
           <div className="flex items-center gap-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 px-3 py-1.5 rounded-full border border-green-500/30 backdrop-blur-sm">
             <span className="text-green-400 text-sm font-medium">Live Updates</span>
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
@@ -251,12 +252,17 @@ function App() {
           </div>
 
           {/* العنوان الرئيسي مصغر للموبايل */}
-          <h1 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight">
-            الدليل الشامل للاعبين المحترفين
+          <h1 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight" style={{ fontFamily: '"Noto Sans Arabic", sans-serif' }}>
+            رقم 1 في تطوير لاعبي
           </h1>
           
-          {/* النص الفرعي مصغر */}
-          <p className="text-white text-sm font-sans mb-3 text-center">
+          {/* نص eFootball في سطر منفصل مع التوهج المطلوب */}
+          <p className="text-white text-lg font-bold mb-3 text-center animate-text-glow-pulse" style={{ 
+            fontFamily: 'Montserrat, sans-serif', 
+            color: '#FFFFFF',
+            textShadow: '0 0 8px rgba(255, 255, 255, 0.7), 0 0 12px rgba(255, 255, 255, 0.5), 0 0 16px rgba(173, 216, 230, 0.4)',
+            filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.3))'
+          }}>
             eFootball
           </p>
 
@@ -266,12 +272,7 @@ function App() {
             <div className="relative z-10">
               <div className="flex items-center justify-center gap-2 mb-1">
                 <Trophy className="w-4 h-4 text-yellow-400" />
-             <h2 className="text-sm font-bold text-yellow-300" style={{ fontFamily: '"Noto Sans Arabic", sans-serif' }}>رقم 1 في تطوير لاعبي</h2>
-          <p className="text-white text-base font-sans font-bold mb-3 text-center" style={{ fontFamily: 'Montserrat, sans-serif', textShadow: '0 0 8px rgba(255, 255, 255, 0.7), 0 0 12px rgba(255, 255, 255, 0.5)' }}>
-            eFootball
-          </p>dow: '0 0 8px rgba(255, 255, 255, 0.7), 0 0 12px rgba(255, 255, 255, 0.5)' }}>
-                  eFootball
-                </p>
+                <span className="text-sm font-bold text-yellow-300">تطوير احترافي للاعبين</span>
                 <Trophy className="w-4 h-4 text-yellow-400" />
               </div>
               <div className="flex items-center justify-center gap-1 text-amber-200 text-xs">
@@ -339,19 +340,22 @@ function App() {
               {filteredPlayers.map((player, index) => (
                   <Card 
                   key={index}
-                  className="bg-gradient-to-br from-slate-800/70 via-slate-900/80 to-slate-800/70 border border-slate-600/50 backdrop-blur-xl hover:border-blue-500/70 transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden shadow-lg hover:shadow-xl"
+                  className="bg-gradient-to-br from-slate-800/70 via-slate-900/80 to-slate-800/70 border border-slate-600/50 backdrop-blur-xl hover:border-blue-500/70 transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden shadow-lg hover:shadow-xl animate-white-pulse-glow"
                   onClick={() => showPlayerDetails(player)}
                 >
-                  {/* تأثير الإضاءة عند التمرير */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-card-flash"></div>
+                  {/* تأثير الإضاءة عند التمرير مع فلاش محسن */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-hover-flash"></div>
+                  
+                  {/* فلاش أبيض خفيف حول الكارت */}
+                  <div className="absolute inset-0 rounded-lg border-2 border-white/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-border-glow"></div>
                   
                   <CardContent className="p-3 text-center relative z-10">
-                    {/* صورة اللاعب مع الفلاش المتحرك */}
+                    {/* صورة اللاعب مع الفلاش المتحرك المحسن */}
                     {player.image && (
                       <div className="mb-3">
                         <div className="relative inline-block">
-                          {/* الهالة الخلفية */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg blur-md opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                          {/* الهالة الخلفية المحسنة */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg blur-md opacity-50 group-hover:opacity-75 transition-opacity duration-300 animate-white-pulse-glow"></div>
                           
                           {/* الصورة */}
                           <img 
@@ -365,9 +369,9 @@ function App() {
                             }}
                           />
                           
-                          {/* الفلاش المتحرك المائل */}
+                          {/* الفلاش المتحرك المائل المحسن */}
                           <div className="absolute inset-0 overflow-hidden rounded-lg">
-                            <div className="absolute -top-2 -left-2 w-6 h-full bg-gradient-to-r from-transparent via-white/60 to-transparent transform rotate-12 translate-x-[-100%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-out"></div>
+                            <div className="absolute -top-2 -left-2 w-6 h-full bg-gradient-to-r from-transparent via-white/80 to-transparent transform rotate-12 translate-x-[-100%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-out animate-flash-sweep"></div>
                           </div>
                           
                           {/* النجمة */}
@@ -377,8 +381,9 @@ function App() {
                           
                           {/* فلاش إضافي حول الإطار */}
                           <div className="absolute inset-0 rounded-lg border border-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
-                          {/* فلاش أبيض خفيف حول الكارت */}
-                          <div className="absolute inset-0 rounded-lg border-2 border-white/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse-slow"></div>
+                          
+                          {/* تأثير التوهج الأبيض الخفيف */}
+                          <div className="absolute inset-0 rounded-lg border-2 border-white/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse-slow"></div>
                         </div>
                       </div>
                     )}

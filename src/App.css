@@ -194,3 +194,127 @@
 }
 
 
+
+
+/* تأثيرات الفلاش والتوهج المحسنة لكروت اللاعبين */
+
+@keyframes white-pulse-glow {
+  0% {
+    box-shadow: 0 0 0px rgba(255, 255, 255, 0.0), 0 0 0px rgba(173, 216, 230, 0.0);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(173, 216, 230, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(255, 255, 255, 0.0), 0 0 0px rgba(173, 216, 230, 0.0);
+  }
+}
+
+.animate-white-pulse-glow {
+  animation: white-pulse-glow 2s infinite ease-in-out;
+}
+
+@keyframes flash-sweep {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%) skewX(-15deg);
+    opacity: 0;
+  }
+}
+
+.animate-flash-sweep {
+  animation: flash-sweep 2s infinite ease-in-out;
+}
+
+@keyframes border-glow {
+  0% {
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0px rgba(255, 255, 255, 0.0);
+  }
+  50% {
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+  }
+  100% {
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0px rgba(255, 255, 255, 0.0);
+  }
+}
+
+.animate-border-glow {
+  animation: border-glow 2s infinite ease-in-out;
+}
+
+@keyframes hover-flash {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%) skewX(-15deg);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%) skewX(-15deg);
+  }
+}
+
+.group:hover .animate-hover-flash {
+  animation: hover-flash 0.8s ease-out;
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s infinite ease-in-out;
+}
+
+/* تأثير التوهج للنص eFootball */
+@keyframes text-glow-pulse {
+  0% {
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.7), 0 0 12px rgba(255, 255, 255, 0.5), 0 0 16px rgba(173, 216, 230, 0.4);
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.9), 0 0 18px rgba(255, 255, 255, 0.7), 0 0 24px rgba(173, 216, 230, 0.6);
+  }
+  100% {
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.7), 0 0 12px rgba(255, 255, 255, 0.5), 0 0 16px rgba(173, 216, 230, 0.4);
+  }
+}
+
+.animate-text-glow-pulse {
+  animation: text-glow-pulse 3s infinite ease-in-out;
+}
+
+/* تأثير الفلاش المتحرك */
+@keyframes flash {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(100%) skewX(-15deg);
+    opacity: 0;
+  }
+}
+
+.animate-flash {
+  animation: flash 2s ease-in-out infinite;
+}
+

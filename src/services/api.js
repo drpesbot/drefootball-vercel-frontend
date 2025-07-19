@@ -104,12 +104,6 @@ class ApiService {
       throw error;
     }
   }
-}
-
-export default new ApiService();
-
-
-
 
   // Increment notification subscribers count
   async incrementNotificationSubscribers() {
@@ -133,9 +127,6 @@ export default new ApiService();
     }
   }
 
-
-
-
   // Get notification subscribers count
   async getNotificationSubscribers() {
     try {
@@ -150,4 +141,28 @@ export default new ApiService();
     }
   }
 
+  // Send manual notification
+  async sendManualNotification(message) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/notifications/send`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: "killer8speed",
+          message: message
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to send notification");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error sending notification:", error);
+      throw error;
+    }
+  }
+}
 
+export default new ApiService();
