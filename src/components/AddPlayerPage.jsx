@@ -321,58 +321,50 @@ function AddPlayerPage({ onBack }) {
           </p>
         </div>
 
-        {/* لوحة التحكم */}
-        <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm mb-6">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Settings className="w-5 h-5 text-yellow-400" />
+        {/* لوحة التحكم مصغرة للموبايل */}
+        <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm mb-4">
+          <CardHeader className="p-3">
+            <CardTitle className="text-white flex items-center gap-2 text-sm">
+              <Settings className="w-4 h-4 text-yellow-400" />
               لوحة التحكم
             </CardTitle>
-            <CardDescription className="text-gray-300">
+            <CardDescription className="text-gray-300 text-xs">
               إدارة اللاعبين المحفوظين والإشعارات
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-3">
+          <CardContent className="p-3">
+            <div className="flex flex-wrap gap-2">
               <Button 
                 variant="outline" 
-                className="bg-blue-600/20 border-blue-500 text-blue-300 hover:bg-blue-600/30"
+                className="bg-blue-600/20 border-blue-500 text-blue-300 hover:bg-blue-600/30 text-xs py-1 px-2 h-7"
                 onClick={handleShowAllPlayers}
               >
-                <User className="w-4 h-4 mr-2" />
+                <User className="w-3 h-3 mr-1" />
                 عرض جميع اللاعبين
               </Button>
               <Button 
                 variant="outline" 
-                className="bg-green-600/20 border-green-500 text-green-300 hover:bg-green-600/30"
+                className="bg-green-600/20 border-green-500 text-green-300 hover:bg-green-600/30 text-xs py-1 px-2 h-7"
                 onClick={handleShowAllPlayers}
               >
-                <Edit className="w-4 h-4 mr-2" />
+                <Edit className="w-3 h-3 mr-1" />
                 تعديل لاعب
               </Button>
               <Button 
                 variant="outline" 
-                className="bg-red-600/20 border-red-500 text-red-300 hover:bg-red-600/30"
+                className="bg-red-600/20 border-red-500 text-red-300 hover:bg-red-600/30 text-xs py-1 px-2 h-7"
                 onClick={handleShowAllPlayers}
               >
-                <Trash2 className="w-4 h-4 mr-2" />
+                <Trash2 className="w-3 h-3 mr-1" />
                 حذف لاعب
               </Button>
               <Button 
                 variant="outline" 
-                className="bg-orange-600/20 border-orange-500 text-orange-300 hover:bg-orange-600/30"
+                className="bg-orange-600/20 border-orange-500 text-orange-300 hover:bg-orange-600/30 text-xs py-1 px-2 h-7"
                 onClick={() => setShowNotificationForm(true)}
               >
-                <Bell className="w-4 h-4 mr-2" />
+                <Bell className="w-3 h-3 mr-1" />
                 إرسال إشعار يدوي
-              </Button>
-              <Button 
-                variant="outline" 
-                className="bg-purple-600/20 border-purple-500 text-purple-300 hover:bg-purple-600/30"
-                onClick={handleShowSubscribersCount}
-              >
-                <BarChart3 className="w-4 h-4 mr-2" />
-                عدد المشتركين
               </Button>
             </div>
           </CardContent>
@@ -385,11 +377,11 @@ function AddPlayerPage({ onBack }) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* اسم اللاعب */}
+        <form onSubmit={handleSubmit} className="space-y-3">
+          {/* اسم اللاعب مصغر */}
           <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <Label htmlFor="name" className="text-white text-lg font-semibold mb-3 block">
+            <CardContent className="p-3">
+              <Label htmlFor="name" className="text-white text-sm font-semibold mb-2 block">
                 اسم اللاعب *
               </Label>
               <Input
@@ -398,16 +390,16 @@ function AddPlayerPage({ onBack }) {
                 placeholder="أدخل اسم اللاعب"
                 value={playerData.name}
                 onChange={(e) => setPlayerData(prev => ({ ...prev, name: e.target.value }))}
-                className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400"
                 required
+                className="bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 h-8 text-sm"
               />
             </CardContent>
           </Card>
 
-          {/* القوة الإجمالية للاعب */}
+          {/* القوة الإجمالية للاعب مصغر */}
           <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <Label htmlFor="overallRating" className="text-white text-lg font-semibold mb-3 block">
+            <CardContent className="p-3">
+              <Label htmlFor="overallRating" className="text-white text-sm font-semibold mb-2 block">
                 القوة الإجمالية للاعب (Overall Rating) *
               </Label>
               <Input
@@ -416,35 +408,36 @@ function AddPlayerPage({ onBack }) {
                 placeholder="أدخل القوة الإجمالية (0-150)"
                 value={playerData.overallRating}
                 onChange={(e) => handleInputChange('overallRating', e.target.value)}
-                className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400"
+                className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 h-8 text-sm"
                 min="0"
                 max="150"
                 required
               />
-              <p className="text-gray-400 text-sm mt-2">القيمة يجب أن تكون بين 0 و 150</p>
+              <p className="text-gray-400 text-xs mt-1">القيمة يجب أن تكون بين 0 و 150</p>
             </CardContent>
           </Card>
 
-          {/* رفع صورة اللاعب */}
+          {/* رفع صورة اللاعب مصغر */}
           <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <Label className="text-white text-lg font-semibold mb-3 block">
+            <CardContent className="p-3">
+              <Label className="text-white text-sm font-semibold mb-2 block">
                 صورة اللاعب
               </Label>
               <div className="flex flex-col items-center">
                 {imagePreview ? (
-                  <div className="mb-4">
-                    <img src={imagePreview} alt="معاينة" className="w-32 h-40 object-cover rounded-lg border-2 border-gray-600" />
+                  <div className="mb-2">
+                    <img src={imagePreview} alt="معاينة" className="w-20 h-24 object-cover rounded-lg border-2 border-gray-600" />
                   </div>
                 ) : (
-                  <div className="w-32 h-40 bg-gray-700 rounded-lg border-2 border-dashed border-gray-500 flex items-center justify-center mb-4">
-                    <Camera className="w-8 h-8 text-gray-400" />
+                  <div className="w-20 h-24 bg-gray-700 rounded-lg border-2 border-dashed border-gray-500 flex items-center justify-center mb-2">
+                    <Camera className="w-5 h-5 text-gray-400" />
                   </div>
                 )}
-                <Label htmlFor="image" className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-                  <Upload className="w-4 h-4" />
+                <Label htmlFor="image" className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs">
+                  <Upload className="w-3 h-3" />
                   اضغط لرفع الصورة
                 </Label>
+                <p className="text-xs text-gray-400 mt-1">PNG, JPG أو GIF</p>
                 <Input
                   id="image"
                   type="file"
@@ -455,13 +448,13 @@ function AddPlayerPage({ onBack }) {
             </CardContent>
           </Card>
 
-          {/* الإحصائيات الأساسية */}
+          {/* الإحصائيات الأساسية مصغر */}
           <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-white text-lg">الإحصائيات الأساسية</CardTitle>
-              <CardDescription className="text-gray-300 text-sm">القيم من 0 إلى 150</CardDescription>
+            <CardHeader className="p-3 pb-2">
+              <CardTitle className="text-white text-sm">الإحصائيات الأساسية</CardTitle>
+              <CardDescription className="text-gray-300 text-xs">القيم من 0 إلى 150</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-3">
+            <CardContent className="grid grid-cols-2 gap-2 p-3 pt-0">
               {[
                 { key: 'finishing', label: 'Finishing', icon: finishingIcon },
                 { key: 'passing', label: 'Passing', icon: passingIcon },
@@ -472,8 +465,8 @@ function AddPlayerPage({ onBack }) {
                 { key: 'defending', label: 'Defending', icon: defendingIcon }
               ].map(({ key, label, icon }) => (
                 <div key={key} className="space-y-1">
-                  <Label className="text-white flex items-center gap-2 text-sm">
-                    <img src={icon} alt={label} className="w-4 h-4 rounded" />
+                  <Label className="text-white flex items-center gap-1.5 text-xs">
+                    <img src={icon} alt={label} className="w-3 h-3 rounded" />
                     {label}
                   </Label>
                   <Input
@@ -483,28 +476,28 @@ function AddPlayerPage({ onBack }) {
                     placeholder="0"
                     value={playerData[key]}
                     onChange={(e) => handleInputChange(key, e.target.value)}
-                    className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 h-8 text-sm"
+                    className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 h-7 text-xs"
                   />
                 </div>
               ))}
             </CardContent>
           </Card>
 
-          {/* إحصائيات حراسة المرمى */}
+          {/* إحصائيات حراسة المرمى مصغر */}
           <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-white text-lg">إحصائيات حراسة المرمى</CardTitle>
-              <CardDescription className="text-gray-300 text-sm">القيم من 0 إلى 150</CardDescription>
+            <CardHeader className="p-3 pb-2">
+              <CardTitle className="text-white text-sm">إحصائيات حراسة المرمى</CardTitle>
+              <CardDescription className="text-gray-300 text-xs">القيم من 0 إلى 150</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-3 gap-3">
+            <CardContent className="grid grid-cols-3 gap-2 p-3 pt-0">
               {[
                 { key: 'gk1', label: 'GK 1', icon: gk1Icon },
                 { key: 'gk2', label: 'GK 2', icon: gk2Icon },
                 { key: 'gk3', label: 'GK 3', icon: gk3Icon }
               ].map(({ key, label, icon }) => (
                 <div key={key} className="space-y-1">
-                  <Label className="text-white flex items-center gap-2 text-sm">
-                    <img src={icon} alt={label} className="w-4 h-4 rounded" />
+                  <Label className="text-white flex items-center gap-1.5 text-xs">
+                    <img src={icon} alt={label} className="w-3 h-3 rounded" />
                     {label}
                   </Label>
                   <Input
@@ -514,30 +507,30 @@ function AddPlayerPage({ onBack }) {
                     placeholder="0"
                     value={playerData[key]}
                     onChange={(e) => handleInputChange(key, e.target.value)}
-                    className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 h-8 text-sm"
+                    className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 h-7 text-xs"
                   />
                 </div>
               ))}
             </CardContent>
           </Card>
 
-          {/* البوستر */}
+          {/* البوستر مصغر */}
           <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-white flex items-center gap-2 text-lg">
-                <Crown className="w-4 h-4 text-yellow-400" />
+            <CardHeader className="p-3 pb-2">
+              <CardTitle className="text-white flex items-center gap-2 text-sm">
+                <Crown className="w-3 h-3 text-yellow-400" />
                 البوستر
               </CardTitle>
-              <CardDescription className="text-gray-300">اختر بوستر واحد للاعب</CardDescription>
+              <CardDescription className="text-gray-300 text-xs">اختر بوستر واحد للاعب</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 pt-0">
               <Select value={playerData.booster} onValueChange={(value) => setPlayerData(prev => ({ ...prev, booster: value }))}>
-                <SelectTrigger className="bg-gray-700/50 border-gray-500 text-white">
+                <SelectTrigger className="bg-gray-700/50 border-gray-500 text-white h-8 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-600">
                   {boosterOptions.map((option) => (
-                    <SelectItem key={option} value={option} className="text-white hover:bg-gray-700">
+                    <SelectItem key={option} value={option} className="text-white hover:bg-gray-700 text-xs">
                       {option}
                     </SelectItem>
                   ))}
@@ -546,10 +539,10 @@ function AddPlayerPage({ onBack }) {
             </CardContent>
           </Card>
 
-          {/* زر الإرسال */}
+          {/* زر الإرسال مصغر */}
           <Button 
             type="submit" 
-            className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-3 text-lg rounded-xl shadow-lg"
+            className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-2 text-sm rounded-xl shadow-lg"
           >
             {editingPlayerId ? 'تعديل اللاعب' : 'إضافة اللاعب'}
           </Button>

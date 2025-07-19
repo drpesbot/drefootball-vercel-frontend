@@ -192,110 +192,118 @@ function App() {
       </div>
       
       <div className="max-w-md mx-auto relative z-10 px-4">
-        {/* الشريط العلوي المحسن - حذف تحديث مباشر */}
-        <div className="flex justify-center items-center mb-4 pt-2">
+        {/* الشريط العلوي المحسن - ترتيب جديد للأزرار */}
+        <div className="flex justify-between items-center mb-4 pt-2 relative">
+          {/* زر الإعدادات على اليمين */}
           <button 
             onClick={handleControlPanel}
-            className="bg-gradient-to-r from-slate-700/90 to-slate-600/90 hover:from-slate-600/90 hover:to-slate-500/90 p-3 rounded-full transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-slate-500/40 shadow-lg hover:shadow-xl hover:border-slate-400/60"
+            className="bg-gradient-to-r from-slate-700/90 to-slate-600/90 hover:from-slate-600/90 hover:to-slate-500/90 p-2.5 rounded-full transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-slate-500/40 shadow-lg hover:shadow-xl hover:border-slate-400/60"
           >
-            <Settings className="w-5 h-5 text-slate-200" />
+            <Settings className="w-4 h-4 text-slate-200" />
           </button>
-        </div>
 
-        {/* زر التواصل المصغر */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50">
+          {/* زر التواصل في المنتصف */}
           <Button 
             onClick={handleContactUs}
-            className="bg-gradient-to-r from-emerald-400 via-green-400 to-emerald-500 hover:from-emerald-500 hover:via-green-500 hover:to-emerald-600 text-white font-bold py-2 px-4 text-sm rounded-full shadow-lg shadow-emerald-500/40 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-emerald-300/30 hover:border-emerald-200/50"
+            className="bg-gradient-to-r from-emerald-400 via-green-400 to-emerald-500 hover:from-emerald-500 hover:via-green-500 hover:to-emerald-600 text-white font-bold py-1.5 px-3 text-xs rounded-full shadow-lg shadow-emerald-500/40 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-emerald-300/30 hover:border-emerald-200/50"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-            <div className="flex items-center justify-center gap-2 relative z-10">
-              <Phone className="w-4 h-4" />
+            <div className="flex items-center justify-center gap-1.5 relative z-10">
+              <Phone className="w-3 h-3" />
               <span>تواصل معنا</span>
             </div>
           </Button>
+
+          {/* مساحة فارغة على اليسار للتوازن */}
+          <div className="w-10 h-10"></div>
         </div>
 
-        {/* Hero Section المصغر */}
-        <Card className="bg-gradient-to-br from-slate-800/50 via-slate-900/70 to-black/90 border border-slate-600/40 backdrop-blur-2xl shadow-xl mb-6 relative overflow-hidden hover:border-slate-500/60 transition-all duration-500">
+        {/* Hero Section مصغر جداً للموبايل */}
+        <Card className="bg-gradient-to-br from-slate-800/50 via-slate-900/70 to-black/90 border border-slate-600/40 backdrop-blur-2xl shadow-xl mb-4 relative overflow-hidden hover:border-slate-500/60 transition-all duration-500">
           {/* تأثيرات الإضاءة المحسنة */}
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/8 via-purple-500/12 to-blue-500/8 animate-pulse"></div>
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400"></div>
           
-          <CardContent className="p-6 text-center relative z-10">
-            {/* الأيقونة الرئيسية المصغرة */}
-            <div className="flex justify-center mb-4">
+          <CardContent className="p-3 text-center relative z-10">
+            {/* الأيقونة الرئيسية مصغرة جداً */}
+            <div className="flex justify-center mb-2">
               <div className="relative group">
-                {/* تأثير الهالة الخارجية */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 rounded-full blur-2xl opacity-60 group-hover:opacity-80 transition-opacity duration-500 scale-110 animate-pulse"></div>
+                {/* تأثير الهالة الخارجية مصغر */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 rounded-full blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-500 scale-110 animate-pulse"></div>
                 
-                {/* الكرة الرئيسية المصغرة */}
-                <div className="relative w-24 h-24 bg-gradient-to-br from-blue-400 via-purple-400 to-emerald-400 rounded-full flex items-center justify-center shadow-xl shadow-purple-500/50 hover:shadow-purple-400/70 transition-all duration-500 hover:scale-110 group">
+                {/* الكرة الرئيسية مصغرة جداً */}
+                <div className="relative w-16 h-16 bg-gradient-to-br from-blue-400 via-purple-400 to-emerald-400 rounded-full flex items-center justify-center shadow-xl shadow-purple-500/50 hover:shadow-purple-400/70 transition-all duration-500 hover:scale-110 group">
                   {/* تأثير الإضاءة الداخلية */}
-                  <div className="absolute inset-2 bg-gradient-to-br from-white/25 to-transparent rounded-full"></div>
-                  <div className="absolute inset-4 bg-gradient-to-tl from-white/15 to-transparent rounded-full"></div>
+                  <div className="absolute inset-1 bg-gradient-to-br from-white/25 to-transparent rounded-full"></div>
+                  <div className="absolute inset-2 bg-gradient-to-tl from-white/15 to-transparent rounded-full"></div>
                   
-                  {/* الأيقونة */}
-                  <img 
-                    src={appIcon} 
-                    alt="eFootball Mobile" 
-                    className="w-16 h-16 object-cover relative z-10 group-hover:animate-pulse drop-shadow-xl rounded-full"
-                    style={{
-                      filter: 'drop-shadow(0 0 15px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 30px rgba(147, 51, 234, 0.2))',
-                      objectFit: 'cover',
-                      objectPosition: 'center'
-                    }}
-                  />
+                  {/* الأيقونة مع تأثير الفلاش */}
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden">
+                    <img 
+                      src={appIcon} 
+                      alt="eFootball Mobile" 
+                      className="w-full h-full object-cover relative z-10 group-hover:animate-pulse drop-shadow-xl rounded-full"
+                      style={{
+                        filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 20px rgba(147, 51, 234, 0.2))',
+                        objectFit: 'cover',
+                        objectPosition: 'center'
+                      }}
+                    />
+                    
+                    {/* تأثير الفلاش المتحرك على الصورة */}
+                    <div className="absolute inset-0 overflow-hidden rounded-full">
+                      <div className="absolute -top-1 -left-1 w-4 h-full bg-gradient-to-r from-transparent via-white/80 to-transparent transform rotate-12 translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-1200 ease-out"></div>
+                    </div>
+                    
+                    {/* فلاش إضافي حول الإطار */}
+                    <div className="absolute inset-0 rounded-full border border-white/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+                  </div>
                   
-                  {/* تأثير الدوران */}
-                  <div className="absolute inset-0 border border-white/30 rounded-full animate-spin-slow"></div>
-                  <div className="absolute inset-1 border border-white/15 rounded-full animate-spin-slow" style={{ animationDirection: 'reverse' }}></div>
+                  {/* تأثير الدوران مصغر */}
+                  <div className="absolute inset-0 border border-white/20 rounded-full animate-spin-slow"></div>
                 </div>
                 
-                {/* شارات الإنجاز المصغرة */}
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-300 to-orange-400 rounded-full flex items-center justify-center shadow-lg animate-bounce">
-                  <Crown className="w-4 h-4 text-white drop-shadow-lg" />
+                {/* شارات الإنجاز مصغرة جداً */}
+                <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-300 to-orange-400 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                  <Crown className="w-3 h-3 text-white drop-shadow-lg" />
                 </div>
-                <div className="absolute -bottom-1 -left-1 w-6 h-6 bg-gradient-to-r from-emerald-300 to-green-400 rounded-full flex items-center justify-center shadow-lg">
-                  <Sparkles className="w-3 h-3 text-white animate-pulse drop-shadow-lg" />
+                <div className="absolute -bottom-0 -left-0 w-4 h-4 bg-gradient-to-r from-emerald-300 to-green-400 rounded-full flex items-center justify-center shadow-lg">
+                  <Sparkles className="w-2 h-2 text-white animate-pulse drop-shadow-lg" />
                 </div>
-                
-                {/* تأثيرات إضافية للعمق */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-blue-300/15 rounded-full animate-ping"></div>
               </div>
             </div>
 
-            {/* العنوان المصغر */}
-            <div className="mb-4">
-              <h1 className="text-3xl md:text-4xl font-black mb-3 bg-gradient-to-r from-blue-300 via-purple-300 to-emerald-300 bg-clip-text text-transparent leading-tight tracking-tight drop-shadow-xl">
+            {/* العنوان مصغر جداً */}
+            <div className="mb-2">
+              <h1 className="text-xl md:text-2xl font-black mb-1 bg-gradient-to-r from-blue-300 via-purple-300 to-emerald-300 bg-clip-text text-transparent leading-tight tracking-tight drop-shadow-xl">
                 eFootball Mobile
               </h1>
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <p className="text-slate-200 text-base font-bold bg-gradient-to-r from-slate-200 to-slate-50 bg-clip-text text-transparent">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <p className="text-slate-200 text-xs font-bold bg-gradient-to-r from-slate-200 to-slate-50 bg-clip-text text-transparent">
                   الدليل الشامل للاعبين المحترفين
                 </p>
               </div>
-              <div className="w-24 h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 mx-auto rounded-full shadow-lg"></div>
+              <div className="w-16 h-0.5 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 mx-auto rounded-full shadow-lg"></div>
             </div>
 
-            {/* مربع الإنجاز المصغر مع كأسين */}
-            <div className="relative bg-gradient-to-r from-yellow-500/15 via-orange-500/25 to-yellow-500/15 border border-yellow-400/50 rounded-2xl p-4 mb-4 backdrop-blur-sm overflow-hidden group hover:border-yellow-300/70 transition-all duration-500 hover:scale-105 shadow-xl">
+            {/* مربع الإنجاز مصغر جداً مع كأسين */}
+            <div className="relative bg-gradient-to-r from-yellow-500/15 via-orange-500/25 to-yellow-500/15 border border-yellow-400/50 rounded-xl p-2 mb-2 backdrop-blur-sm overflow-hidden group hover:border-yellow-300/70 transition-all duration-500 hover:scale-105 shadow-xl">
               {/* تأثيرات الخلفية المتحركة */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/10 to-transparent animate-pulse"></div>
               <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400"></div>
               <div className="absolute bottom-0 right-0 w-full h-0.5 bg-gradient-to-l from-yellow-400 via-orange-400 to-yellow-400"></div>
               
               <div className="relative z-10">
-                <div className="flex items-center justify-center gap-3 mb-2">
-                  <Trophy className="w-6 h-6 text-yellow-400 animate-bounce" />
-                  <span className="text-lg font-black bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent text-center leading-tight">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <Trophy className="w-4 h-4 text-yellow-400 animate-bounce" />
+                  <span className="text-sm font-black bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent text-center leading-tight">
                     رقم 1 في تطوير لاعبي eFootball
                   </span>
-                  <Trophy className="w-6 h-6 text-yellow-400 animate-bounce" />
+                  <Trophy className="w-4 h-4 text-yellow-400 animate-bounce" />
                 </div>
-                <div className="flex items-center justify-center gap-2">
-                  <Award className="w-4 h-4 text-orange-400" />
-                  <p className="text-slate-100 font-bold text-sm text-center">
+                <div className="flex items-center justify-center gap-1">
+                  <Award className="w-3 h-3 text-orange-400" />
+                  <p className="text-slate-100 font-bold text-xs text-center">
                     تطوير لجميع لاعبيه بشكل علمي ومدروس
                   </p>
                   <Award className="w-4 h-4 text-orange-400" />
@@ -305,13 +313,13 @@ function App() {
           </CardContent>
         </Card>
 
-        {/* شريط البحث المصغر */}
-        <div className="relative mb-6">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/15 via-purple-500/15 to-emerald-500/15 rounded-2xl blur-lg"></div>
-          <div className="relative bg-gradient-to-r from-slate-800/70 to-slate-700/70 backdrop-blur-xl border border-slate-500/30 rounded-full p-1 shadow-lg hover:border-blue-400/50 transition-all duration-300">
-            <div className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-3xl">
-              <div className="p-2 bg-blue-500/20 rounded-full">
-                <Search className="w-4 h-4 text-blue-400" />
+        {/* شريط البحث مصغر جداً للموبايل */}
+        <div className="relative mb-3">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/15 via-purple-500/15 to-emerald-500/15 rounded-xl blur-lg"></div>
+          <div className="relative bg-gradient-to-r from-slate-800/70 to-slate-700/70 backdrop-blur-xl border border-slate-500/30 rounded-full p-0.5 shadow-lg hover:border-blue-400/50 transition-all duration-300">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/50 rounded-full">
+              <div className="p-1.5 bg-blue-500/20 rounded-full">
+                <Search className="w-3 h-3 text-blue-400" />
               </div>
               <Input
                 type="text"
@@ -321,7 +329,7 @@ function App() {
                   setSearchTerm(e.target.value);
                   handleSearch(e.target.value);
                 }}
-                className="bg-transparent border-none text-white placeholder-slate-400 focus:ring-0 text-sm font-medium flex-1"
+                className="bg-transparent border-none text-white placeholder-slate-400 focus:ring-0 text-xs font-medium flex-1 h-6"
               />
             </div>
           </div>
