@@ -4,7 +4,7 @@ import { Button } from './components/ui/button'
 import { Input } from './components/ui/input'
 import { Search, Settings, Users, Star, Zap, Trophy, Award, Crown, Sparkles, Phone, Bell, Play, Gamepad2, Info } from 'lucide-react'
 import AddPlayerPage from './components/AddPlayerPage'
-import './App.css'pp.css'
+import './App.css'
 import ApiService from './services/api.js'
 
 import appIcon from './assets/images/football_icon_no_black_edges.png'
@@ -32,6 +32,8 @@ function App() {
   const [showPlayerModal, setShowPlayerModal] = useState(false)
   const [showNotificationPopup, setShowNotificationPopup] = useState(false)
   const [showNotificationModal, setShowNotificationModal] = useState(false)
+  const [showNotificationActivationModal, setShowNotificationActivationModal] = useState(false)
+  const [notificationsBlocked, setNotificationsBlocked] = useState(false)
 
   // تحميل اللاعبين من API عند بدء التطبيق
   useEffect(() => {
@@ -44,12 +46,16 @@ function App() {
     }
   }, [])
 
-  // دالة لتحميل اللاعبين من API
+  // دالة لتحميل اللاعبين من API مع ترتيب عشوائي جديد في كل مرة
   const loadPlayers = async () => {
     try {
       const playersData = await ApiService.getPlayers();
-      // ترتيب عشوائي للاعبين
-      const shuffledPlayers = [...playersData].sort(() => Math.random() - 0.5);
+      // ترتيب عشوائي قوي للاعبين باستخدام Fisher-Yates shuffle
+      const shuffledPlayers = [...playersData];
+      for (let i = shuffledPlayers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledPlayers[i], shuffledPlayers[j]] = [shuffledPlayers[j], shuffledPlayers[i]];
+      }
       setPlayers(shuffledPlayers);
       setFilteredPlayers(shuffledPlayers);
     } catch (error) {
@@ -58,7 +64,12 @@ function App() {
       const savedPlayers = localStorage.getItem('efootball_players');
       if (savedPlayers) {
         const parsedPlayers = JSON.parse(savedPlayers);
-        const shuffledPlayers = [...parsedPlayers].sort(() => Math.random() - 0.5);
+        // ترتيب عشوائي قوي للاعبين المحفوظين محلياً
+        const shuffledPlayers = [...parsedPlayers];
+        for (let i = shuffledPlayers.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledPlayers[i], shuffledPlayers[j]] = [shuffledPlayers[j], shuffledPlayers[i]];
+        }
         setPlayers(shuffledPlayers);
         setFilteredPlayers(shuffledPlayers);
       }
@@ -345,6 +356,19 @@ function App() {
               </div>
             </Button>
 
+            {/* زر تفعيل الإشعارات الجديد */}
+            <Button 
+              onClick={() => setShowNotificationActivationModal(true)}
+              className="bg-gradient-to-r from-orange-500 via-red-400 to-pink-500 hover:from-orange-600 hover:via-red-500 hover:to-pink-600 text-white font-black py-3 px-8 text-base rounded-full shadow-2xl shadow-orange-500/60 transition-all duration-300 hover:scale-105 relative overflow-hidden group border-2 border-orange-300/50 hover:border-orange-200/70 animate-bounce"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              <div className="flex items-center justify-center gap-3 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                <Bell className="w-5 h-5 animate-pulse" />
+                <span>تفعيل الإشعارات</span>
+                <Sparkles className="w-5 h-5 animate-pulse" />
+              </div>
+            </Button>
+
             {/* الزر الثانوي - تواصل معنا */}
             <Button 
               onClick={handleContactUs}
@@ -474,7 +498,7 @@ function App() {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
               {filteredPlayers.map((player, index) => (
                   <Card 
                   key={index}
@@ -966,6 +990,150 @@ function App() {
                 
                 {/* نص صغير */}
                 <p className="text-gray-400 text-xs text-center mt-4" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                  يمكنك إلغاء الاشتراك في أي وقت من إعدادات المتصفح
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* النافذة المنبثقة الجديدة لتفعيل الإشعارات */}
+        {showNotificationActivationModal && (
+          <div className="fixed inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 z-50 animate-in fade-in duration-500">
+            <div className="bg-gradient-to-br from-gray-900/95 via-black/98 to-gray-900/95 border-2 border-white/20 rounded-3xl max-w-md w-full shadow-2xl relative overflow-hidden">
+              {/* تأثيرات الخلفية المتحركة */}
+              <div className="absolute inset-0 opacity-30">
+                <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-white/20 to-transparent rounded-full blur-2xl animate-pulse"></div>
+                <div className="absolute bottom-0 right-0 w-40 h-40 bg-gradient-to-tl from-white/15 to-transparent rounded-full blur-3xl animate-pulse delay-1000"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-gradient-to-r from-white/10 to-transparent rounded-full blur-xl animate-pulse delay-500"></div>
+              </div>
+
+              {/* النقاط البيضاء المتحركة */}
+              <div className="absolute inset-0 overflow-hidden">
+                {[...Array(15)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute w-1 h-1 bg-white/60 rounded-full animate-pulse"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                      animationDelay: `${Math.random() * 2}s`,
+                      animationDuration: `${2 + Math.random() * 2}s`
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div className="relative z-10 p-8">
+                {/* أيقونة الإشعارات مع تأثيرات */}
+                <div className="text-center mb-6">
+                  <div className="relative inline-block">
+                    <div className="w-20 h-20 bg-gradient-to-br from-orange-400 via-red-400 to-pink-500 rounded-full flex items-center justify-center shadow-2xl shadow-orange-500/50 animate-bounce">
+                      <Bell className="w-10 h-10 text-white animate-pulse" />
+                    </div>
+                    {/* هالة متوهجة */}
+                    <div className="absolute inset-0 w-20 h-20 bg-gradient-to-br from-orange-400/40 via-red-400/40 to-pink-500/40 rounded-full blur-xl animate-pulse"></div>
+                    {/* نجوم متحركة حول الأيقونة */}
+                    <div className="absolute -top-2 -right-2">
+                      <Sparkles className="w-6 h-6 text-yellow-400 animate-spin" />
+                    </div>
+                    <div className="absolute -bottom-2 -left-2">
+                      <Sparkles className="w-4 h-4 text-blue-400 animate-bounce" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* العنوان الرئيسي */}
+                <h2 className="text-2xl font-black text-center mb-4 bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                  🔔 تفعيل الإشعارات المجاني
+                </h2>
+
+                {/* المميزات */}
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-xl border border-green-400/30">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">✓</span>
+                    </div>
+                    <span className="text-white font-semibold text-sm" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                      احصل على آخر أخبار اللاعبين فوراً
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl border border-blue-400/30">
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">⚡</span>
+                    </div>
+                    <span className="text-white font-semibold text-sm" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                      تحديثات حصرية للإحصائيات الجديدة
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl border border-purple-400/30">
+                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">🎁</span>
+                    </div>
+                    <span className="text-white font-semibold text-sm" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                      عروض خاصة ومحتوى حصري
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl border border-yellow-400/30">
+                    <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">🏆</span>
+                    </div>
+                    <span className="text-white font-semibold text-sm" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                      كن أول من يعرف بالتحديثات الجديدة
+                    </span>
+                  </div>
+                </div>
+
+                {/* زر التفعيل الرئيسي */}
+                <Button
+                  onClick={async () => {
+                    try {
+                      if ('Notification' in window) {
+                        const permission = await Notification.requestPermission();
+                        if (permission === 'granted') {
+                          // زيادة عداد المشتركين
+                          const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
+                          localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
+                          
+                          // إظهار إشعار تأكيد
+                          new Notification('🎉 تم تفعيل الإشعارات بنجاح!', {
+                            body: 'ستصلك الآن جميع الأخبار والتحديثات الحصرية',
+                            icon: '/favicon.ico'
+                          });
+                          
+                          setShowNotificationActivationModal(false);
+                          setNotificationsBlocked(false);
+                        } else {
+                          alert('يرجى السماح بالإشعارات من إعدادات المتصفح للحصول على التحديثات');
+                        }
+                      } else {
+                        alert('متصفحك لا يدعم الإشعارات');
+                      }
+                    } catch (error) {
+                      console.error('خطأ في تفعيل الإشعارات:', error);
+                      alert('حدث خطأ، يرجى المحاولة مرة أخرى');
+                    }
+                  }}
+                  className="w-full bg-gradient-to-r from-orange-500 via-red-400 to-pink-500 hover:from-orange-600 hover:via-red-500 hover:to-pink-600 text-white font-black py-4 px-6 rounded-2xl shadow-2xl shadow-orange-500/50 transition-all duration-300 hover:scale-105 relative overflow-hidden group animate-pulse"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                  <div className="flex items-center justify-center gap-3 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                    <Bell className="w-6 h-6 animate-pulse" />
+                    <span className="text-lg">🚀 تفعيل الإشعارات الآن</span>
+                    <Sparkles className="w-6 h-6 animate-pulse" />
+                  </div>
+                </Button>
+
+                {/* نص تشجيعي */}
+                <p className="text-center text-gray-300 text-xs mt-4 animate-pulse" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                  ⭐ انضم إلى أكثر من 10,000 مستخدم يتلقون التحديثات يومياً
+                </p>
+
+                {/* نص الإلغاء */}
+                <p className="text-center text-gray-500 text-xs mt-2" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
                   يمكنك إلغاء الاشتراك في أي وقت من إعدادات المتصفح
                 </p>
               </div>
