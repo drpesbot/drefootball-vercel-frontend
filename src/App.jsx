@@ -36,6 +36,7 @@ function App() {
   const [notificationsBlocked, setNotificationsBlocked] = useState(false)
   const [isNotificationActivated, setIsNotificationActivated] = useState(false)
   const [showBlockingOverlay, setShowBlockingOverlay] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   // تحميل اللاعبين من API عند بدء التطبيق
   useEffect(() => {
