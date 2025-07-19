@@ -259,7 +259,10 @@ function App() {
           
           {/* النص الفرعي مصغر */}
           <p className="text-white text-xs mb-3 flex items-center justify-center gap-1">
-            eFootball Mobile
+            eFootball
+          </p>
+          <p className="text-white text-xs mb-3 flex items-center justify-center gap-1">
+            Mobile
           </p>
 
           {/* مربع الإنجاز الذهبي المحسن للموبايل */}
