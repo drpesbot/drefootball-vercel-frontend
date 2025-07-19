@@ -190,219 +190,328 @@ function App() {
   // الصفحة الرئيسية
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white relative overflow-hidden pt-2 pb-8">
-      {/* خلفية متحركة محسنة */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
+      {/* خلفية متحركة محسنة مع تدرج أكثر احترافية */}
+      <div className="absolute inset-0 opacity-15">
+        {/* طبقة خلفية أساسية */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-gray-900/95 to-black/90"></div>
+        
+        {/* عناصر الإضاءة المتحركة */}
+        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-blue-500/25 to-purple-500/25 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-to-r from-violet-500/25 to-pink-500/25 rounded-full blur-3xl animate-pulse delay-500"></div>
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-to-r from-violet-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse delay-500"></div>
+        
+        {/* نقاط إضاءة صغيرة */}
+        <div className="absolute top-32 right-20 w-32 h-32 bg-gradient-to-r from-yellow-400/15 to-orange-400/15 rounded-full blur-2xl animate-pulse delay-300"></div>
+        <div className="absolute bottom-32 left-20 w-40 h-40 bg-gradient-to-r from-teal-400/15 to-blue-400/15 rounded-full blur-2xl animate-pulse delay-700"></div>
       </div>
       
-      <div className="max-w-md mx-auto relative z-10 px-4">
-        {/* الشريط العلوي المحسن - ترتيب جديد للأزرار */}
-        <div className="flex justify-between items-center mb-4 pt-2 relative">
+      {/* شبكة خلفية خفيفة للمظهر الاحترافي */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
+          backgroundSize: '20px 20px'
+        }}></div>
+      </div>
+      
+      {/* حاوي متجاوب للأجهزة المختلفة */}
+      <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mx-auto relative z-10 px-4 sm:px-6 md:px-8">
+        {/* الشريط العلوي المحسن - ترتيب جديد للأزرار مع مسافات متساوية */}
+        <div className="flex justify-between items-center mb-6 pt-3 px-2 relative">
           {/* زر Live Updates على اليسار */}
-          <div className="flex items-center gap-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 px-3 py-1.5 rounded-full border border-green-500/30 backdrop-blur-sm">
-            <span className="text-green-400 text-sm font-medium">Live Updates</span>
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+          <div className="flex items-center gap-2 bg-gradient-to-r from-green-600/25 to-emerald-600/25 px-4 py-2 rounded-full border border-green-500/40 backdrop-blur-sm shadow-lg hover:shadow-green-500/20 transition-all duration-300">
+            <span className="text-green-400 text-sm font-semibold">Live Updates</span>
+            <div className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/60"></div>
           </div>
 
           {/* زر الإعدادات على اليمين */}
           <button 
             onClick={handleControlPanel}
-            className="bg-gradient-to-r from-slate-700/90 to-slate-600/90 hover:from-slate-600/90 hover:to-slate-500/90 p-2.5 rounded-full transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-slate-500/40 shadow-lg hover:shadow-xl hover:border-slate-400/60"
+            className="bg-gradient-to-r from-slate-700/95 to-slate-600/95 hover:from-slate-600/95 hover:to-slate-500/95 p-3 rounded-full transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-slate-500/50 shadow-lg hover:shadow-xl hover:border-slate-400/70 hover:shadow-slate-400/20"
           >
             <Settings className="w-5 h-5 text-white" />
           </button>
         </div>
-        {/* Hero Section محسن مع صورة بحجم مناسب للموبايل */}
-        <div className="text-center mb-4 relative">
-          {/* الكرة الرئيسية بحجم مناسب للموبايل */}
-          <div className="relative inline-block mb-3">
-            <div className="relative w-20 h-20 mx-auto">
+        {/* Hero Section محسن مع تنظيم احترافي للعناصر */}
+        <div className="text-center mb-6 relative px-2">
+          {/* الكرة الرئيسية بحجم مناسب ومحسن */}
+          <div className="relative inline-block mb-4">
+            <div className="relative w-24 h-24 mx-auto">
               <img 
                 src={appIcon} 
                 alt="Football" 
-                className="w-full h-full rounded-full object-cover shadow-xl"
+                className="w-full h-full rounded-full object-cover shadow-2xl border-2 border-white/20"
                 style={{
-                  filter: 'drop-shadow(0 0 15px rgba(139, 92, 246, 0.5)) drop-shadow(0 0 30px rgba(139, 92, 246, 0.3))',
+                  filter: 'drop-shadow(0 0 20px rgba(139, 92, 246, 0.6)) drop-shadow(0 0 40px rgba(139, 92, 246, 0.4))',
                   objectFit: 'cover',
                   objectPosition: 'center'
                 }}
               />
-              {/* فلاش متحرك على الصورة */}
+              {/* فلاش متحرك على الصورة محسن */}
               <div className="absolute inset-0 rounded-full overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 -translate-x-full animate-[flash_2s_ease-in-out_infinite] pointer-events-none"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent transform -skew-x-12 -translate-x-full animate-[flash_3s_ease-in-out_infinite] pointer-events-none"></div>
               </div>
-              {/* هالة خارجية متحركة */}
-              <div className="absolute inset-0 rounded-full border-2 border-white/20 animate-pulse"></div>
+              {/* هالة خارجية متحركة محسنة */}
+              <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-pulse"></div>
+              <div className="absolute -inset-2 rounded-full border border-blue-400/20 animate-pulse delay-500"></div>
             </div>
             
-            {/* التاج والنجوم مصغرة للموبايل */}
-            <div className="absolute -top-1 -right-1">
-              <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
-                <Crown className="w-3 h-3 text-white" />
+            {/* التاج والنجوم مع تحسين المواضع */}
+            <div className="absolute -top-2 -right-2">
+              <div className="w-7 h-7 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-xl animate-bounce border border-yellow-300/50">
+                <Crown className="w-4 h-4 text-white" />
               </div>
             </div>
             
-            <div className="absolute -bottom-1 -left-1">
-              <div className="w-6 h-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+            <div className="absolute -bottom-2 -left-2">
+              <div className="w-7 h-7 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-xl animate-pulse border border-green-300/50">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
             </div>
           </div>
 
-          {/* العنوان الرئيسي مصغر للموبايل */}
-          <h1 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight" style={{ fontFamily: '"Noto Sans Arabic", sans-serif' }}>
-            رقم 1 في تطوير لاعبي
+          {/* العنوان الرئيسي محسن مع خط احترافي */}
+          <h1 className="text-2xl md:text-3xl font-black text-white mb-3 leading-tight tracking-wide" style={{ 
+            fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif',
+            fontWeight: '900'
+          }}>
+            الرقم الأول في تطوير لاعبي كرة القدم
           </h1>
           
           {/* نص eFootball في سطر منفصل مع التوهج المطلوب */}
-          <p className="text-white text-lg font-bold mb-3 text-center animate-text-glow-pulse" style={{ 
+          <p className="text-white text-xl font-bold mb-4 text-center animate-text-glow-pulse tracking-wider" style={{ 
             fontFamily: 'Montserrat, sans-serif', 
             color: '#FFFFFF',
-            textShadow: '0 0 8px rgba(255, 255, 255, 0.7), 0 0 12px rgba(255, 255, 255, 0.5), 0 0 16px rgba(173, 216, 230, 0.4)',
-            filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.3))'
+            textShadow: '0 0 10px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 255, 255, 0.6), 0 0 20px rgba(173, 216, 230, 0.5)',
+            filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.4))',
+            fontWeight: '700'
           }}>
-            eFootball
+            eFootball Mobile
           </p>
 
-          {/* مربع الإنجاز الذهبي المحسن للموبايل */}
-          <div className="bg-gradient-to-r from-yellow-600/20 to-amber-600/20 border-2 border-yellow-500/40 rounded-xl p-2 mb-3 backdrop-blur-sm shadow-xl relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 to-amber-500/10 animate-pulse"></div>
+          {/* مربع الإنجاز الذهبي المحسن مع نصوص عربية متسقة */}
+          <div className="bg-gradient-to-r from-yellow-600/25 to-amber-600/25 border-2 border-yellow-500/50 rounded-2xl p-4 mb-4 backdrop-blur-sm shadow-2xl relative overflow-hidden mx-2">
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/15 to-amber-500/15 animate-pulse"></div>
             <div className="relative z-10">
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <Trophy className="w-4 h-4 text-yellow-400" />
-                <span className="text-sm font-bold text-yellow-300">تطوير احترافي للاعبين</span>
-                <Trophy className="w-4 h-4 text-yellow-400" />
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <Trophy className="w-5 h-5 text-yellow-400" />
+                <span className="text-base font-bold text-yellow-300" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                  منصة التطوير الاحترافية
+                </span>
+                <Trophy className="w-5 h-5 text-yellow-400" />
               </div>
-              <div className="flex items-center justify-center gap-1 text-amber-200 text-xs">
-                <Award className="w-3 h-3 text-amber-400" />
-                <span>تطوير لجميع لاعبيه بشكل علمي ومدروس</span>
+              <div className="flex items-center justify-center gap-2 text-amber-200 text-sm">
+                <Award className="w-4 h-4 text-amber-400" />
+                <span style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                  تطوير شامل ومدروس لجميع اللاعبين
+                </span>
               </div>
             </div>
           </div>
 
-          {/* زر التواصل في المنتصف */}
-          <Button 
-            onClick={handleContactUs}
-            className="bg-gradient-to-r from-emerald-400 via-green-400 to-emerald-500 hover:from-emerald-500 hover:via-green-500 hover:to-emerald-600 text-white font-bold py-1.5 px-3 text-xs rounded-full shadow-lg shadow-emerald-500/40 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-emerald-300/30 hover:border-emerald-200/50"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-            <div className="flex items-center justify-center gap-1.5 relative z-10">
-              <Phone className="w-3 h-3" />
-              <span>تواصل معنا</span>
-            </div>
-          </Button>
-
-          {/* مساحة فارغة على اليسار للتوازن */}
-          <div className="w-10 h-10"></div>
-        </div>
-
-
-
-        {/* شريط البحث مصغر للموبايل */}
-        <div className="relative mb-2">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-emerald-500/10 rounded-lg blur-md"></div>
-          <div className="relative bg-gradient-to-r from-slate-800/70 to-slate-700/70 backdrop-blur-xl border border-slate-500/30 rounded-full p-0.5 shadow-md hover:border-blue-400/50 transition-all duration-300">
-            <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-800/50 rounded-full">
-              <div className="p-1 bg-blue-500/20 rounded-full">
-                <Search className="w-2.5 h-2.5 text-blue-400" />
+          {/* زر التواصل محسن مع أزرار إضافية */}
+          <div className="flex flex-col gap-3 items-center">
+            {/* الزر الرئيسي - تواصل معنا */}
+            <Button 
+              onClick={handleContactUs}
+              className="bg-gradient-to-r from-emerald-400 via-green-400 to-emerald-500 hover:from-emerald-500 hover:via-green-500 hover:to-emerald-600 text-white font-bold py-3 px-8 text-sm rounded-full shadow-xl shadow-emerald-500/50 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-emerald-300/40 hover:border-emerald-200/60"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              <div className="flex items-center justify-center gap-2 relative z-10" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                <Phone className="w-4 h-4" />
+                <span>تواصل معنا الآن</span>
               </div>
-              <Input
-                type="text"
-                placeholder="ابحث عن لاعب..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  handleSearch(e.target.value);
+            </Button>
+
+            {/* أزرار إضافية في صف واحد */}
+            <div className="flex gap-3 justify-center">
+              {/* زر عن التطبيق */}
+              <Button 
+                onClick={() => {
+                  // يمكن إضافة modal أو صفحة منفصلة لاحقاً
+                  alert('معلومات عن التطبيق ستكون متاحة قريباً');
                 }}
-                className="bg-transparent border-none text-white placeholder-slate-400 focus:ring-0 text-xs font-medium flex-1 h-5"
-              />
+                className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 text-white font-semibold py-2 px-4 text-xs rounded-full shadow-lg shadow-blue-500/30 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-blue-400/30"
+              >
+                <div className="flex items-center justify-center gap-1.5 relative z-10" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                  <Star className="w-3 h-3" />
+                  <span>عن التطبيق</span>
+                </div>
+              </Button>
+
+              {/* زر الأخبار */}
+              <Button 
+                onClick={() => {
+                  // يمكن إضافة صفحة أخبار لاحقاً
+                  alert('قسم الأخبار قيد التطوير');
+                }}
+                className="bg-gradient-to-r from-orange-500/80 to-red-500/80 hover:from-orange-600/90 hover:to-red-600/90 text-white font-semibold py-2 px-4 text-xs rounded-full shadow-lg shadow-orange-500/30 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-orange-400/30"
+              >
+                <div className="flex items-center justify-center gap-1.5 relative z-10" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                  <Bell className="w-3 h-3" />
+                  <span>الأخبار</span>
+                </div>
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* عرض اللاعبين المحسن للموبايل */}
-        {filteredPlayers.length > 0 ? (
-          <div className="space-y-3">
-            <div className="text-center mb-3">
-              <h2 className="text-lg font-black bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent mb-2">
-                قسم التطويرات الأسطورية
-              </h2>
-              <div className="flex items-center justify-center gap-2">
-                <div className="w-6 h-0.5 bg-gradient-to-r from-transparent to-blue-500 rounded-full"></div>
-                <Users className="w-4 h-4 text-blue-400" />
-                <div className="w-6 h-0.5 bg-gradient-to-l from-transparent to-blue-500 rounded-full"></div>
+
+
+        {/* شريط البحث محسن مع قائمة تصفية */}
+        <div className="space-y-3 mb-4">
+          {/* شريط البحث الرئيسي */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/15 via-purple-500/15 to-emerald-500/15 rounded-xl blur-lg"></div>
+            <div className="relative bg-gradient-to-r from-slate-800/80 to-slate-700/80 backdrop-blur-xl border border-slate-500/40 rounded-2xl p-1 shadow-xl hover:border-blue-400/60 transition-all duration-300">
+              <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/60 rounded-xl">
+                <div className="p-2 bg-blue-500/25 rounded-xl">
+                  <Search className="w-4 h-4 text-blue-400" />
+                </div>
+                <Input
+                  type="text"
+                  placeholder="ابحث عن لاعبك المفضل..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    handleSearch(e.target.value);
+                  }}
+                  className="bg-transparent border-none text-white placeholder-slate-400 focus:ring-0 text-sm font-medium flex-1 h-6"
+                  style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}
+                />
               </div>
+            </div>
+          </div>
+
+          {/* قائمة التصفية السريعة */}
+          <div className="flex gap-2 justify-center overflow-x-auto pb-2">
+            <button 
+              onClick={() => {
+                setSearchTerm('');
+                handleSearch('');
+              }}
+              className="bg-gradient-to-r from-emerald-500/20 to-green-500/20 hover:from-emerald-500/30 hover:to-green-500/30 text-emerald-400 font-semibold py-2 px-4 text-xs rounded-full border border-emerald-500/30 hover:border-emerald-400/50 transition-all duration-300 whitespace-nowrap"
+              style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}
+            >
+              جميع اللاعبين
+            </button>
+            
+            <button 
+              onClick={() => {
+                const topPlayers = players.filter(player => calculateOverallRating(player) >= 90);
+                setFilteredPlayers(topPlayers);
+              }}
+              className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 hover:from-yellow-500/30 hover:to-orange-500/30 text-yellow-400 font-semibold py-2 px-4 text-xs rounded-full border border-yellow-500/30 hover:border-yellow-400/50 transition-all duration-300 whitespace-nowrap"
+              style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}
+            >
+              النجوم (90+)
+            </button>
+            
+            <button 
+              onClick={() => {
+                const midPlayers = players.filter(player => {
+                  const rating = calculateOverallRating(player);
+                  return rating >= 80 && rating < 90;
+                });
+                setFilteredPlayers(midPlayers);
+              }}
+              className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 hover:from-blue-500/30 hover:to-purple-500/30 text-blue-400 font-semibold py-2 px-4 text-xs rounded-full border border-blue-500/30 hover:border-blue-400/50 transition-all duration-300 whitespace-nowrap"
+              style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}
+            >
+              المتميزون (80-89)
+            </button>
+          </div>
+        </div>
+
+        {/* عرض اللاعبين المحسن مع تصميم احترافي */}
+        {filteredPlayers.length > 0 ? (
+          <div className="space-y-4">
+            <div className="text-center mb-4">
+              <h2 className="text-xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent mb-3" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                نجوم التطوير الأسطوري
+              </h2>
+              <div className="flex items-center justify-center gap-3">
+                <div className="w-8 h-0.5 bg-gradient-to-r from-transparent to-blue-500 rounded-full"></div>
+                <Users className="w-5 h-5 text-blue-400" />
+                <div className="w-8 h-0.5 bg-gradient-to-l from-transparent to-blue-500 rounded-full"></div>
+              </div>
+              <p className="text-slate-400 text-sm mt-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                اكتشف أفضل اللاعبين المطورين
+              </p>
             </div>
             
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {filteredPlayers.map((player, index) => (
                   <Card 
                   key={index}
-                  className="bg-gradient-to-br from-slate-800/70 via-slate-900/80 to-slate-800/70 border border-slate-600/50 backdrop-blur-xl hover:border-blue-500/70 transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden shadow-lg hover:shadow-xl animate-white-pulse-glow"
+                  className="bg-gradient-to-br from-slate-800/80 via-slate-900/90 to-slate-800/80 border-2 border-slate-600/60 backdrop-blur-xl hover:border-blue-500/80 transition-all duration-500 hover:scale-105 cursor-pointer group relative overflow-hidden shadow-2xl hover:shadow-blue-500/20 animate-white-pulse-glow rounded-2xl"
                   onClick={() => showPlayerDetails(player)}
                 >
                   {/* تأثير الإضاءة عند التمرير مع فلاش محسن */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-hover-flash"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-hover-flash"></div>
                   
-                  {/* فلاش أبيض خفيف حول الكارت */}
-                  <div className="absolute inset-0 rounded-lg border-2 border-white/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-border-glow"></div>
+                  {/* فلاش أبيض خفيف حول الكارت مع ظلال */}
+                  <div className="absolute inset-0 rounded-2xl border-2 border-white/60 opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-border-glow shadow-2xl shadow-white/20"></div>
                   
-                  <CardContent className="p-3 text-center relative z-10">
+                  <CardContent className="p-4 sm:p-5 text-center relative z-10">
                     {/* صورة اللاعب مع الفلاش المتحرك المحسن */}
                     {player.image && (
-                      <div className="mb-3">
+                      <div className="mb-4">
                         <div className="relative inline-block">
-                          {/* الهالة الخلفية المحسنة */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg blur-md opacity-50 group-hover:opacity-75 transition-opacity duration-300 animate-white-pulse-glow"></div>
+                          {/* الهالة الخلفية المحسنة مع تدرج أكثر تعقيداً */}
+                          <div className="absolute -inset-2 bg-gradient-to-r from-blue-500/40 via-purple-500/50 to-emerald-500/40 rounded-2xl blur-xl opacity-60 group-hover:opacity-90 transition-opacity duration-500 animate-white-pulse-glow"></div>
                           
-                          {/* الصورة */}
+                          {/* إطار إضافي للصورة */}
+                          <div className="absolute -inset-1 bg-gradient-to-r from-slate-700/50 to-slate-600/50 rounded-xl"></div>
+                          
+                          {/* الصورة مع تحسينات متجاوبة */}
                           <img 
                             src={player.image} 
                             alt={player.name}
-                            className="relative w-20 h-30 object-cover object-center rounded-lg border-2 border-blue-500/40 group-hover:border-blue-400/60 transition-all duration-300"
+                            className="relative w-20 h-28 sm:w-24 sm:h-32 md:w-28 md:h-36 object-cover object-center rounded-xl border-2 border-blue-500/50 group-hover:border-blue-400/80 transition-all duration-500 shadow-xl"
                             style={{
                               objectFit: 'cover',
                               objectPosition: 'center center',
-                              aspectRatio: '3/4'
+                              aspectRatio: '3/4',
+                              filter: 'contrast(1.1) saturate(1.2)'
                             }}
                           />
                           
                           {/* الفلاش المتحرك المائل المحسن */}
-                          <div className="absolute inset-0 overflow-hidden rounded-lg">
-                            <div className="absolute -top-2 -left-2 w-6 h-full bg-gradient-to-r from-transparent via-white/80 to-transparent transform rotate-12 translate-x-[-100%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-out animate-flash-sweep"></div>
+                          <div className="absolute inset-0 overflow-hidden rounded-xl">
+                            <div className="absolute -top-4 -left-4 w-8 h-full bg-gradient-to-r from-transparent via-white/90 to-transparent transform rotate-12 translate-x-[-150%] group-hover:translate-x-[200%] transition-transform duration-1200 ease-out animate-flash-sweep"></div>
                           </div>
                           
-                          {/* النجمة */}
-                          <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full flex items-center justify-center animate-pulse">
-                            <Star className="w-2.5 h-2.5 text-white" />
+                          {/* النجمة مع تحسين */}
+                          <div className="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full flex items-center justify-center animate-pulse shadow-xl border border-green-300/60">
+                            <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
                           </div>
                           
-                          {/* فلاش إضافي حول الإطار */}
-                          <div className="absolute inset-0 rounded-lg border border-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
+                          {/* فلاش إضافي حول الإطار مع تأثيرات متقدمة */}
+                          <div className="absolute inset-0 rounded-xl border-2 border-white/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse shadow-lg shadow-white/30"></div>
                           
-                          {/* تأثير التوهج الأبيض الخفيف */}
-                          <div className="absolute inset-0 rounded-lg border-2 border-white/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse-slow"></div>
+                          {/* تأثير التوهج الأبيض الخفيف المحسن */}
+                          <div className="absolute inset-0 rounded-xl border-2 border-white/70 opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-pulse-slow shadow-2xl shadow-white/40"></div>
                         </div>
                       </div>
                     )}
                     
-                    {/* اسم اللاعب */}
-                    <h3 className="text-lg font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-3 group-hover:from-blue-300 group-hover:to-purple-300 transition-all duration-300">
+                    {/* اسم اللاعب مع ألوان مميزة وحجم متجاوب */}
+                    <h3 className="text-base sm:text-lg font-black bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-500 bg-clip-text text-transparent mb-3 group-hover:from-yellow-300 group-hover:via-orange-300 group-hover:to-yellow-400 transition-all duration-500" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
                       {player.name}
                     </h3>
                     
-                    {/* القوة الإجمالية */}
-                    <div className="bg-gradient-to-r from-yellow-500/20 via-orange-500/30 to-yellow-500/20 rounded-2xl p-3 border border-yellow-500/40 group-hover:border-yellow-400/60 transition-all duration-300">
+                    {/* القوة الإجمالية مع تصميم محسن ومتجاوب */}
+                    <div className="bg-gradient-to-r from-yellow-500/25 via-orange-500/35 to-yellow-500/25 rounded-2xl p-3 sm:p-4 border-2 border-yellow-500/50 group-hover:border-yellow-400/70 transition-all duration-500 shadow-lg group-hover:shadow-yellow-500/20">
                       <div className="flex items-center justify-center gap-2 mb-1">
-                        <Zap className="w-4 h-4 text-yellow-400" />
-                        <span className="text-2xl font-black bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                        <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400" />
+                        <span className="text-xl sm:text-2xl font-black bg-gradient-to-r from-yellow-300 via-orange-300 to-yellow-400 bg-clip-text text-transparent">
                           {calculateOverallRating(player)}
                         </span>
-                        <Zap className="w-4 h-4 text-yellow-400" />
+                        <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400" />
                       </div>
-                      <p className="text-xs text-slate-400 font-semibold">القوة الإجمالية</p>
+                      <p className="text-xs text-slate-300 font-semibold" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                        القوة الإجمالية
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
