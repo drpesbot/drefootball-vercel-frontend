@@ -198,30 +198,29 @@ function App() {
             onClick={handleControlPanel}
             className="bg-gradient-to-r from-slate-700/90 to-slate-600/90 hover:from-slate-600/90 hover:to-slate-500/90 p-2.5 rounded-full transition-all duration-300 hover:scale-110 backdrop-blur-sm border border-slate-500/40 shadow-lg hover:shadow-xl hover:border-slate-400/60"
           >
-            <Settings className="w-4 h-4 text-green-400" />
+            <Settings className="w-5 h-5 text-white" />
           </button>
 
-          {/* مؤشر التحديث المباشر في المنتصف */}
-          <div className="flex items-center gap-2 bg-gradient-to-r from-green-800/40 to-emerald-800/40 px-3 py-1.5 rounded-full border border-green-500/30 backdrop-blur-sm">
+          {/* مؤشر Live Updates في المنتصف */}
+          <div className="flex items-center gap-2 bg-gradient-to-r from-green-600/20 to-emerald-600/20 px-3 py-1.5 rounded-full border border-green-500/30 backdrop-blur-sm">
+            <span className="text-green-400 text-sm font-medium">Live Updates</span>
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
-            <span className="text-green-300 text-xs font-medium">تحديث مباشر</span>
           </div>
 
-          {/* زر تواصل معنا */}
+          {/* زر تواصل معنا على اليسار */}
           <button 
             onClick={handleContactUs}
-            className="bg-gradient-to-r from-blue-600/90 to-cyan-600/90 hover:from-blue-500/90 hover:to-cyan-500/90 px-4 py-2 rounded-full transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-blue-400/40 shadow-lg hover:shadow-xl hover:border-blue-300/60 flex items-center gap-2"
+            className="bg-gradient-to-r from-green-600/90 to-emerald-600/90 hover:from-green-500/90 hover:to-emerald-500/90 px-3 py-2 rounded-full transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-green-500/40 shadow-lg hover:shadow-xl hover:border-green-400/60 flex items-center gap-2"
           >
-            <Phone className="w-3 h-3" />
-            <span className="text-xs font-medium">تواصل معنا</span>
+            <Phone className="w-4 h-4" />
+            <span className="text-sm font-medium">تواصل معنا</span>
           </button>
         </div>
-
         {/* Hero Section محسن مع صورة بحجم مناسب */}
         <div className="text-center mb-6 relative">
-          {/* الكرة الرئيسية بحجم مناسب */}
+          {/* الكرة الرئيسية بحجم احترافي مناسب */}
           <div className="relative inline-block mb-4">
-            <div className="relative w-20 h-20 mx-auto">
+            <div className="relative w-24 h-24 mx-auto">
               <img 
                 src={appIcon} 
                 alt="Football" 
@@ -242,14 +241,14 @@ function App() {
             
             {/* التاج والنجوم */}
             <div className="absolute -top-1 -right-1">
-              <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
-                <Crown className="w-3 h-3 text-white" />
+              <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                <Crown className="w-4 h-4 text-white" />
               </div>
             </div>
             
             <div className="absolute -bottom-1 -left-1">
-              <div className="w-6 h-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-                <Sparkles className="w-3 h-3 text-white" />
+              <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                <Sparkles className="w-4 h-4 text-white" />
               </div>
             </div>
           </div>

@@ -360,6 +360,33 @@ function AddPlayerPage({ onBack }) {
               </Button>
               <Button 
                 variant="outline" 
+                className="bg-purple-600/20 border-purple-500 text-purple-300 hover:bg-purple-600/30 text-xs py-1 px-2 h-7"
+                onClick={() => setShowNotificationForm(true)}
+              >
+                <Send className="w-3 h-3 mr-1" />
+                إرسال إشعار يدوي
+              </Button>
+              <Button 
+                variant="outline" 
+                className="bg-orange-600/20 border-orange-500 text-orange-300 hover:bg-orange-600/30 text-xs py-1 px-2 h-7"
+                onClick={handleShowSubscribersCount}
+              >
+                <Users className="w-3 h-3 mr-1" />
+                League Subscribers
+              </Button>
+            </div>
+                تعديل لاعب
+              </Button>
+              <Button 
+                variant="outline" 
+                className="bg-red-600/20 border-red-500 text-red-300 hover:bg-red-600/30 text-xs py-1 px-2 h-7"
+                onClick={handleShowAllPlayers}
+              >
+                <Trash2 className="w-3 h-3 mr-1" />
+                حذف لاعب
+              </Button>
+              <Button 
+                variant="outline" 
                 className="bg-orange-600/20 border-orange-500 text-orange-300 hover:bg-orange-600/30 text-xs py-1 px-2 h-7"
                 onClick={() => setShowNotificationForm(true)}
               >
