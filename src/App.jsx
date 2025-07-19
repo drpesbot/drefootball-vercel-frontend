@@ -216,17 +216,17 @@ function App() {
             <span className="text-sm font-medium">تواصل معنا</span>
           </button>
         </div>
-        {/* Hero Section محسن مع صورة بحجم مناسب */}
-        <div className="text-center mb-6 relative">
-          {/* الكرة الرئيسية بحجم احترافي مناسب */}
-          <div className="relative inline-block mb-4">
-            <div className="relative w-24 h-24 mx-auto">
+        {/* Hero Section محسن مع صورة بحجم مناسب للموبايل */}
+        <div className="text-center mb-4 relative">
+          {/* الكرة الرئيسية بحجم مناسب للموبايل */}
+          <div className="relative inline-block mb-3">
+            <div className="relative w-20 h-20 mx-auto">
               <img 
                 src={appIcon} 
                 alt="Football" 
-                className="w-full h-full rounded-full object-cover shadow-2xl"
+                className="w-full h-full rounded-full object-cover shadow-xl"
                 style={{
-                  filter: 'drop-shadow(0 0 20px rgba(139, 92, 246, 0.6)) drop-shadow(0 0 40px rgba(139, 92, 246, 0.4))',
+                  filter: 'drop-shadow(0 0 15px rgba(139, 92, 246, 0.5)) drop-shadow(0 0 30px rgba(139, 92, 246, 0.3))',
                   objectFit: 'cover',
                   objectPosition: 'center'
                 }}
@@ -239,43 +239,43 @@ function App() {
               <div className="absolute inset-0 rounded-full border-2 border-white/20 animate-pulse"></div>
             </div>
             
-            {/* التاج والنجوم */}
+            {/* التاج والنجوم مصغرة للموبايل */}
             <div className="absolute -top-1 -right-1">
-              <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
-                <Crown className="w-4 h-4 text-white" />
+              <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                <Crown className="w-3 h-3 text-white" />
               </div>
             </div>
             
             <div className="absolute -bottom-1 -left-1">
-              <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+              <div className="w-6 h-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
             </div>
           </div>
 
-          {/* العنوان الرئيسي */}
-          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent mb-2 leading-tight">
+          {/* العنوان الرئيسي مصغر للموبايل */}
+          <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent mb-2 leading-tight">
             eFootball Mobile
           </h1>
           
-          {/* النص الفرعي */}
-          <p className="text-yellow-300 text-sm mb-4 flex items-center justify-center gap-1">
-            <Star className="w-4 h-4 text-yellow-400 animate-pulse" />
+          {/* النص الفرعي مصغر */}
+          <p className="text-yellow-300 text-xs mb-3 flex items-center justify-center gap-1">
+            <Star className="w-3 h-3 text-yellow-400 animate-pulse" />
             الدليل الشامل للاعبين المحترفين
-            <Star className="w-4 h-4 text-yellow-400 animate-pulse" />
+            <Star className="w-3 h-3 text-yellow-400 animate-pulse" />
           </p>
 
-          {/* مربع الإنجاز الذهبي المحسن */}
-          <div className="bg-gradient-to-r from-yellow-600/20 to-amber-600/20 border-2 border-yellow-500/40 rounded-xl p-3 mb-4 backdrop-blur-sm shadow-xl relative overflow-hidden">
+          {/* مربع الإنجاز الذهبي المحسن للموبايل */}
+          <div className="bg-gradient-to-r from-yellow-600/20 to-amber-600/20 border-2 border-yellow-500/40 rounded-xl p-2 mb-3 backdrop-blur-sm shadow-xl relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 to-amber-500/10 animate-pulse"></div>
             <div className="relative z-10">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Trophy className="w-5 h-5 text-yellow-400" />
-                <h2 className="text-lg font-bold text-yellow-300">رقم 1 في تطوير لاعبي eFootball</h2>
-                <Trophy className="w-5 h-5 text-yellow-400" />
+              <div className="flex items-center justify-center gap-2 mb-1">
+                <Trophy className="w-4 h-4 text-yellow-400" />
+                <h2 className="text-sm font-bold text-yellow-300">رقم 1 في تطوير لاعبي eFootball</h2>
+                <Trophy className="w-4 h-4 text-yellow-400" />
               </div>
-              <div className="flex items-center justify-center gap-1 text-amber-200 text-sm">
-                <Award className="w-4 h-4 text-amber-400" />
+              <div className="flex items-center justify-center gap-1 text-amber-200 text-xs">
+                <Award className="w-3 h-3 text-amber-400" />
                 <span>تطوير لجميع لاعبيه بشكل علمي ومدروس</span>
               </div>
             </div>
@@ -396,13 +396,13 @@ function App() {
           </CardContent>
         </Card>
 
-        {/* شريط البحث مصغر جداً للموبايل */}
-        <div className="relative mb-3">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/15 via-purple-500/15 to-emerald-500/15 rounded-xl blur-lg"></div>
-          <div className="relative bg-gradient-to-r from-slate-800/70 to-slate-700/70 backdrop-blur-xl border border-slate-500/30 rounded-full p-0.5 shadow-lg hover:border-blue-400/50 transition-all duration-300">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/50 rounded-full">
-              <div className="p-1.5 bg-blue-500/20 rounded-full">
-                <Search className="w-3 h-3 text-blue-400" />
+        {/* شريط البحث مصغر للموبايل */}
+        <div className="relative mb-2">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-emerald-500/10 rounded-lg blur-md"></div>
+          <div className="relative bg-gradient-to-r from-slate-800/70 to-slate-700/70 backdrop-blur-xl border border-slate-500/30 rounded-full p-0.5 shadow-md hover:border-blue-400/50 transition-all duration-300">
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-800/50 rounded-full">
+              <div className="p-1 bg-blue-500/20 rounded-full">
+                <Search className="w-2.5 h-2.5 text-blue-400" />
               </div>
               <Input
                 type="text"
@@ -412,40 +412,40 @@ function App() {
                   setSearchTerm(e.target.value);
                   handleSearch(e.target.value);
                 }}
-                className="bg-transparent border-none text-white placeholder-slate-400 focus:ring-0 text-xs font-medium flex-1 h-6"
+                className="bg-transparent border-none text-white placeholder-slate-400 focus:ring-0 text-xs font-medium flex-1 h-5"
               />
             </div>
           </div>
         </div>
 
-        {/* عرض اللاعبين المحسن */}
+        {/* عرض اللاعبين المحسن للموبايل */}
         {filteredPlayers.length > 0 ? (
-          <div className="space-y-6">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent mb-3">
+          <div className="space-y-3">
+            <div className="text-center mb-3">
+              <h2 className="text-lg font-black bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent mb-2">
                 قسم التطويرات الأسطورية
               </h2>
               <div className="flex items-center justify-center gap-2">
-                <div className="w-8 h-0.5 bg-gradient-to-r from-transparent to-blue-500 rounded-full"></div>
-                <Users className="w-5 h-5 text-blue-400" />
-                <div className="w-8 h-0.5 bg-gradient-to-l from-transparent to-blue-500 rounded-full"></div>
+                <div className="w-6 h-0.5 bg-gradient-to-r from-transparent to-blue-500 rounded-full"></div>
+                <Users className="w-4 h-4 text-blue-400" />
+                <div className="w-6 h-0.5 bg-gradient-to-l from-transparent to-blue-500 rounded-full"></div>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               {filteredPlayers.map((player, index) => (
                   <Card 
                   key={index}
-                  className="bg-gradient-to-br from-slate-800/70 via-slate-900/80 to-slate-800/70 border border-slate-600/50 backdrop-blur-xl hover:border-blue-500/70 transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden shadow-xl hover:shadow-2xl"
+                  className="bg-gradient-to-br from-slate-800/70 via-slate-900/80 to-slate-800/70 border border-slate-600/50 backdrop-blur-xl hover:border-blue-500/70 transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden shadow-lg hover:shadow-xl"
                   onClick={() => showPlayerDetails(player)}
                 >
                   {/* تأثير الإضاءة عند التمرير */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
-                  <CardContent className="p-5 text-center relative z-10">
+                  <CardContent className="p-3 text-center relative z-10">
                     {/* صورة اللاعب مع الفلاش المتحرك */}
                     {player.image && (
-                      <div className="mb-4">
+                      <div className="mb-3">
                         <div className="relative inline-block">
                           {/* الهالة الخلفية */}
                           <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg blur-md opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
