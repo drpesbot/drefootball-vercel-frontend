@@ -150,3 +150,22 @@
 }
 
 
+
+
+@keyframes pulse-white-glow {
+  0% {
+    box-shadow: 0 0 0px rgba(255, 255, 255, 0.0);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(255, 255, 255, 0.0);
+  }
+}
+
+.animate-pulse-white-glow {
+  animation: pulse-white-glow 2s infinite ease-in-out;
+}
+
+

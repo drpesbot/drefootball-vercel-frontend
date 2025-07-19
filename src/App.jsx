@@ -152,9 +152,15 @@ function App() {
           // هنا يمكنك إرسال إشعار تجريبي أو تسجيل خدمة عامل
           
           // تتبع المشتركين في localStorage
-          const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
-          localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
-        } else {
+          const currentSubscribers = parseInt(localStorage.getItem(\'notificationSubscribers\') || \'0\');
+          localStorage.setItem(\'notificationSubscribers\', (currentSubscribers + 1).toString());
+          // إرسال طلب للواجهة الخلفية لتحديث عدد المشتركين
+          try {
+            await ApiService.incrementNotificationSubscribers();
+            console.log(\'Notification subscriber count updated on backend.\');
+          } catch (error) {
+            console.error(\'Error updating subscriber count on backend:\', error);
+          }   } else {
           console.log('Notification permission denied.');
         }
       });
@@ -248,14 +254,12 @@ function App() {
 
           {/* العنوان الرئيسي مصغر للموبايل */}
           <h1 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight">
-            eFootball <br /> Mobile
+            الدليل الشامل للاعبين المحترفين
           </h1>
           
           {/* النص الفرعي مصغر */}
-          <p className="text-yellow-300 text-xs mb-3 flex items-center justify-center gap-1">
-            <Star className="w-3 h-3 text-yellow-400 animate-pulse" />
-            الدليل الشامل للاعبين المحترفين
-            <Star className="w-3 h-3 text-yellow-400 animate-pulse" />
+          <p className="text-white text-xs mb-3 flex items-center justify-center gap-1">
+            eFootball Mobile
           </p>
 
           {/* مربع الإنجاز الذهبي المحسن للموبايل */}
@@ -332,7 +336,7 @@ function App() {
               {filteredPlayers.map((player, index) => (
                   <Card 
                   key={index}
-                  className="bg-gradient-to-br from-slate-800/70 via-slate-900/80 to-slate-800/70 border border-slate-600/50 backdrop-blur-xl hover:border-blue-500/70 transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden shadow-lg hover:shadow-xl"
+                  className="bg-gradient-to-br from-slate-800/70 via-slate-900/80 to-slate-800/70 border border-slate-600/50 backdrop-blur-xl hover:border-blue-500/70 transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden shadow-lg hover:shadow-xl animate-pulse-white-glow"
                   onClick={() => showPlayerDetails(player)}
                 >
                   {/* تأثير الإضاءة عند التمرير */}

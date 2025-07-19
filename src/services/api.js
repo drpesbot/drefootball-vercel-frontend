@@ -109,3 +109,45 @@ class ApiService {
 export default new ApiService();
 
 
+
+
+  // Increment notification subscribers count
+  async incrementNotificationSubscribers() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/notifications/increment-subscribers`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: "killer8speed",
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to increment notification subscribers");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error incrementing notification subscribers:", error);
+      throw error;
+    }
+  }
+
+
+
+
+  // Get notification subscribers count
+  async getNotificationSubscribers() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/notifications/subscribers`);
+      if (!response.ok) {
+        throw new Error("Failed to get notification subscribers");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error getting notification subscribers:", error);
+      throw error;
+    }
+  }
+
+

@@ -54,9 +54,16 @@ function AddPlayerPage({ onBack }) {
     loadSubscribersCount()
   }, [])
 
-  const loadSubscribersCount = () => {
-    const count = parseInt(localStorage.getItem('notificationSubscribers') || '0')
-    setSubscribersCount(count)
+  const loadSubscribersCount = async () => {
+    try {
+      const response = await ApiService.getNotificationSubscribers();
+      setSubscribersCount(response.count);
+    } catch (error) {
+      console.error(\'Error loading subscribers count from backend:\', error);
+      // Fallback to localStorage if backend fails
+      const count = parseInt(localStorage.getItem(\'notificationSubscribers\') || \'0\');
+      setSubscribersCount(count);
+    }
   }
 
   const handleInputChange = (field, value) => {
