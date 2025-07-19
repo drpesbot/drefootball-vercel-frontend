@@ -207,14 +207,7 @@ function App() {
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
           </div>
 
-          {/* زر تواصل معنا على اليسار */}
-          <button 
-            onClick={handleContactUs}
-            className="bg-gradient-to-r from-green-600/90 to-emerald-600/90 hover:from-green-500/90 hover:to-emerald-500/90 px-3 py-2 rounded-full transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-green-500/40 shadow-lg hover:shadow-xl hover:border-green-400/60 flex items-center gap-2"
-          >
-            <Phone className="w-4 h-4" />
-            <span className="text-sm font-medium">تواصل معنا</span>
-          </button>
+
         </div>
         {/* Hero Section محسن مع صورة بحجم مناسب للموبايل */}
         <div className="text-center mb-4 relative">
