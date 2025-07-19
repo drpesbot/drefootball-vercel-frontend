@@ -256,11 +256,8 @@ function App() {
           </h1>
           
           {/* النص الفرعي مصغر */}
-          <p className="text-white text-xs mb-3 flex items-center justify-center gap-1">
+          <p className="text-white text-sm font-sans mb-3 text-center">
             eFootball
-          </p>
-          <p className="text-white text-xs mb-3 flex items-center justify-center gap-1">
-            Mobile
           </p>
 
           {/* مربع الإنجاز الذهبي المحسن للموبايل */}
