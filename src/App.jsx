@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Input } from '@/components/ui/input.jsx'
-import { Button } from '@/components/ui/button.jsx'
-import { Card, CardContent } from '@/components/ui/card.jsx'
-import { Search, Phone, Settings, Trophy, X, Star, Zap, Target, Shield, Gauge, Eye, Heart, Footprints, Users, Sparkles, Crown, Award, Bell } from 'lucide-react'
-import './App.css'
+import { Card, CardContent } from './components/ui/card'
+import { Button } from './components/ui/button'
+import { Input } from './components/ui/input'
+import { Search, Settings, Users, Star, Zap, Trophy, Award, Crown, Sparkles, Phone, Bell, Play, Gamepad2, Info } from 'lucide-react'
+import AddPlayerPage from './components/AddPlayerPage'
+import './App.css'pp.css'
 import ApiService from './services/api.js'
 
 import appIcon from './assets/images/football_icon_no_black_edges.png'
@@ -23,14 +24,14 @@ import gk2Icon from './assets/icons/gk2.jpg'
 import gk3Icon from './assets/icons/gk3.jpg'
 
 function App() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [currentPage, setCurrentPage] = useState('home') // 'home', 'password', 'admin'
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [currentPage, setCurrentPage] = useState('home')
   const [players, setPlayers] = useState([])
-  const [filteredPlayers, setFilteredPlayers] = useState([]) // حالة جديدة للاعبين المفلترين
+  const [filteredPlayers, setFilteredPlayers] = useState([])
+  const [searchTerm, setSearchTerm] = useState('')
   const [selectedPlayer, setSelectedPlayer] = useState(null)
   const [showPlayerModal, setShowPlayerModal] = useState(false)
   const [showNotificationPopup, setShowNotificationPopup] = useState(false)
+  const [showNotificationModal, setShowNotificationModal] = useState(false)
 
   // تحميل اللاعبين من API عند بدء التطبيق
   useEffect(() => {
@@ -190,31 +191,39 @@ function App() {
   // الصفحة الرئيسية
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white relative overflow-hidden pt-2 pb-8">
-      {/* خلفية متحركة محسنة مع تدرج أكثر احترافية */}
-      <div className="absolute inset-0 opacity-15">
-        {/* طبقة خلفية أساسية */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-gray-900/95 to-black/90"></div>
+      {/* خلفية محسنة أكثر حدة ووضوحاً */}
+      <div className="absolute inset-0 opacity-20">
+        {/* طبقة خلفية أساسية محسنة */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-gray-900/98 to-black/95"></div>
         
-        {/* عناصر الإضاءة المتحركة */}
-        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-blue-500/25 to-purple-500/25 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-to-r from-violet-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse delay-500"></div>
+        {/* عناصر الإضاءة المتحركة المحسنة */}
+        <div className="absolute top-16 left-8 w-80 h-80 bg-gradient-to-r from-blue-600/30 to-purple-600/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-16 right-8 w-72 h-72 bg-gradient-to-r from-emerald-600/25 to-cyan-600/25 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 w-56 h-56 bg-gradient-to-r from-violet-600/25 to-pink-600/25 rounded-full blur-3xl animate-pulse delay-500"></div>
         
-        {/* نقاط إضاءة صغيرة */}
-        <div className="absolute top-32 right-20 w-32 h-32 bg-gradient-to-r from-yellow-400/15 to-orange-400/15 rounded-full blur-2xl animate-pulse delay-300"></div>
-        <div className="absolute bottom-32 left-20 w-40 h-40 bg-gradient-to-r from-teal-400/15 to-blue-400/15 rounded-full blur-2xl animate-pulse delay-700"></div>
+        {/* نقاط إضاءة صغيرة محسنة */}
+        <div className="absolute top-28 right-16 w-28 h-28 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-full blur-2xl animate-pulse delay-300"></div>
+        <div className="absolute bottom-28 left-16 w-36 h-36 bg-gradient-to-r from-teal-500/20 to-blue-500/20 rounded-full blur-2xl animate-pulse delay-700"></div>
       </div>
       
-      {/* شبكة خلفية خفيفة للمظهر الاحترافي */}
-      <div className="absolute inset-0 opacity-5">
+      {/* شبكة خلفية أكثر وضوحاً للمظهر الاحترافي */}
+      <div className="absolute inset-0 opacity-8">
         <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
-          backgroundSize: '20px 20px'
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.2) 1px, transparent 0)`,
+          backgroundSize: '24px 24px'
         }}></div>
       </div>
       
-      {/* حاوي متجاوب للأجهزة المختلفة */}
-      <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mx-auto relative z-10 px-4 sm:px-6 md:px-8">
+      {/* خطوط هندسية خفيفة للمظهر الاحترافي */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+        <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-white/30 to-transparent"></div>
+        <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-white/30 to-transparent"></div>
+      </div>
+      
+      {/* حاوي متجاوب للأجهزة المختلفة مع محاذاة مثالية */}
+      <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto relative z-10 px-4 sm:px-6 md:px-8">
         {/* الشريط العلوي المحسن - ترتيب جديد للأزرار مع مسافات متساوية */}
         <div className="flex justify-between items-center mb-6 pt-3 px-2 relative">
           {/* زر Live Updates على اليسار */}
@@ -277,15 +286,25 @@ function App() {
             الرقم الأول في تطوير لاعبي كرة القدم
           </h1>
           
-          {/* نص eFootball في سطر منفصل مع التوهج المطلوب */}
-          <p className="text-white text-xl font-bold mb-4 text-center animate-text-glow-pulse tracking-wider" style={{ 
-            fontFamily: 'Montserrat, sans-serif', 
-            color: '#FFFFFF',
-            textShadow: '0 0 10px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 255, 255, 0.6), 0 0 20px rgba(173, 216, 230, 0.5)',
-            filter: 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.4))',
-            fontWeight: '700'
+          {/* نص eFootball Mobile في سطر منفصل باللون الأخضر الفسفوري */}
+          <p className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-center leading-tight tracking-wider relative" style={{ 
+            fontFamily: '"Montserrat", "Poppins", sans-serif',
+            fontWeight: '900'
           }}>
-            eFootball Mobile
+            <span className="bg-gradient-to-r from-green-400 via-emerald-300 to-green-500 bg-clip-text text-transparent animate-pulse drop-shadow-2xl" style={{
+              textShadow: '0 0 20px rgba(34, 197, 94, 0.8), 0 0 40px rgba(34, 197, 94, 0.6), 0 0 60px rgba(34, 197, 94, 0.4)',
+              filter: 'drop-shadow(0 0 15px rgba(34, 197, 94, 0.9))'
+            }}>
+              eFootball Mobile
+            </span>
+            
+            {/* تأثير التوهج الإضافي الأخضر الفسفوري */}
+            <div className="absolute inset-0 bg-gradient-to-r from-green-400 via-emerald-300 to-green-500 bg-clip-text text-transparent opacity-60 blur-sm animate-pulse-slow" style={{ 
+              fontFamily: '"Montserrat", "Poppins", sans-serif',
+              fontWeight: '900'
+            }}>
+              eFootball Mobile
+            </div>
           </p>
 
           {/* مربع الإنجاز الذهبي المحسن مع نصوص عربية متسقة */}
@@ -308,46 +327,62 @@ function App() {
             </div>
           </div>
 
-          {/* زر التواصل محسن مع أزرار إضافية */}
-          <div className="flex flex-col gap-3 items-center">
-            {/* الزر الرئيسي - تواصل معنا */}
+          {/* الأزرار المحسنة مع زر "العب الآن" البارز */}
+          <div className="flex flex-col gap-4 items-center">
+            {/* الزر الرئيسي - العب الآن */}
+            <Button 
+              onClick={() => {
+                // يمكن إضافة رابط للعبة أو صفحة اللعب
+                alert('سيتم توجيهك إلى اللعبة قريباً!');
+              }}
+              className="bg-gradient-to-r from-green-500 via-emerald-400 to-green-600 hover:from-green-600 hover:via-emerald-500 hover:to-green-700 text-white font-black py-4 px-10 text-lg rounded-full shadow-2xl shadow-green-500/60 transition-all duration-300 hover:scale-110 relative overflow-hidden group border-2 border-green-300/50 hover:border-green-200/70 animate-pulse"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              <div className="flex items-center justify-center gap-3 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                <Play className="w-6 h-6" />
+                <span>العب الآن</span>
+                <Gamepad2 className="w-6 h-6" />
+              </div>
+            </Button>
+
+            {/* الزر الثانوي - تواصل معنا */}
             <Button 
               onClick={handleContactUs}
-              className="bg-gradient-to-r from-emerald-400 via-green-400 to-emerald-500 hover:from-emerald-500 hover:via-green-500 hover:to-emerald-600 text-white font-bold py-3 px-8 text-sm rounded-full shadow-xl shadow-emerald-500/50 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-emerald-300/40 hover:border-emerald-200/60"
+              className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 text-white font-bold py-3 px-8 text-sm rounded-full shadow-xl shadow-blue-500/40 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-blue-400/40 hover:border-blue-300/60"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-              <div className="flex items-center justify-center gap-2 relative z-10" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+              <div className="flex items-center justify-center gap-2 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
                 <Phone className="w-4 h-4" />
-                <span>تواصل معنا الآن</span>
+                <span>تواصل معنا</span>
               </div>
             </Button>
 
             {/* أزرار إضافية في صف واحد */}
-            <div className="flex gap-3 justify-center">
+            <div className="flex gap-3 justify-center flex-wrap">
               {/* زر عن التطبيق */}
               <Button 
                 onClick={() => {
-                  // يمكن إضافة modal أو صفحة منفصلة لاحقاً
                   alert('معلومات عن التطبيق ستكون متاحة قريباً');
                 }}
-                className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600/90 hover:to-purple-600/90 text-white font-semibold py-2 px-4 text-xs rounded-full shadow-lg shadow-blue-500/30 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-blue-400/30"
+                className="bg-gradient-to-r from-orange-500/70 to-red-500/70 hover:from-orange-600/80 hover:to-red-600/80 text-white font-semibold py-2 px-5 text-sm rounded-full shadow-lg shadow-orange-500/30 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-orange-400/30 hover:border-orange-300/50"
               >
-                <div className="flex items-center justify-center gap-1.5 relative z-10" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
-                  <Star className="w-3 h-3" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500"></div>
+                <div className="flex items-center justify-center gap-2 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                  <Info className="w-4 h-4" />
                   <span>عن التطبيق</span>
                 </div>
               </Button>
 
-              {/* زر الأخبار */}
+              {/* زر الأخبار - مع النافذة المنبثقة للإشعارات */}
               <Button 
                 onClick={() => {
-                  // يمكن إضافة صفحة أخبار لاحقاً
-                  alert('قسم الأخبار قيد التطوير');
+                  setShowNotificationModal(true);
                 }}
-                className="bg-gradient-to-r from-orange-500/80 to-red-500/80 hover:from-orange-600/90 hover:to-red-600/90 text-white font-semibold py-2 px-4 text-xs rounded-full shadow-lg shadow-orange-500/30 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-orange-400/30"
+                className="bg-gradient-to-r from-teal-500/70 to-cyan-500/70 hover:from-teal-600/80 hover:to-cyan-600/80 text-white font-semibold py-2 px-5 text-sm rounded-full shadow-lg shadow-teal-500/30 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-teal-400/30 hover:border-teal-300/50"
               >
-                <div className="flex items-center justify-center gap-1.5 relative z-10" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
-                  <Bell className="w-3 h-3" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500"></div>
+                <div className="flex items-center justify-center gap-2 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                  <Bell className="w-4 h-4" />
                   <span>الأخبار</span>
                 </div>
               </Button>
@@ -357,42 +392,42 @@ function App() {
 
 
 
-        {/* شريط البحث محسن مع قائمة تصفية */}
-        <div className="space-y-3 mb-4">
-          {/* شريط البحث الرئيسي */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/15 via-purple-500/15 to-emerald-500/15 rounded-xl blur-lg"></div>
-            <div className="relative bg-gradient-to-r from-slate-800/80 to-slate-700/80 backdrop-blur-xl border border-slate-500/40 rounded-2xl p-1 shadow-xl hover:border-blue-400/60 transition-all duration-300">
-              <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/60 rounded-xl">
-                <div className="p-2 bg-blue-500/25 rounded-xl">
-                  <Search className="w-4 h-4 text-blue-400" />
+        {/* شريط البحث مصغر ومتناسق مع التصميم */}
+        <div className="space-y-3 mb-6">
+          {/* شريط البحث الرئيسي مصغر */}
+          <div className="relative max-w-md mx-auto">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-emerald-500/10 rounded-xl blur-md"></div>
+            <div className="relative bg-gradient-to-r from-slate-800/70 to-slate-700/70 backdrop-blur-xl border border-slate-500/30 rounded-full p-0.5 shadow-lg hover:border-blue-400/50 transition-all duration-300">
+              <div className="flex items-center gap-2 px-3 py-2 bg-slate-800/50 rounded-full">
+                <div className="p-1.5 bg-blue-500/20 rounded-full">
+                  <Search className="w-3.5 h-3.5 text-blue-400" />
                 </div>
                 <Input
                   type="text"
-                  placeholder="ابحث عن لاعبك المفضل..."
+                  placeholder="ابحث عن لاعب..."
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     handleSearch(e.target.value);
                   }}
-                  className="bg-transparent border-none text-white placeholder-slate-400 focus:ring-0 text-sm font-medium flex-1 h-6"
-                  style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}
+                  className="bg-transparent border-none text-white placeholder-slate-400 focus:ring-0 text-sm font-medium flex-1 h-5"
+                  style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}
                 />
               </div>
             </div>
           </div>
 
-          {/* قائمة التصفية السريعة */}
-          <div className="flex gap-2 justify-center overflow-x-auto pb-2">
+          {/* قائمة التصفية السريعة مصغرة */}
+          <div className="flex gap-2 justify-center overflow-x-auto pb-1">
             <button 
               onClick={() => {
                 setSearchTerm('');
                 handleSearch('');
               }}
-              className="bg-gradient-to-r from-emerald-500/20 to-green-500/20 hover:from-emerald-500/30 hover:to-green-500/30 text-emerald-400 font-semibold py-2 px-4 text-xs rounded-full border border-emerald-500/30 hover:border-emerald-400/50 transition-all duration-300 whitespace-nowrap"
-              style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}
+              className="bg-gradient-to-r from-emerald-500/15 to-green-500/15 hover:from-emerald-500/25 hover:to-green-500/25 text-emerald-400 font-medium py-1.5 px-3 text-xs rounded-full border border-emerald-500/25 hover:border-emerald-400/40 transition-all duration-300 whitespace-nowrap"
+              style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}
             >
-              جميع اللاعبين
+              الكل
             </button>
             
             <button 
@@ -400,10 +435,10 @@ function App() {
                 const topPlayers = players.filter(player => calculateOverallRating(player) >= 90);
                 setFilteredPlayers(topPlayers);
               }}
-              className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 hover:from-yellow-500/30 hover:to-orange-500/30 text-yellow-400 font-semibold py-2 px-4 text-xs rounded-full border border-yellow-500/30 hover:border-yellow-400/50 transition-all duration-300 whitespace-nowrap"
-              style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}
+              className="bg-gradient-to-r from-yellow-500/15 to-orange-500/15 hover:from-yellow-500/25 hover:to-orange-500/25 text-yellow-400 font-medium py-1.5 px-3 text-xs rounded-full border border-yellow-500/25 hover:border-yellow-400/40 transition-all duration-300 whitespace-nowrap"
+              style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}
             >
-              النجوم (90+)
+              النجوم
             </button>
             
             <button 
@@ -414,10 +449,10 @@ function App() {
                 });
                 setFilteredPlayers(midPlayers);
               }}
-              className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 hover:from-blue-500/30 hover:to-purple-500/30 text-blue-400 font-semibold py-2 px-4 text-xs rounded-full border border-blue-500/30 hover:border-blue-400/50 transition-all duration-300 whitespace-nowrap"
-              style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}
+              className="bg-gradient-to-r from-blue-500/15 to-purple-500/15 hover:from-blue-500/25 hover:to-purple-500/25 text-blue-400 font-medium py-1.5 px-3 text-xs rounded-full border border-blue-500/25 hover:border-blue-400/40 transition-all duration-300 whitespace-nowrap"
+              style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}
             >
-              المتميزون (80-89)
+              المتميزون
             </button>
           </div>
         </div>
@@ -825,6 +860,116 @@ function App() {
                 </div>
               </CardContent>
             </Card>
+          </div>
+        )}
+
+        {/* النافذة المنبثقة الجديدة للإشعارات - تصميم حديث مع خلفية سوداء ونقاط بيضاء */}
+        {showNotificationModal && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="relative max-w-md w-full">
+              {/* الخلفية السوداء مع النقاط البيضاء */}
+              <div className="absolute inset-0 bg-black rounded-3xl"></div>
+              <div className="absolute inset-0 opacity-15" style={{
+                backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.8) 1px, transparent 0)`,
+                backgroundSize: '20px 20px'
+              }}></div>
+              
+              {/* محتوى النافذة */}
+              <div className="relative bg-gradient-to-br from-black/95 via-gray-900/95 to-black/95 rounded-3xl p-8 border border-white/20 shadow-2xl">
+                {/* زر الإغلاق */}
+                <button 
+                  onClick={() => setShowNotificationModal(false)}
+                  className="absolute top-4 right-4 w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-300"
+                >
+                  <span className="text-white text-lg">×</span>
+                </button>
+                
+                {/* أيقونة الجرس */}
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                    <Bell className="w-8 h-8 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-black text-white mb-2" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                    اشترك في الإشعارات
+                  </h2>
+                  <p className="text-gray-300 text-sm" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                    احصل على آخر الأخبار والتحديثات
+                  </p>
+                </div>
+                
+                {/* النقاط التشجيعية */}
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span className="text-white text-sm" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                      أخبار اللاعبين الجدد فور إضافتهم
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <span className="text-white text-sm" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                      تحديثات التطوير والتحسينات
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                    <span className="text-white text-sm" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                      عروض وأحداث خاصة
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                    <span className="text-white text-sm" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                      نصائح وإرشادات للتطوير
+                    </span>
+                  </div>
+                </div>
+                
+                {/* زر الاشتراك */}
+                <Button 
+                  onClick={async () => {
+                    try {
+                      // تفعيل الإشعارات
+                      if ('Notification' in window) {
+                        const permission = await Notification.requestPermission();
+                        if (permission === 'granted') {
+                          // زيادة عداد المشتركين
+                          const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
+                          localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
+                          
+                          // إظهار إشعار تأكيد
+                          new Notification('تم تفعيل الإشعارات بنجاح!', {
+                            body: 'ستصلك الآن جميع الأخبار والتحديثات',
+                            icon: '/favicon.ico'
+                          });
+                          
+                          setShowNotificationModal(false);
+                        } else {
+                          alert('يرجى السماح بالإشعارات من إعدادات المتصفح');
+                        }
+                      } else {
+                        alert('متصفحك لا يدعم الإشعارات');
+                      }
+                    } catch (error) {
+                      console.error('خطأ في تفعيل الإشعارات:', error);
+                      alert('حدث خطأ، يرجى المحاولة مرة أخرى');
+                    }
+                  }}
+                  className="w-full bg-gradient-to-r from-green-500 via-emerald-400 to-green-600 hover:from-green-600 hover:via-emerald-500 hover:to-green-700 text-white font-bold py-4 px-6 rounded-2xl shadow-xl shadow-green-500/30 transition-all duration-300 hover:scale-105 relative overflow-hidden group"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                  <div className="flex items-center justify-center gap-3 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                    <Bell className="w-5 h-5" />
+                    <span>اضغط هنا للمتابعة</span>
+                  </div>
+                </Button>
+                
+                {/* نص صغير */}
+                <p className="text-gray-400 text-xs text-center mt-4" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                  يمكنك إلغاء الاشتراك في أي وقت من إعدادات المتصفح
+                </p>
+              </div>
+            </div>
           </div>
         )}
       </div>
