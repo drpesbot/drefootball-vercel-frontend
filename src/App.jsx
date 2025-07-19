@@ -6,6 +6,7 @@ import { Search, Settings, Users, Star, Zap, Trophy, Award, Crown, Sparkles, Pho
 import AddPlayerPage from './components/AddPlayerPage'
 import './App.css'
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+import ApiService from './services/api.js';
 
 import appIcon from './assets/images/football_icon_no_black_edges.png'
 import PasswordProtection from './components/PasswordProtection.jsx'
