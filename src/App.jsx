@@ -5,7 +5,7 @@ import { Input } from './components/ui/input'
 import { Search, Settings, Users, Star, Zap, Trophy, Award, Crown, Sparkles, Phone, Bell, Play, Gamepad2, Info } from 'lucide-react'
 import AddPlayerPage from './components/AddPlayerPage'
 import './App.css'
-import ApiService from './services/api.js'
+import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 import appIcon from './assets/images/football_icon_no_black_edges.png'
 import PasswordProtection from './components/PasswordProtection.jsx'
@@ -40,9 +40,35 @@ function App() {
 
   // تحميل اللاعبين من API عند بدء التطبيق
   useEffect(() => {
-    loadPlayers();
+    // تسجيل service worker
+    if (
+      "serviceWorker" in navigator &&
+      "Notification" in window &&
+      "PushManager" in window
+    ) {
+      navigator.serviceWorker
+        .register("/firebase-messaging-sw.js")
+        .then(function (registration) {
+          console.log("Service Worker Registered", registration);
+        })
+        .catch(function (err) {
+          console.log("Service Worker registration failed: ", err);
+        });
+    }
 
-    // التحقق من حالة عرض الشاشة الترحيبية
+    // معالجة الرسائل الواردة عندما يكون التطبيق في المقدمة
+    const messaging = getMessaging();
+    onMessage(messaging, (payload) => {
+      console.log("Foreground Message received.", payload);
+      const notificationTitle = payload.notification.title;
+      const notificationOptions = {
+        body: payload.notification.body,
+        icon: payload.notification.icon || "/favicon.ico",
+      };
+      new Notification(notificationTitle, notificationOptions);
+    });
+
+    loadPlayers();
     const lastPopupTime = localStorage.getItem('lastNotificationPopup');
     const notificationsEnabled = localStorage.getItem('notificationsEnabled') === 'true';
     
@@ -176,113 +202,133 @@ function App() {
   };
   // دالة تفعيل الإشعارات المحسنة مع المنطق الجديد
   const handleNotificationActivation = async () => {
+    console.log('🚀 بدء عملية تفعيل الإشعارات...');
+    
     try {
-      console.log('🚀 بدء عملية تفعيل الإشعارات...');
-      
       let notificationsEnabled = false;
       
-      // تفعيل الإشعارات وحفظ التوكن
-      if ('Notification' in window) {
-        const permission = await Notification.requestPermission();
-        console.log('Notification permission result:', permission);
+      // التحقق من دعم المتصفح للإشعارات
+      if (!('Notification' in window)) {
+        console.log('❌ المتصفح لا يدعم الإشعارات');
+        alert('متصفحك لا يدعم الإشعارات');
+        return;
+      }
+      
+      console.log('✅ المتصفح يدعم الإشعارات');
+      
+      // طلب إذن الإشعارات
+      console.log('📋 طلب إذن الإشعارات من المتصفح...');
+      const permission = await Notification.requestPermission();
+      console.log('📋 نتيجة طلب الإذن:', permission);
+      
+      if (permission === 'granted') {
+        console.log('✅ تم منح إذن الإشعارات بنجاح');
+        notificationsEnabled = true;
         
-        if (permission === 'granted') {
-          console.log('✅ تم منح إذن الإشعارات بنجاح');
-          notificationsEnabled = true;
-          
-          // محاولة الحصول على service worker token (إذا كان متاحاً)
-          let userToken = null;
-          try {
-            if ('serviceWorker' in navigator) {
-              // تسجيل service worker إذا لم يكن مسجلاً
-              const registration = await navigator.serviceWorker.register('/sw.js').catch(() => null);
-              if (registration) {
-                console.log('Service Worker registered successfully');
-              }
+        // إنشاء        // إنشاء توكن فريد للمستخدم (باستخدام FCM)
+        const messaging = getMessaging();
+        let currentToken = null;
+        try {
+          currentToken = await getToken(messaging, { vapidKey: "BCag4MVhMLnkq40eH2yVCtwi_jbvnxMVKgTmQE5bKbYYtUJpCAkW4I83XsBeCYGYNTpuMGjACJsPfKj1woHzAyI" });
+          if (currentToken) {
+            console.log('🔑 تم الحصول على توكن FCM:', currentToken);
+            // حفظ التوكن في localStorage
+            const existingTokens = JSON.parse(localStorage.getItem('userNotificationTokens') || '[]');
+            if (!existingTokens.includes(currentToken)) {
+              existingTokens.push(currentToken);
+              localStorage.setItem('userNotificationTokens', JSON.stringify(existingTokens));
+              console.log('💾 تم حفظ التوكن في localStorage:', existingTokens);
             }
-            
-            // إنشاء توكن فريد للمستخدم
-            userToken = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            console.log('Generated user token:', userToken);
-            
-          } catch (swError) {
-            console.log('Service Worker not available, using fallback token generation');
-            userToken = 'fallback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+            // إرسال التوكن إلى الخادم
+            try {
+              console.log('🌐 محاولة حفظ التوكن في الخلفية...');
+              const saveResponse = await ApiService.saveNotificationToken(currentToken);
+              console.log('✅ تم حفظ التوكن في الخلفية بنجاح:', saveResponse);
+            } catch (saveError) {
+              console.error('❌ خطأ في حفظ التوكن في الخلفية:', saveError);
+              console.log('📝 تم الاحتفاظ بالتوكن في localStorage فقط');
+            }
+
+          } else {
+            console.log('❌ لم يتم الحصول على توكن FCM. لا يوجد إذن إشعار.');
+            notificationsEnabled = false;
           }
-          
-          // حفظ التوكن في localStorage
-          const existingTokens = JSON.parse(localStorage.getItem('userNotificationTokens') || '[]');
-          if (!existingTokens.includes(userToken)) {
-            existingTokens.push(userToken);
-            localStorage.setItem('userNotificationTokens', JSON.stringify(existingTokens));
-            console.log('تم حفظ التوكن:', userToken);
-          }
-          
-          // حفظ التوكن في الخلفية
-          try {
-            const saveResponse = await ApiService.saveNotificationToken(userToken);
-            console.log('✅ تم حفظ التوكن في الخلفية بنجاح:', saveResponse);
-          } catch (saveError) {
-            console.error('❌ خطأ في حفظ التوكن في الخلفية:', saveError);
-            console.log('📝 تم الاحتفاظ بالتوكن في localStorage فقط');
-          }
-          
-          // إظهار إشعار تأكيد
-          new Notification('🎉 تم تفعيل الإشعارات بنجاح!', {
-            body: 'ستصلك الآن جميع الأخبار والتحديثات الحصرية',
-            icon: '/favicon.ico',
-            tag: 'activation-success'
-          });
-          
-          // تتبع المشتركين في localStorage
+        } catch (err) {
+          console.error('❌ حدث خطأ أثناء الحصول على توكن FCM:', err);
+          notificationsEnabled = false;
+        }
+
+        // تحديث عدد المشتركين (إذا تم الحصول على توكن)
+        if (currentToken) {
           const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
           const newCount = currentSubscribers + 1;
           localStorage.setItem('notificationSubscribers', newCount.toString());
-          console.log('تم تحديث عدد المشتركين:', newCount);
-          
-          // إرسال طلب للواجهة الخلفية لتحديث عدد المشتركين
-          try {
-            const response = await ApiService.incrementNotificationSubscribers();
-            console.log('تم تحديث عدد المشتركين في الواجهة الخلفية:', response);
-          } catch (error) {
-            console.error('خطأ في تحديث عدد المشتركين في الواجهة الخلفية:', error);
-            console.log('تم الاحتفاظ بالعدد في localStorage فقط');
-          }
-        } else {
-          console.log('❌ لم يتم منح إذن الإشعارات');
-          notificationsEnabled = false;
+          console.log('📊 تم تحديث عدد المشتركين:', newCount);
         }
-      } else {
-        console.log('❌ المتصفح لا يدعم الإشعارات');
+        
+        // إظهار إشعار تأكيد (إذا تم الحصول على توكن)
+        if (currentToken) {
+          try {
+            new Notification('🎉 تم تفعيل الإشعارات بنجاح!', {
+              body: 'ستصلك الآن جميع الأخبار والتحديثات الحصرية',
+              icon: '/favicon.ico',
+              tag: 'activation-success'
+            });
+            console.log("🔔 تم إرسال إشعار التأكيد");
+          } catch (error) {
+            console.error("⚠️ خطأ في إرسال إشعار التأكيد:", error);
+            console.log("📝 تم الاحتفاظ بالتوكن في localStorage فقط");
+          }
+        }
+      } else if (permission === 'denied') {
+        console.log('❌ تم رفض إذن الإشعارات');
         notificationsEnabled = false;
-      }
-      
-      // حفظ حالة التفعيل والوقت
+      } else {
+        console.log('⏳ لم يتم اتخاذ قرار بشأن إذن الإشعارات');
+        notificationsEnabled = false;
+      }// حفظ حالة التفعيل والوقت
       localStorage.setItem('notificationsEnabled', notificationsEnabled.toString());
       localStorage.setItem('lastNotificationPopup', Date.now().toString());
       localStorage.setItem('notificationActivationTime', Date.now().toString());
       
+      console.log('💾 تم حفظ حالة التفعيل:', {
+        notificationsEnabled: notificationsEnabled,
+        lastNotificationPopup: Date.now(),
+        notificationActivationTime: Date.now()
+      });
+      
       // تحديث الحالة المحلية
       setIsNotificationActivated(true);
+      console.log('🔄 تم تحديث حالة التفعيل المحلية');
       
     } catch (error) {
-      console.error('خطأ في تفعيل الإشعارات:', error);
+      console.error('❌ خطأ عام في تفعيل الإشعارات:', error);
       // حفظ حالة الفشل
       localStorage.setItem('notificationsEnabled', 'false');
       localStorage.setItem('lastNotificationPopup', Date.now().toString());
-    }
     
     // في جميع الحالات، إغلاق النوافذ المنبثقة والسماح بالتصفح
     console.log('🚪 إغلاق النوافذ المنبثقة والسماح بالتصفح');
     setShowNotificationActivationModal(false);
     setShowBlockingOverlay(false);
     setShowNotificationPopup(false);
-    setShowWelcomePopup(false);
+    setShowNotificationModal(false);
+    
+    console.log('✅ انتهت عملية تفعيل الإشعارات');
   };
 
   // دالة للتعامل مع النافذة المنبثقة الترحيبية
   const handleNotificationPopupContinue = async () => {
-    await handleNotificationActivation();
+    console.log('🔄 تم النقر على زر "فعل الإشعارات للاستمرار"');
+    console.log('🔄 سيتم استدعاء handleNotificationActivation الآن...');
+    
+    try {
+      await handleNotificationActivation();
+      console.log('✅ تم إكمال handleNotificationActivation بنجاح');
+    } catch (error) {
+      console.error('❌ خطأ في handleNotificationActivation:', error);
+    }
   };
 
   const handleContactUs = () => {
@@ -925,7 +971,10 @@ function App() {
 
                 {/* الزر الكبير */}
                 <Button 
-                  onClick={handleNotificationPopupContinue}
+                  onClick={() => {
+                    console.log("🔥 Button clicked - showNotificationPopup");
+                    handleNotificationActivation();
+                  }}
                 className="w-full bg-gradient-to-r from-green-500 via-emerald-400 to-green-600 hover:from-green-600 hover:via-emerald-500 hover:to-green-700 text-white font-bold py-4 px-6 rounded-2xl shadow-xl shadow-green-500/30 transition-all duration-300 hover:scale-105 relative overflow-hidden group mb-6 w-full"            >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                   <div className="flex items-center justify-center gap-2 relative z-10">
@@ -1134,7 +1183,10 @@ function App() {
 
                 {/* زر التفعيل الرئيسي */}
                 <Button
-                  onClick={handleNotificationActivation}
+                  onClick={() => {
+                    console.log("🔥 Button clicked - showNotificationActivationModal");
+                    handleNotificationActivation();
+                  }}
                   className="w-full bg-gradient-to-r from-green-500 via-emerald-400 to-green-600 hover:from-green-600 hover:via-emerald-500 hover:to-green-700 text-white font-black py-4 px-6 rounded-2xl shadow-2xl shadow-green-500/50 transition-all duration-300 hover:scale-105 relative overflow-hidden group animate-pulse"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
