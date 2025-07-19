@@ -155,7 +155,7 @@ function App() {
           const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
           localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
         } else {
-          console.log('Notification permission denied.')
+          console.log('Notification permission denied.');
         }
       });
     }
@@ -170,7 +170,6 @@ function App() {
     );
     setFilteredPlayers(results);
   };
-
   // عرض صفحة الحماية
   if (currentPage === 'password') {
     return <PasswordProtection onAuthenticated={handleAuthenticated} />
