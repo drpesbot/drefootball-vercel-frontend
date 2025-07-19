@@ -266,7 +266,12 @@ function App() {
             <div className="relative z-10">
               <div className="flex items-center justify-center gap-2 mb-1">
                 <Trophy className="w-4 h-4 text-yellow-400" />
-                <h2 className="text-sm font-bold text-yellow-300">رقم 1 في تطوير لاعبي eFootball</h2>
+             <h2 className="text-sm font-bold text-yellow-300" style={{ fontFamily: '"Noto Sans Arabic", sans-serif' }}>رقم 1 في تطوير لاعبي</h2>
+          <p className="text-white text-base font-sans font-bold mb-3 text-center" style={{ fontFamily: 'Montserrat, sans-serif', textShadow: '0 0 8px rgba(255, 255, 255, 0.7), 0 0 12px rgba(255, 255, 255, 0.5)' }}>
+            eFootball
+          </p>dow: '0 0 8px rgba(255, 255, 255, 0.7), 0 0 12px rgba(255, 255, 255, 0.5)' }}>
+                  eFootball
+                </p>
                 <Trophy className="w-4 h-4 text-yellow-400" />
               </div>
               <div className="flex items-center justify-center gap-1 text-amber-200 text-xs">
@@ -334,11 +339,11 @@ function App() {
               {filteredPlayers.map((player, index) => (
                   <Card 
                   key={index}
-                  className="bg-gradient-to-br from-slate-800/70 via-slate-900/80 to-slate-800/70 border border-slate-600/50 backdrop-blur-xl hover:border-blue-500/70 transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden shadow-lg hover:shadow-xl animate-pulse-white-glow"
+                  className="bg-gradient-to-br from-slate-800/70 via-slate-900/80 to-slate-800/70 border border-slate-600/50 backdrop-blur-xl hover:border-blue-500/70 transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden shadow-lg hover:shadow-xl"
                   onClick={() => showPlayerDetails(player)}
                 >
                   {/* تأثير الإضاءة عند التمرير */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-card-flash"></div>
                   
                   <CardContent className="p-3 text-center relative z-10">
                     {/* صورة اللاعب مع الفلاش المتحرك */}
