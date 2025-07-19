@@ -34,15 +34,35 @@ function App() {
   const [showNotificationModal, setShowNotificationModal] = useState(false)
   const [showNotificationActivationModal, setShowNotificationActivationModal] = useState(false)
   const [notificationsBlocked, setNotificationsBlocked] = useState(false)
+  const [isNotificationActivated, setIsNotificationActivated] = useState(false)
+  const [showBlockingOverlay, setShowBlockingOverlay] = useState(true)
 
   // تحميل اللاعبين من API عند بدء التطبيق
   useEffect(() => {
     loadPlayers();
 
-    // التحقق من LocalStorage لعرض النافذة المنبثقة
-    const hasSeenPopup = localStorage.getItem('hasSeenNotificationPopup')
-    if (!hasSeenPopup) {
-      // setShowNotificationPopup(true); // سيتم تفعيلها عند الضغط على البحث
+    // التحقق من حالة تفعيل الإشعارات
+    const notificationActivated = localStorage.getItem('notificationActivated')
+    const activationTime = localStorage.getItem('notificationActivationTime')
+    
+    if (notificationActivated && activationTime) {
+      const currentTime = new Date().getTime()
+      const timeDiff = currentTime - parseInt(activationTime)
+      const hoursDiff = timeDiff / (1000 * 60 * 60)
+      
+      // إذا مر أقل من 24 ساعة، لا نحجب التصفح
+      if (hoursDiff < 24) {
+        setIsNotificationActivated(true)
+        setShowBlockingOverlay(false)
+      } else {
+        // إذا مر أكثر من 24 ساعة، نحجب التصفح مرة أخرى
+        setIsNotificationActivated(false)
+        setShowBlockingOverlay(true)
+        setShowNotificationActivationModal(true)
+      }
+    } else {
+      // إذا لم يتم تفعيل الإشعارات من قبل، نحجب التصفح
+      setShowNotificationActivationModal(true)
     }
   }, [])
 
@@ -113,16 +133,26 @@ function App() {
   }
 
   const handleSearch = (term = searchTerm) => {
-    // التحقق من آخر مرة ظهرت فيها النافذة المنبثقة
+    // التحقق من تفعيل الإشعارات أولاً
+    if (!isNotificationActivated) {
+      // إذا لم يتم تفعيل الإشعارات، إظهار النافذة المنبثقة
+      setShowNotificationActivationModal(true);
+      return; // لا تقم بالبحث حتى يتم تفعيل الإشعارات
+    }
+
+    // التحقق من آخر مرة ظهرت فيها النافذة المنبثقة (نظام الـ 24 ساعة)
     const lastPopupTime = localStorage.getItem("lastNotificationPopupTime");
+    const activationTime = localStorage.getItem('notificationActivationTime');
     const currentTime = new Date().getTime();
     const twentyFourHours = 24 * 60 * 60 * 1000; // 24 ساعة بالميلي ثانية
     
-    // إظهار النافذة المنبثقة إذا مر 24 ساعة أو أكثر من آخر مرة
-    if (term.trim() !== '' && (!lastPopupTime || (currentTime - parseInt(lastPopupTime)) >= twentyFourHours)) {
-      setShowNotificationPopup(true);
-      localStorage.setItem("lastNotificationPopupTime", currentTime.toString());
-      return; // لا تقم بالبحث حتى يتم التعامل مع النافذة المنبثقة
+    // إظهار النافذة المنبثقة إذا مر 24 ساعة أو أكثر من آخر تفعيل
+    if (term.trim() !== '' && activationTime && (currentTime - parseInt(activationTime)) >= twentyFourHours) {
+      setShowNotificationActivationModal(true);
+      // إعادة تعيين حالة التفعيل
+      setIsNotificationActivated(false);
+      setShowBlockingOverlay(true);
+      return; // لا تقم بالبحث حتى يتم إعادة تفعيل الإشعارات
     }
 
     const lowerCaseSearchTerm = term.toLowerCase();
@@ -131,6 +161,43 @@ function App() {
     );
     setFilteredPlayers(results);
   };
+  // دالة تفعيل الإشعارات الجديدة
+  const handleNotificationActivation = async () => {
+    // تفعيل الإشعارات
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(async permission => {
+        if (permission === 'granted') {
+          console.log('Notification permission granted.')
+          
+          // تتبع المشتركين في localStorage
+          const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
+          localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
+          
+          // إرسال طلب للواجهة الخلفية لتحديث عدد المشتركين
+          try {
+            await ApiService.incrementNotificationSubscribers();
+            console.log('Notification subscriber count updated on backend.');
+          } catch (error) {
+            console.error('Error updating subscriber count on backend:', error);
+          }
+        }
+      });
+    }
+    
+    // حفظ حالة التفعيل مع الوقت الحالي
+    const currentTime = new Date().getTime()
+    localStorage.setItem('notificationActivated', 'true')
+    localStorage.setItem('notificationActivationTime', currentTime.toString())
+    
+    // تحديث الحالة وإزالة الحجب
+    setIsNotificationActivated(true)
+    setShowBlockingOverlay(false)
+    setShowNotificationActivationModal(false)
+    
+    // إظهار رسالة تأكيد
+    alert('تم تفعيل الإشعارات بنجاح! يمكنك الآن تصفح الموقع بحرية.')
+  }
+
   const handleContactUs = () => {
     window.open('https://linktr.ee/Drefootball26', '_blank')
   }
@@ -297,20 +364,20 @@ function App() {
             الرقم الأول في تطوير لاعبي كرة القدم
           </h1>
           
-          {/* نص eFootball Mobile في سطر منفصل باللون الأخضر الفسفوري */}
+          {/* نص eFootball Mobile في سطر منفصل باللون الأبيض */}
           <p className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-center leading-tight tracking-wider relative" style={{ 
             fontFamily: '"Montserrat", "Poppins", sans-serif',
             fontWeight: '900'
           }}>
-            <span className="bg-gradient-to-r from-green-400 via-emerald-300 to-green-500 bg-clip-text text-transparent animate-pulse drop-shadow-2xl" style={{
-              textShadow: '0 0 20px rgba(34, 197, 94, 0.8), 0 0 40px rgba(34, 197, 94, 0.6), 0 0 60px rgba(34, 197, 94, 0.4)',
-              filter: 'drop-shadow(0 0 15px rgba(34, 197, 94, 0.9))'
+            <span className="text-white animate-pulse drop-shadow-2xl" style={{
+              textShadow: '0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.4)',
+              filter: 'drop-shadow(0 0 15px rgba(255, 255, 255, 0.9))'
             }}>
               eFootball Mobile
             </span>
             
-            {/* تأثير التوهج الإضافي الأخضر الفسفوري */}
-            <div className="absolute inset-0 bg-gradient-to-r from-green-400 via-emerald-300 to-green-500 bg-clip-text text-transparent opacity-60 blur-sm animate-pulse-slow" style={{ 
+            {/* تأثير التوهج الإضافي الأبيض */}
+            <div className="absolute inset-0 text-white opacity-60 blur-sm animate-pulse-slow" style={{ 
               fontFamily: '"Montserrat", "Poppins", sans-serif',
               fontWeight: '900'
             }}>
@@ -338,24 +405,8 @@ function App() {
             </div>
           </div>
 
-          {/* الأزرار المحسنة مع زر "العب الآن" البارز */}
+          {/* الأزرار المحسنة */}
           <div className="flex flex-col gap-4 items-center">
-            {/* الزر الرئيسي - العب الآن */}
-            <Button 
-              onClick={() => {
-                // يمكن إضافة رابط للعبة أو صفحة اللعب
-                alert('سيتم توجيهك إلى اللعبة قريباً!');
-              }}
-              className="bg-gradient-to-r from-green-500 via-emerald-400 to-green-600 hover:from-green-600 hover:via-emerald-500 hover:to-green-700 text-white font-black py-4 px-10 text-lg rounded-full shadow-2xl shadow-green-500/60 transition-all duration-300 hover:scale-110 relative overflow-hidden group border-2 border-green-300/50 hover:border-green-200/70 animate-pulse"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-              <div className="flex items-center justify-center gap-3 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
-                <Play className="w-6 h-6" />
-                <span>العب الآن</span>
-                <Gamepad2 className="w-6 h-6" />
-              </div>
-            </Button>
-
             {/* زر تفعيل الإشعارات الجديد */}
             <Button 
               onClick={() => setShowNotificationActivationModal(true)}
@@ -380,37 +431,6 @@ function App() {
                 <span>تواصل معنا</span>
               </div>
             </Button>
-
-            {/* أزرار إضافية في صف واحد */}
-            <div className="flex gap-3 justify-center flex-wrap">
-              {/* زر عن التطبيق */}
-              <Button 
-                onClick={() => {
-                  alert('معلومات عن التطبيق ستكون متاحة قريباً');
-                }}
-                className="bg-gradient-to-r from-orange-500/70 to-red-500/70 hover:from-orange-600/80 hover:to-red-600/80 text-white font-semibold py-2 px-5 text-sm rounded-full shadow-lg shadow-orange-500/30 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-orange-400/30 hover:border-orange-300/50"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500"></div>
-                <div className="flex items-center justify-center gap-2 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
-                  <Info className="w-4 h-4" />
-                  <span>عن التطبيق</span>
-                </div>
-              </Button>
-
-              {/* زر الأخبار - مع النافذة المنبثقة للإشعارات */}
-              <Button 
-                onClick={() => {
-                  setShowNotificationModal(true);
-                }}
-                className="bg-gradient-to-r from-teal-500/70 to-cyan-500/70 hover:from-teal-600/80 hover:to-cyan-600/80 text-white font-semibold py-2 px-5 text-sm rounded-full shadow-lg shadow-teal-500/30 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-teal-400/30 hover:border-teal-300/50"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500"></div>
-                <div className="flex items-center justify-center gap-2 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
-                  <Bell className="w-4 h-4" />
-                  <span>الأخبار</span>
-                </div>
-              </Button>
-            </div>
           </div>
         </div>
 
@@ -1135,6 +1155,46 @@ function App() {
                 {/* نص الإلغاء */}
                 <p className="text-center text-gray-500 text-xs mt-2" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
                   يمكنك إلغاء الاشتراك في أي وقت من إعدادات المتصفح
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* طبقة حجب التصفح حتى تفعيل الإشعارات */}
+        {showBlockingOverlay && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
+            <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black p-8 rounded-3xl shadow-2xl max-w-md mx-4 border border-gray-700/50 relative overflow-hidden">
+              {/* تأثيرات الخلفية */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 animate-pulse"></div>
+              
+              <div className="relative z-10 text-center">
+                <div className="mb-6">
+                  <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-full mx-auto flex items-center justify-center mb-4 animate-bounce">
+                    <Bell className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-black text-white mb-2" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                    مرحباً بك في eFootball Mobile!
+                  </h3>
+                  <p className="text-gray-300 text-sm" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                    للوصول إلى جميع ميزات الموقع، يرجى تفعيل الإشعارات أولاً
+                  </p>
+                </div>
+
+                <Button 
+                  onClick={handleNotificationActivation}
+                  className="w-full bg-gradient-to-r from-orange-500 via-red-400 to-pink-500 hover:from-orange-600 hover:via-red-500 hover:to-pink-600 text-white font-black py-4 px-6 rounded-2xl shadow-2xl shadow-orange-500/50 transition-all duration-300 hover:scale-105 relative overflow-hidden group animate-pulse"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                  <div className="flex items-center justify-center gap-3 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                    <Bell className="w-6 h-6 animate-pulse" />
+                    <span className="text-lg">🚀 تفعيل الإشعارات للمتابعة</span>
+                    <Sparkles className="w-6 h-6 animate-pulse" />
+                  </div>
+                </Button>
+
+                <p className="text-center text-gray-400 text-xs mt-4" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                  بعد التفعيل، ستتمكن من تصفح الموقع واستخدام جميع الميزات
                 </p>
               </div>
             </div>
