@@ -164,39 +164,56 @@ function App() {
   };
   // دالة تفعيل الإشعارات الجديدة
   const handleNotificationActivation = async () => {
-    // تفعيل الإشعارات
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission().then(async permission => {
+    try {
+      // تفعيل الإشعارات
+      if ('Notification' in window) {
+        const permission = await Notification.requestPermission();
         if (permission === 'granted') {
-          console.log('Notification permission granted.')
-          
-          // تتبع المشتركين في localStorage
-          const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
-          localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
-          
-          // إرسال طلب للواجهة الخلفية لتحديث عدد المشتركين
-          try {
-            await ApiService.incrementNotificationSubscribers();
-            console.log('Notification subscriber count updated on backend.');
-          } catch (error) {
-            console.error('Error updating subscriber count on backend:', error);
-          }
+          console.log('Notification permission granted.');
         }
-      });
+      }
+      
+      // تتبع المشتركين في localStorage
+      const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
+      localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
+      
+      // إرسال طلب للواجهة الخلفية لتحديث عدد المشتركين
+      try {
+        const response = await ApiService.incrementNotificationSubscribers();
+        console.log('Notification subscriber count updated on backend:', response);
+      } catch (error) {
+        console.error('Error updating subscriber count on backend:', error);
+        // في حالة فشل الإرسال للواجهة الخلفية، نحتفظ بالعدد في localStorage فقط
+        console.log('Fallback: Subscriber count saved in localStorage only');
+      }
+      
+      // حفظ حالة التفعيل مع الوقت الحالي
+      const currentTime = new Date().getTime();
+      localStorage.setItem('notificationActivated', 'true');
+      localStorage.setItem('notificationActivationTime', currentTime.toString());
+      
+      // تحديث الحالة وإزالة الحجب
+      setIsNotificationActivated(true);
+      setShowBlockingOverlay(false);
+      setShowNotificationActivationModal(false);
+      
+      // إظهار رسالة تأكيد
+      alert('تم تفعيل الإشعارات بنجاح! يمكنك الآن تصفح الموقع بحرية.');
+      
+    } catch (error) {
+      console.error('Error in notification activation:', error);
+      
+      // حتى في حالة الخطأ، نسمح للمستخدم بالمتابعة
+      const currentTime = new Date().getTime();
+      localStorage.setItem('notificationActivated', 'true');
+      localStorage.setItem('notificationActivationTime', currentTime.toString());
+      
+      setIsNotificationActivated(true);
+      setShowBlockingOverlay(false);
+      setShowNotificationActivationModal(false);
+      
+      alert('تم تفعيل الإشعارات! يمكنك الآن تصفح الموقع بحرية.');
     }
-    
-    // حفظ حالة التفعيل مع الوقت الحالي
-    const currentTime = new Date().getTime()
-    localStorage.setItem('notificationActivated', 'true')
-    localStorage.setItem('notificationActivationTime', currentTime.toString())
-    
-    // تحديث الحالة وإزالة الحجب
-    setIsNotificationActivated(true)
-    setShowBlockingOverlay(false)
-    setShowNotificationActivationModal(false)
-    
-    // إظهار رسالة تأكيد
-    alert('تم تفعيل الإشعارات بنجاح! يمكنك الآن تصفح الموقع بحرية.')
   }
 
   const handleContactUs = () => {

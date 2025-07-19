@@ -56,11 +56,23 @@ function AddPlayerPage({ onBack }) {
 
   const loadSubscribersCount = async () => {
     try {
+      console.log('Loading subscribers count from backend...');
       const response = await ApiService.getNotificationSubscribers();
-      setSubscribersCount(response.count);
+      console.log('Backend response:', response);
+      
+      if (response && typeof response.count === 'number') {
+        setSubscribersCount(response.count);
+        console.log('Subscribers count loaded from backend:', response.count);
+      } else {
+        throw new Error('Invalid response format from backend');
+      }
     } catch (error) {
       console.error('Error loading subscribers count from backend:', error);
-      // Fallback to localStorage if backend fai      const count = parseInt(localStorage.getItem('notificationSubscribers') || '0');      setSubscribersCount(count);
+      
+      // Fallback to localStorage if backend fails
+      const count = parseInt(localStorage.getItem('notificationSubscribers') || '0');
+      setSubscribersCount(count);
+      console.log('Fallback: Using localStorage count:', count);
     }
   }
 
