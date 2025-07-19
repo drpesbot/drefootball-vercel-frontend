@@ -610,6 +610,13 @@ function AddPlayerPage({ onBack }) {
                             {player.name}
                           </h3>
                           
+                          {/* البوستر - تحت اسم اللاعب مباشرة */}
+                          {player.booster && player.booster !== 'No Booster' && (
+                            <div className="bg-gradient-to-r from-purple-500/20 via-pink-500/30 to-purple-500/20 rounded-xl p-2 border border-purple-500/30 mb-3">
+                              <p className="text-xs text-purple-400 font-semibold">{player.booster}</p>
+                            </div>
+                          )}
+                          
                           {/* القوة الإجمالية */}
                           <div className="bg-gradient-to-r from-yellow-500/20 via-orange-500/30 to-yellow-500/20 rounded-2xl p-3 border border-yellow-500/30 group-hover:border-yellow-400/50 transition-all duration-300 mb-3">
                             <div className="flex items-center justify-center gap-2 mb-1">
@@ -619,13 +626,6 @@ function AddPlayerPage({ onBack }) {
                             </div>
                             <p className="text-xs text-gray-400 font-semibold">القوة الإجمالية</p>
                           </div>
-
-                          {/* البوستر */}
-                          {player.booster && player.booster !== 'No Booster' && (
-                            <div className="bg-gradient-to-r from-purple-500/20 via-pink-500/30 to-purple-500/20 rounded-xl p-2 border border-purple-500/30 mb-3">
-                              <p className="text-xs text-purple-400 font-semibold">{player.booster}</p>
-                            </div>
-                          )}
 
                           {/* أزرار التعديل والحذف */}
                           <div className="flex gap-2 mt-4">
