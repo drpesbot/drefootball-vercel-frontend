@@ -308,41 +308,7 @@ function App() {
     loadPlayers();
   }
 
-  const handleNotificationPopupContinue = async () => {
-    // تفعيل الإشعارات (هذا الجزء يتطلب واجهة برمجة تطبيقات متصفح حقيقية)
-    // For demonstration, we'll just simulate it.
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission().then(async permission => {
-        if (permission === 'granted') {
-          console.log('Notification permission granted.')
-          // هنا يمكنك إرسال إشعار تجريبي أو تسجيل خدمة عامل
-          
-          // تتبع المشتركين في localStorage
-          const currentSubscribers = parseInt(localStorage.getItem('notificationSubscribers') || '0');
-          localStorage.setItem('notificationSubscribers', (currentSubscribers + 1).toString());
-          // إرسال طلب للواجهة الخلفية لتحديث عدد المشتركين
-          try {
-            await ApiService.incrementNotificationSubscribers();
-            console.log('Notification subscriber count updated on backend.');
-          } catch (error) {
-            console.error('Error updating subscriber count on backend:', error);
-          }
-        } else {
-          console.log('Notification permission denied.');
-        }
-      });
-    }
-    
-    localStorage.setItem('hasSeenNotificationPopup', 'true')
-    setShowNotificationPopup(false)
-    
-    // تنفيذ البحث الآن
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    const results = players.filter((player) =>
-      player.name.toLowerCase().includes(lowerCaseSearchTerm)
-    );
-    setFilteredPlayers(results);
-  };
+
   // عرض صفحة الحماية
   if (currentPage === 'password') {
     return <PasswordProtection onAuthenticated={handleAuthenticated} />
