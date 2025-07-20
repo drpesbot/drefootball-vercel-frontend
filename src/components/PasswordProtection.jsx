@@ -4,8 +4,6 @@ import { Input } from '@/components/ui/input.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Shield, Lock, AlertTriangle, Eye, EyeOff } from 'lucide-react'
 
-// Hash مشفر لكلمة المرور killer8speed باستخدام bcrypt
-const HASHED_PASSWORD = '$2b$12$LQv3c1yqBWVHxkd0LQ4YNu5JTgHRZpXIpBVchvimjl5bEaYBr9H6m'
 
 function PasswordProtection({ onAuthenticated }) {
   const [password, setPassword] = useState('')
@@ -15,52 +13,61 @@ function PasswordProtection({ onAuthenticated }) {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+
     if (isBlocked) {
-      setError(`تم حظر الوصول لمدة ${Math.ceil(blockTimeLeft / 60)} دقائق`)
-      return
+      setError(`تم حظر الوصول لمدة ${Math.ceil(blockTimeLeft / 60)} دقائق`);
+      return;
     }
 
-    // التحقق من كلمة المرور باستخدام bcrypt (محاكاة)
-    // في التطبيق الحقيقي، يجب استخدام مكتبة bcrypt.js للمقارنة
-    if (password === 'killer8speed') { // هنا نقوم بمقارنة مباشرة لغرض الاختبار
-      // كلمة مرور صحيحة
-      setError('')
-      setAttempts(0)
-      onAuthenticated()
-    } else {
-      // كلمة مرور خاطئة
-      const newAttempts = attempts + 1
-      setAttempts(newAttempts)
-      
-      if (newAttempts >= 3) {
-        // حظر لمدة 5 دقائق
-        setIsBlocked(true)
-        setBlockTimeLeft(300) // 5 دقائق بالثواني
-        setError('تم تجاوز الحد الأقصى للمحاولات. تم حظر الوصول لمدة 5 دقائق')
-        
-        // عداد تنازلي للحظر
-        const blockTimer = setInterval(() => {
-          setBlockTimeLeft(prev => {
-            if (prev <= 1) {
-              clearInterval(blockTimer)
-              setIsBlocked(false)
-              setAttempts(0)
-              setError('')
-              return 0
-            }
-            return prev - 1
-          })
-        }, 1000)
+    try {
+      const response = await fetch("https://drefootball-backend.onrender.com/api/auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setError("");
+        setAttempts(0);
+        onAuthenticated();
       } else {
-        setError(`كلمة مرور خاطئة. المحاولات المتبقية: ${3 - newAttempts}`)
+        const newAttempts = attempts + 1;
+        setAttempts(newAttempts);
+
+        if (newAttempts >= 3) {
+          setIsBlocked(true);
+          setBlockTimeLeft(300); // 5 دقائق بالثواني
+          setError("تم تجاوز الحد الأقصى للمحاولات. تم حظر الوصول لمدة 5 دقائق");
+
+          const blockTimer = setInterval(() => {
+            setBlockTimeLeft((prev) => {
+              if (prev <= 1) {
+                clearInterval(blockTimer);
+                setIsBlocked(false);
+                setAttempts(0);
+                setError("");
+                return 0;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+        } else {
+          setError(`كلمة مرور خاطئة. المحاولات المتبقية: ${3 - newAttempts}`);
+        }
       }
+    } catch (error) {
+      console.error("Authentication error:", error);
+      setError("حدث خطأ أثناء المصادقة. يرجى المحاولة مرة أخرى.");
     }
-    
-    setPassword('')
-  }
+
+    setPassword("");
+  };
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
