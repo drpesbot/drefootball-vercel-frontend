@@ -63,10 +63,21 @@ function App() {
   };
 
   const handleNotificationPopupContinue = async () => {
-    setShowNotificationPopup(false); // إخفاء النافذة المنبثقة فور النقر
-    localStorage.setItem('notificationPopupSeen', 'true'); // تسجيل أن المستخدم رأى النافذة
-    await requestNotificationPermission(); // طلب إذن الإشعارات
-    checkNotificationStatus(); // إعادة فحص الحالة بعد طلب الإذن
+    console.log("بدء عملية تفعيل الإشعارات...");
+    
+    try {
+      // طلب إذن الإشعارات وحفظ التوكن
+      const token = await requestNotificationPermission();
+      
+      if (token) {
+        console.log("تم تفعيل الإشعارات بنجاح وحفظ التوكن:", token);
+        // لا نغلق النافذة المنبثقة - يجب على المستخدم إغلاقها يدوياً
+      } else {
+        console.log("فشل في الحصول على التوكن");
+      }
+    } catch (error) {
+      console.error("خطأ في تفعيل الإشعارات:", error);
+    }
   };
 
   const handleNotificationPopupClose = () => {
