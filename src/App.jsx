@@ -35,6 +35,7 @@ function App() {
   const [showPlayerModal, setShowPlayerModal] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [showNotificationPopup, setShowNotificationPopup] = useState(false); // حالة للتحكم في ظهور النافذة المنبثقة
+  const [showToast, setShowToast] = useState(false); // حالة للتحكم في ظهور رسالة التوست
 
   // تحميل اللاعبين من API عند بدء التطبيق
   useEffect(() => {
@@ -65,7 +66,16 @@ function App() {
     }
   };
 
-  const handleEnableNotifications = async () => {
+  const handleEnableNotificationsClick = async () => {
+    if (Notification.permission === 'granted') {
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000); // إخفاء التوست بعد 3 ثوانٍ
+    } else {
+      setShowNotificationPopup(true);
+    }
+  };
+
+  const handleNotificationPopupContinue = async () => {
     setShowNotificationPopup(false); // إخفاء النافذة المنبثقة فور النقر
     await requestNotificationPermission(); // طلب إذن الإشعارات
     checkNotificationStatus(); // إعادة فحص الحالة بعد طلب الإذن
@@ -322,7 +332,7 @@ function App() {
           <div className="flex flex-col gap-4 items-center">
             {/* زر تفعيل الإشعارات الجديد */}
             <Button 
-              onClick={() => handleEnableNotifications()} // تم تغيير الدالة المستدعاة
+              onClick={handleEnableNotificationsClick} // تم تغيير الدالة المستدعاة
               className="bg-gradient-to-r from-orange-500 via-red-400 to-pink-500 hover:from-orange-600 hover:via-red-500 hover:to-pink-600 text-white font-black py-3 px-8 text-base rounded-full shadow-2xl shadow-orange-500/60 transition-all duration-300 hover:scale-105 relative overflow-hidden group border-2 border-orange-300/50 hover:border-orange-200/70 animate-bounce"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
@@ -751,8 +761,15 @@ function App() {
         {showNotificationPopup && (
           <NotificationPopup
             onClose={() => setShowNotificationPopup(false)}
-            onEnableNotifications={handleEnableNotifications}
+            onEnableNotifications={handleNotificationPopupContinue}
           />
+        )}
+
+        {/* رسالة التوست */}
+        {showToast && (
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-300 z-50">
+            Notifications are already enabled ✅
+          </div>
         )}
       </div>
     </div>
