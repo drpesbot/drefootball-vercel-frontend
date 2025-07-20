@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X, Bell, Send, Users, Eye, BarChart3 } from 'lucide-react'
 import ApiService from '../services/api.js'
+import { requestNotificationPermission, onMessageListener } from '../firebase.js'
 
 import appIcon from '../assets/images/app_icon.jpg'
 
@@ -49,9 +50,35 @@ function AddPlayerPage({ onBack }) {
   const [subscribersCount, setSubscribersCount] = useState(0)
   const [editingPlayerId, setEditingPlayerId] = useState(null)
 
-  // تحميل عدد المشتركين عند بدء التطبيق
+  // تحميل عدد المشتركين عند بدء التطبيق وطلب إذن الإشعارات
   useEffect(() => {
     loadSubscribersCount()
+    
+    // طلب إذن الإشعارات عند تحميل التطبيق
+    const initializeNotifications = async () => {
+      try {
+        await requestNotificationPermission()
+        
+        // الاستماع للرسائل في المقدمة
+        onMessageListener()
+          .then((payload) => {
+            console.log('تم استلام إشعار:', payload)
+            // يمكنك إضافة منطق لعرض الإشعار هنا
+            if (payload.notification) {
+              // عرض إشعار مخصص أو استخدام المتصفح
+              new Notification(payload.notification.title, {
+                body: payload.notification.body,
+                icon: payload.notification.image || '/app_icon.png'
+              })
+            }
+          })
+          .catch((err) => console.log('خطأ في استلام الرسالة:', err))
+      } catch (error) {
+        console.error('خطأ في تهيئة الإشعارات:', error)
+      }
+    }
+    
+    initializeNotifications()
   }, [])
 
   const loadSubscribersCount = async () => {
