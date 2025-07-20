@@ -22,13 +22,14 @@ const messaging = getMessaging(app);
 // طلب إذن الإشعارات والحصول على التوكن
 export const requestNotificationPermission = async () => {
   try {
-    console.log("طلب إذن الإشعارات...");
+    console.log("🔔 بدء طلب إذن الإشعارات...");
     
     // طلب الإذن من المستخدم
     const permission = await Notification.requestPermission();
+    console.log("📋 نتيجة طلب الإذن:", permission);
     
     if (permission === 'granted') {
-      console.log("تم منح إذن الإشعارات");
+      console.log("✅ تم منح إذن الإشعارات");
       
       // الحصول على التوكن
       const currentToken = await getToken(messaging, {
@@ -36,10 +37,11 @@ export const requestNotificationPermission = async () => {
       });
       
       if (currentToken) {
-        console.log("تم الحصول على التوكن:", currentToken);
+        console.log("🔑 تم الحصول على التوكن:", currentToken);
         
         // إرسال التوكن إلى الـ Backend
         try {
+          console.log("📤 إرسال التوكن إلى الـ Backend...");
           const response = await fetch("https://pop-srne.onrender.com/api/save-token", {
             method: "POST",
             headers: {
@@ -48,24 +50,36 @@ export const requestNotificationPermission = async () => {
             body: JSON.stringify({ token: currentToken }),
           });
           
+          const responseData = await response.json();
+          console.log("📥 استجابة الـ Backend:", responseData);
+          
           if (response.ok) {
-            console.log("تم حفظ التوكن بنجاح في الـ Backend");
+            console.log("✅ تم حفظ التوكن بنجاح في الـ Backend");
+            alert("تم تفعيل الإشعارات بنجاح! ✅");
           } else {
-            console.error("فشل في حفظ التوكن:", response.statusText);
+            console.error("❌ فشل في حفظ التوكن:", response.statusText, responseData);
+            alert("فشل في حفظ التوكن: " + response.statusText);
           }
         } catch (error) {
-          console.error("خطأ في إرسال التوكن إلى الـ Backend:", error);
+          console.error("❌ خطأ في إرسال التوكن إلى الـ Backend:", error);
+          alert("خطأ في الاتصال بالخادم: " + error.message);
         }
         
         return currentToken;
       } else {
-        console.log("لم يتم الحصول على التوكن");
+        console.log("❌ لم يتم الحصول على التوكن");
+        alert("فشل في الحصول على توكن الجهاز");
+        return null;
       }
     } else {
-      console.log("تم رفض إذن الإشعارات");
+      console.log("❌ تم رفض إذن الإشعارات");
+      alert("تم رفض إذن الإشعارات. يرجى السماح بالإشعارات من إعدادات المتصفح.");
+      return null;
     }
   } catch (err) {
-    console.error("خطأ في طلب إذن الإشعارات:", err);
+    console.error("❌ خطأ في طلب إذن الإشعارات:", err);
+    alert("خطأ في طلب إذن الإشعارات: " + err.message);
+    return null;
   }
 };
 
