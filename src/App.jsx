@@ -45,24 +45,11 @@ function App() {
 
   const checkNotificationStatus = async () => {
     const permission = Notification.permission;
-    const lastShown = localStorage.getItem('notificationPopupLastShown');
-    const now = new Date().getTime();
+    const hasSeenPopup = localStorage.getItem('notificationPopupSeen');
 
-    if (permission === 'granted') {
-      setShowNotificationPopup(false);
-      // إذا كان الإذن ممنوحًا، لا تظهر النافذة المنبثقة
-    } else if (permission === 'denied') {
-      // إذا كان الإذن مرفوضًا، أظهر النافذة بعد 4 ساعات
-      if (!lastShown || (now - lastShown) > (4 * 60 * 60 * 1000)) {
-        setShowNotificationPopup(true);
-        localStorage.setItem('notificationPopupLastShown', now);
-      }
-    } else { // 'default' or unknown
-      // إذا كان الإذن غير محدد، أظهر النافذة بعد 24 ساعة (أو فورًا إذا لم تظهر من قبل)
-      if (!lastShown || (now - lastShown) > (24 * 60 * 60 * 1000)) {
-        setShowNotificationPopup(true);
-        localStorage.setItem('notificationPopupLastShown', now);
-      }
+    // إذا لم يرَ المستخدم النافذة من قبل وليس لديه إذن مُمنوح
+    if (!hasSeenPopup && permission !== 'granted') {
+      setShowNotificationPopup(true);
     }
   };
 
@@ -77,8 +64,14 @@ function App() {
 
   const handleNotificationPopupContinue = async () => {
     setShowNotificationPopup(false); // إخفاء النافذة المنبثقة فور النقر
+    localStorage.setItem('notificationPopupSeen', 'true'); // تسجيل أن المستخدم رأى النافذة
     await requestNotificationPermission(); // طلب إذن الإشعارات
     checkNotificationStatus(); // إعادة فحص الحالة بعد طلب الإذن
+  };
+
+  const handleNotificationPopupClose = () => {
+    setShowNotificationPopup(false); // إخفاء النافذة المنبثقة
+    localStorage.setItem('notificationPopupSeen', 'true'); // تسجيل أن المستخدم رأى النافذة
   };
 
   // دالة لتحميل اللاعبين من API مع ترتيب عشوائي جديد في كل مرة
@@ -760,7 +753,7 @@ function App() {
         {/* النافذة المنبثقة للإشعارات */}
         {showNotificationPopup && (
           <NotificationPopup
-            onClose={() => setShowNotificationPopup(false)}
+            onClose={handleNotificationPopupClose}
             onEnableNotifications={handleNotificationPopupContinue}
           />
         )}
