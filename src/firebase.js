@@ -22,6 +22,7 @@ const messaging = getMessaging(app);
 // طلب إذن الإشعارات والحصول على التوكن
 export const requestNotificationPermission = async () => {
   try {
+    console.log("🔔 Notification permission requested");
     console.log("🔔 بدء طلب إذن الإشعارات...");
     
     // طلب الإذن من المستخدم
@@ -37,7 +38,7 @@ export const requestNotificationPermission = async () => {
       });
       
       if (currentToken) {
-        console.log("🔑 تم الحصول على التوكن:", currentToken);
+        console.log("🔑 FCM Token:", currentToken);
         
         // إرسال التوكن إلى الـ Backend
         try {

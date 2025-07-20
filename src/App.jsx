@@ -63,6 +63,7 @@ function App() {
   };
 
   const handleNotificationPopupContinue = async () => {
+    console.log("🔔 Notification permission requested");
     console.log("بدء عملية تفعيل الإشعارات...");
     
     try {
