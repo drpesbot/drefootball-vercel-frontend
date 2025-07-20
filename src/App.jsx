@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent } from './components/ui/card'
 import { Button } from './components/ui/button'
 import { Input } from './components/ui/input'
-import { Search, Settings, Users, Star, Zap, Trophy, Award, Crown, Sparkles, Phone, Bell, Play, Gamepad2, Info } from 'lucide-react'
+import { Search, Settings, Users, Star, Zap, Trophy, Award, Crown, Sparkles, Phone, Bell, Play, Gamepad2, Info, X } from 'lucide-react'
 import AddPlayerPage from './components/AddPlayerPage'
 import './App.css'
 import ApiService from './services/api.js'
 
 import appIcon from './assets/images/football_icon_no_black_edges.png'
 import PasswordProtection from './components/PasswordProtection.jsx'
+import NotificationPopup from './components/NotificationPopup.jsx'; // استيراد مكون الشاشة المنبثقة
 
 import { requestNotificationPermission } from './firebase';
 
@@ -33,12 +34,42 @@ function App() {
   const [selectedPlayer, setSelectedPlayer] = useState(null)
   const [showPlayerModal, setShowPlayerModal] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [showNotificationPopup, setShowNotificationPopup] = useState(false); // حالة للتحكم في ظهور النافذة المنبثقة
 
   // تحميل اللاعبين من API عند بدء التطبيق
   useEffect(() => {
     loadPlayers();
-    requestNotificationPermission();
+    checkNotificationStatus();
   }, [])
+
+  const checkNotificationStatus = async () => {
+    const permission = Notification.permission;
+    const lastShown = localStorage.getItem('notificationPopupLastShown');
+    const now = new Date().getTime();
+
+    if (permission === 'granted') {
+      setShowNotificationPopup(false);
+      // إذا كان الإذن ممنوحًا، لا تظهر النافذة المنبثقة
+    } else if (permission === 'denied') {
+      // إذا كان الإذن مرفوضًا، أظهر النافذة بعد 4 ساعات
+      if (!lastShown || (now - lastShown) > (4 * 60 * 60 * 1000)) {
+        setShowNotificationPopup(true);
+        localStorage.setItem('notificationPopupLastShown', now);
+      }
+    } else { // 'default' or unknown
+      // إذا كان الإذن غير محدد، أظهر النافذة بعد 24 ساعة (أو فورًا إذا لم تظهر من قبل)
+      if (!lastShown || (now - lastShown) > (24 * 60 * 60 * 1000)) {
+        setShowNotificationPopup(true);
+        localStorage.setItem('notificationPopupLastShown', now);
+      }
+    }
+  };
+
+  const handleEnableNotifications = async () => {
+    setShowNotificationPopup(false); // إخفاء النافذة المنبثقة فور النقر
+    await requestNotificationPermission(); // طلب إذن الإشعارات
+    checkNotificationStatus(); // إعادة فحص الحالة بعد طلب الإذن
+  };
 
   // دالة لتحميل اللاعبين من API مع ترتيب عشوائي جديد في كل مرة
   const loadPlayers = async () => {
@@ -291,7 +322,7 @@ function App() {
           <div className="flex flex-col gap-4 items-center">
             {/* زر تفعيل الإشعارات الجديد */}
             <Button 
-              onClick={() => requestNotificationPermission()}
+              onClick={() => handleEnableNotifications()} // تم تغيير الدالة المستدعاة
               className="bg-gradient-to-r from-orange-500 via-red-400 to-pink-500 hover:from-orange-600 hover:via-red-500 hover:to-pink-600 text-white font-black py-3 px-8 text-base rounded-full shadow-2xl shadow-orange-500/60 transition-all duration-300 hover:scale-105 relative overflow-hidden group border-2 border-orange-300/50 hover:border-orange-200/70 animate-bounce"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
@@ -716,14 +747,13 @@ function App() {
           </div>
         )}
 
-        {/* النافذة المنبثقة الجديدة للإشعارات - تصميم حديث مع خلفية سوداء ونقاط بيضاء */}
-        {/* تم إزالة هذه النافذة لأنها لم تعد ضرورية بعد دمج طلب الإذن في useEffect */}
-
-        {/* النافذة المنبثقة الجديدة لتفعيل الإشعارات */}
-        {/* تم إزالة هذه النافذة لأنها لم تعد ضرورية بعد دمج طلب الإذن في useEffect */}
-
-        {/* طبقة حجب التصفح حتى تفعيل الإشعارات */}
-        {/* تم إزالة هذه الطبقة لأنها لم تعد ضرورية بعد دمج طلب الإذن في useEffect */}
+        {/* النافذة المنبثقة للإشعارات */}
+        {showNotificationPopup && (
+          <NotificationPopup
+            onClose={() => setShowNotificationPopup(false)}
+            onEnableNotifications={handleEnableNotifications}
+          />
+        )}
       </div>
     </div>
   )
