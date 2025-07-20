@@ -272,14 +272,6 @@ function App() {
             </div>
           </div>
 
-          {/* العنوان الرئيسي محسن مع خط احترافي */}
-          <h1 className="text-2xl md:text-3xl font-black text-white mb-3 leading-tight tracking-wide" style={{ 
-            fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif',
-            fontWeight: '900'
-          }}>
-            الرقم الأول في تطوير لاعبي كرة القدم
-          </h1>
-          
           {/* نص eFootball Mobile في سطر منفصل باللون الأبيض */}
           <p className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-center leading-tight tracking-wider relative" style={{ 
             fontFamily: '"Montserrat", "Poppins", sans-serif',
@@ -326,13 +318,13 @@ function App() {
             {/* زر تفعيل الإشعارات الجديد */}
             <Button 
               onClick={handleEnableNotificationsClick} // تم تغيير الدالة المستدعاة
-              className="bg-gradient-to-r from-orange-500 via-red-400 to-pink-500 hover:from-orange-600 hover:via-red-500 hover:to-pink-600 text-white font-black py-3 px-8 text-base rounded-full shadow-2xl shadow-orange-500/60 transition-all duration-300 hover:scale-105 relative overflow-hidden group border-2 border-orange-300/50 hover:border-orange-200/70 animate-bounce"
+              className="bg-gradient-to-r from-green-400 via-lime-400 to-green-500 hover:from-green-500 hover:via-lime-500 hover:to-green-600 text-black font-black py-3 px-8 text-base rounded-full shadow-2xl shadow-green-400/60 transition-all duration-300 hover:scale-105 relative overflow-hidden group border-2 border-green-300/50 hover:border-green-200/70"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
               <div className="flex items-center justify-center gap-3 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
-                <Bell className="w-5 h-5 animate-pulse" />
+                <Bell className="w-5 h-5" />
                 <span>تفعيل الإشعارات</span>
-                <Sparkles className="w-5 h-5 animate-pulse" />
+                <Sparkles className="w-5 h-5" />
               </div>
             </Button>
 
@@ -578,6 +570,24 @@ function App() {
                   </h3>
                   <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
                 </div>
+
+                {/* بوستر اللاعب */}
+                {selectedPlayer.poster && (
+                  <div className="mb-6 text-center">
+                    <div className="relative inline-block">
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur-lg opacity-50"></div>
+                      <img 
+                        src={selectedPlayer.poster} 
+                        alt={`${selectedPlayer.name} Poster`}
+                        className="relative w-full max-w-xs h-48 object-cover bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl border-2 border-purple-500/40 shadow-xl"
+                      />
+                      {/* تأثير الفلاش على البوستر */}
+                      <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 -translate-x-full animate-[flash_3s_ease-in-out_infinite] pointer-events-none"></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* القوة الإجمالية المحسنة */}
                 <div className="text-center mb-8">
