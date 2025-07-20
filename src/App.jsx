@@ -369,43 +369,9 @@ function App() {
             </div>
           </div>
 
-          {/* قائمة التصفية السريعة مصغرة */}
+          {/* قائمة التصفية السريعة مصغرة - تم إزالة الأزرار غير الضرورية */}
           <div className="flex gap-2 justify-center overflow-x-auto pb-1">
-            <button 
-              onClick={() => {
-                setSearchTerm('');
-                handleSearch('');
-              }}
-              className="bg-gradient-to-r from-emerald-500/15 to-green-500/15 hover:from-emerald-500/25 hover:to-green-500/25 text-emerald-400 font-medium py-1.5 px-3 text-xs rounded-full border border-emerald-500/25 hover:border-emerald-400/40 transition-all duration-300 whitespace-nowrap"
-              style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}
-            >
-              الكل
-            </button>
-            
-            <button 
-              onClick={() => {
-                const topPlayers = players.filter(player => calculateOverallRating(player) >= 90);
-                setFilteredPlayers(topPlayers);
-              }}
-              className="bg-gradient-to-r from-yellow-500/15 to-orange-500/15 hover:from-yellow-500/25 hover:to-orange-500/25 text-yellow-400 font-medium py-1.5 px-3 text-xs rounded-full border border-yellow-500/25 hover:border-yellow-400/40 transition-all duration-300 whitespace-nowrap"
-              style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}
-            >
-              النجوم
-            </button>
-            
-            <button 
-              onClick={() => {
-                const midPlayers = players.filter(player => {
-                  const rating = calculateOverallRating(player);
-                  return rating >= 80 && rating < 90;
-                });
-                setFilteredPlayers(midPlayers);
-              }}
-              className="bg-gradient-to-r from-blue-500/15 to-purple-500/15 hover:from-blue-500/25 hover:to-purple-500/25 text-blue-400 font-medium py-1.5 px-3 text-xs rounded-full border border-blue-500/25 hover:border-blue-400/40 transition-all duration-300 whitespace-nowrap"
-              style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}
-            >
-              المتميزون
-            </button>
+            {/* تم إزالة أزرار الكل والنجوم والمتميزون */}
           </div>
         </div>
 
@@ -570,6 +536,25 @@ function App() {
                   </h3>
                   <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
                 </div>
+
+                {/* إحصائية البوستر تحت اسم اللاعب مباشرة */}
+                {selectedPlayer.poster && (
+                  <div className="text-center mb-6">
+                    <div className="bg-gradient-to-r from-purple-500/20 via-pink-500/30 to-purple-500/20 rounded-3xl p-4 border-2 border-purple-500/40 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/10 to-transparent animate-pulse"></div>
+                      <div className="relative z-10">
+                        <div className="flex items-center justify-center gap-3 mb-2">
+                          <img src={selectedPlayer.poster} alt="Poster" className="w-8 h-8 rounded-lg object-cover" />
+                          <span className="text-2xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                            بوستر اللاعب
+                          </span>
+                          <img src={selectedPlayer.poster} alt="Poster" className="w-8 h-8 rounded-lg object-cover" />
+                        </div>
+                        <p className="text-sm text-slate-300 font-bold">البوستر الخاص</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* بوستر اللاعب */}
                 {selectedPlayer.poster && (

@@ -6,6 +6,9 @@ const NotificationPopup = ({ onClose, onEnableNotifications }) => {
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
       <div className="bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 border border-slate-600/50 backdrop-blur-2xl max-w-sm w-full rounded-3xl shadow-2xl relative overflow-hidden">
+        {/* تأثير الفلاش الأبيض المتحرك */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full animate-[flash_4s_ease-in-out_infinite] pointer-events-none"></div>
+        
         {/* زر الإغلاق */}
         <button 
           onClick={onClose}
@@ -15,21 +18,22 @@ const NotificationPopup = ({ onClose, onEnableNotifications }) => {
         </button>
         
         <div className="p-6 relative z-10 text-center">
-          {/* أيقونة الجرس مع التوهج */}
+          {/* أيقونة الجرس مع التوهج المحسن */}
           <div className="flex justify-center mb-6">
             <div className="relative">
-              <div className="w-20 h-20 bg-gradient-to-r from-orange-500 via-pink-500 to-red-500 rounded-full flex items-center justify-center shadow-2xl">
+              <div className="w-20 h-20 bg-gradient-to-r from-orange-500 via-pink-500 to-red-500 rounded-full flex items-center justify-center shadow-2xl animate-pulse">
                 <Bell className="w-10 h-10 text-white" />
               </div>
               {/* النجوم المتحركة */}
               <div className="absolute -top-2 -right-2">
-                <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" />
+                <Sparkles className="w-6 h-6 text-yellow-400 animate-bounce" />
               </div>
               <div className="absolute -bottom-2 -left-2">
-                <Sparkles className="w-5 h-5 text-blue-400 animate-pulse delay-500" />
+                <Sparkles className="w-5 h-5 text-blue-400 animate-bounce delay-500" />
               </div>
-              {/* هالة متوهجة */}
-              <div className="absolute inset-0 w-20 h-20 bg-gradient-to-r from-orange-500/30 via-pink-500/30 to-red-500/30 rounded-full blur-xl animate-pulse"></div>
+              {/* هالة متوهجة محسنة */}
+              <div className="absolute inset-0 w-20 h-20 bg-gradient-to-r from-orange-500/40 via-pink-500/40 to-red-500/40 rounded-full blur-xl animate-pulse"></div>
+              <div className="absolute -inset-2 w-24 h-24 bg-gradient-to-r from-orange-500/20 via-pink-500/20 to-red-500/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
             </div>
           </div>
           
@@ -90,10 +94,10 @@ const NotificationPopup = ({ onClose, onEnableNotifications }) => {
             onClick={onEnableNotifications}
             className="w-full bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:via-emerald-600 hover:to-green-700 text-white font-black py-4 px-8 text-base rounded-2xl shadow-2xl shadow-green-500/60 transition-all duration-300 hover:scale-105 relative overflow-hidden group border-2 border-green-400/50 hover:border-green-300/70"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
             <div className="flex items-center justify-center gap-3 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
               <Bell className="w-5 h-5" />
-              <span>فعل الإشعارات للاستمرار</span>
+              <span>اضغط هنا للمتابعة</span>
               <Sparkles className="w-5 h-5" />
             </div>
           </Button>
