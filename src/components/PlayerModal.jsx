@@ -75,11 +75,11 @@ const PlayerModal = ({ player, onClose }) => {
         </Button>
         <CardContent className="p-6 text-center relative">
           {player.image && (
-            <div className="mb-4 relative">
+            <div className="mb-4 relative flex justify-center">
               <img
                 src={player.image}
                 alt={player.name}
-                className="w-full h-48 object-cover object-center rounded-xl border-2 border-blue-500/50 shadow-lg"
+                className="w-48 h-auto object-cover object-center rounded-xl border-2 border-blue-500/50 shadow-lg"
               />
               <div className="absolute inset-0 rounded-xl border-2 border-white/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse shadow-lg shadow-white/30"></div>
             </div>
@@ -110,16 +110,23 @@ const PlayerModal = ({ player, onClose }) => {
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-3 text-sm text-left">
+          <h4 className="text-xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-3" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+            Detailed Statistics
+          </h4>
+
+          <div className="space-y-3 text-sm text-left">
             {Object.keys(statIcons).map((statKey) => {
               const statValue = player[statKey];
               if (statValue !== undefined && statValue !== null) {
                 return (
-                  <div key={statKey} className="flex items-center bg-slate-700/50 rounded-lg p-2 border border-slate-600/50 shadow-md">
-                    <img src={statIcons[statKey]} alt={statNames[statKey]} className="w-6 h-6 rounded-full mr-2" />
-                    <span className="text-slate-300 font-medium" style={{ fontFamily: '"Cairo", sans-serif' }}>
-                      {statNames[statKey]}: <span className="font-bold text-white">{statValue}</span>
-                    </span>
+                  <div key={statKey} className="flex items-center justify-between bg-slate-700/50 rounded-lg p-3 border border-slate-600/50 shadow-md">
+                    <div className="flex items-center">
+                      <img src={statIcons[statKey]} alt={statNames[statKey]} className="w-6 h-6 rounded-full mr-3" />
+                      <span className="text-slate-300 font-medium" style={{ fontFamily: '"Cairo", sans-serif' }}>
+                        {statNames[statKey]}
+                      </span>
+                    </div>
+                    <span className="font-bold text-white text-lg">{statValue}</span>
                   </div>
                 );
               }
@@ -133,9 +140,5 @@ const PlayerModal = ({ player, onClose }) => {
 };
 
 export default PlayerModal;
-
-
-
-
 
 
