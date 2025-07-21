@@ -26,6 +26,8 @@ import gk1Icon from './assets/icons/gk1.jpg'
 import gk2Icon from './assets/icons/gk2.jpg'
 import gk3Icon from './assets/icons/gk3.jpg'
 
+import PlayerModal from './components/PlayerModal';
+
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
   const [players, setPlayers] = useState([])
@@ -541,6 +543,10 @@ function App() {
             Notifications are already enabled ✅
           </div>
         )}
+
+        {showPlayerModal && (
+          <PlayerModal player={selectedPlayer} onClose={closePlayerModal} />
+        )}
       </div>
     </div>
   )
@@ -550,6 +556,12 @@ export default App
 
 
 
+
+
+
+
+
+import PlayerModal from './components/PlayerModal';
 
 
 
