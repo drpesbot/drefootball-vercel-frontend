@@ -63,6 +63,7 @@ function App() {
   };
 
   const handleNotificationPopupContinue = async () => {
+    console.log("Continue clicked");
     console.log("🔔 Notification permission requested");
     console.log("بدء عملية تفعيل الإشعارات...");
     
@@ -761,7 +762,7 @@ function App() {
         {showNotificationPopup && (
           <NotificationPopup
             onClose={handleNotificationPopupClose}
-            onEnableNotifications={handleNotificationPopupContinue}
+            handleNotificationPopupContinue={handleNotificationPopupContinue}
           />
         )}
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from './ui/button';
 import { Bell, Sparkles, X, CheckCircle, Zap, Gift, AlertTriangle } from 'lucide-react';
 
-const NotificationPopup = ({ onClose, onEnableNotifications }) => {
+const NotificationPopup = ({ onClose, handleNotificationPopupContinue }) => {
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
       <div className="bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 border border-slate-600/50 backdrop-blur-2xl max-w-sm w-full rounded-3xl shadow-2xl relative overflow-hidden">
@@ -91,7 +91,7 @@ const NotificationPopup = ({ onClose, onEnableNotifications }) => {
           
           {/* الزر الرئيسي */}
           <Button
-            onClick={onEnableNotifications}
+            onClick={handleNotificationPopupContinue}
             className="w-full bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:via-emerald-600 hover:to-green-700 text-white font-black py-4 px-8 text-base rounded-2xl shadow-2xl shadow-green-500/60 transition-all duration-300 hover:scale-105 relative overflow-hidden group border-2 border-green-400/50 hover:border-green-300/70"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
