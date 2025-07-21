@@ -48,7 +48,7 @@ function App() {
           .register("/firebase-messaging-sw.js")
           .then((registration) => {
             console.log("✅ Service Worker registered successfully:", registration);
-            messaging.useServiceWorker(registration);
+            // messaging.useServiceWorker(registration); // تم إزالة هذا السطر لأنه يتم التعامل معه في firebase.js
           })
           .catch((err) => {
             console.log('❌ Service Worker registration failed:', err);
@@ -68,6 +68,7 @@ function App() {
   };
 
   const handleEnableNotificationsClick = async () => {
+    console.log("Clicked 'تفعيل الإشعارات' button"); // سجل تشخيصي جديد
     if (Notification.permission === 'granted') {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000); // إخفاء التوست بعد 3 ثوانٍ
@@ -104,6 +105,7 @@ function App() {
   };
 
   const handleNotificationPopupClose = () => {
+    console.log("Closing notification popup"); // سجل تشخيصي جديد
     setShowNotificationPopup(false); // إخفاء النافذة المنبثقة
     localStorage.setItem('notificationPopupSeen', 'true'); // تسجيل أن المستخدم رأى النافذة
   };
@@ -521,264 +523,6 @@ function App() {
           </div>
         )}
 
-        {/* النافذة المنبثقة لتفاصيل اللاعب المحسنة */}
-        {showPlayerModal && selectedPlayer && (
-          <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-            <Card className="bg-gradient-to-br from-slate-800/95 via-slate-900/95 to-black/95 border border-slate-600/50 backdrop-blur-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
-              {/* تأثير الإضاءة */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/5 to-transparent animate-pulse"></div>
-              
-              <CardContent className="p-6 relative z-10">
-                {/* زر الإغلاق المحسن */}
-                <div className="flex justify-between items-center mb-6">
-                  <div className="flex items-center gap-2">
-                    <Star className="w-6 h-6 text-yellow-400" />
-                    <h2 className="text-xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                      تفاصيل اللاعب
-                    </h2>
-                  </div>
-                  <button 
-                    onClick={closePlayerModal}
-                    className="bg-gradient-to-r from-red-500/20 to-red-600/20 hover:from-red-500/30 hover:to-red-600/30 p-2 rounded-full transition-all duration-300 border border-red-500/30 hover:border-red-400/50"
-                  >
-                    <X className="w-5 h-5 text-red-400" />
-                  </button>
-                </div>
-
-                {/* صورة اللاعب المحسنة */}
-                {selectedPlayer.image && (
-                  <div className="mb-6 text-center">
-                    <div className="relative inline-block">
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur-lg opacity-50"></div>
-                      <img 
-                        src={selectedPlayer.image} 
-                        alt={selectedPlayer.name}
-                        className="relative w-32 h-44 object-contain bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl border-2 border-blue-500/40 shadow-xl p-2"
-                        style={{ aspectRatio: '3/4' }}
-                      />
-                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
-                        <Crown className="w-4 h-4 text-white" />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* اسم اللاعب المحسن */}
-                <div className="text-center mb-6">
-                  <h3 className="text-2xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-2">
-                    {selectedPlayer.name}
-                  </h3>
-                  <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
-                </div>
-
-                {/* إحصائية البوستر تحت اسم اللاعب مباشرة */}
-                {selectedPlayer.poster && (
-                  <div className="text-center mb-6">
-                    <div className="bg-gradient-to-r from-purple-500/20 via-pink-500/30 to-purple-500/20 rounded-3xl p-4 border-2 border-purple-500/40 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/10 to-transparent animate-pulse"></div>
-                      <div className="relative z-10">
-                        <div className="flex items-center justify-center gap-3 mb-2">
-                          <img src={selectedPlayer.poster} alt="Poster" className="w-8 h-8 rounded-lg object-cover" />
-                          <span className="text-2xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                            بوستر اللاعب
-                          </span>
-                          <img src={selectedPlayer.poster} alt="Poster" className="w-8 h-8 rounded-lg object-cover" />
-                        </div>
-                        <p className="text-sm text-slate-300 font-bold">البوستر الخاص</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* بوستر اللاعب */}
-                {selectedPlayer.poster && (
-                  <div className="mb-6 text-center">
-                    <div className="relative inline-block">
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur-lg opacity-50"></div>
-                      <img 
-                        src={selectedPlayer.poster} 
-                        alt={`${selectedPlayer.name} Poster`}
-                        className="relative w-full max-w-xs h-48 object-cover bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl border-2 border-purple-500/40 shadow-xl"
-                      />
-                      {/* تأثير الفلاش على البوستر */}
-                      <div className="absolute inset-0 rounded-2xl overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 -translate-x-full animate-[flash_3s_ease-in-out_infinite] pointer-events-none"></div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* القوة الإجمالية المحسنة */}
-                <div className="text-center mb-8">
-                  <div className="bg-gradient-to-r from-yellow-500/20 via-orange-500/30 to-yellow-500/20 rounded-3xl p-4 border-2 border-yellow-500/40 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-500/10 to-transparent animate-pulse"></div>
-                    <div className="relative z-10">
-                      <div className="flex items-center justify-center gap-3 mb-2">
-                        <Zap className="w-6 h-6 text-yellow-400" />
-                        <span className="text-4xl font-black bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                          {calculateOverallRating(selectedPlayer)}
-                        </span>
-                        <Zap className="w-6 h-6 text-yellow-400" />
-                      </div>
-                      <p className="text-sm text-slate-300 font-bold">القوة الإجمالية</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* الإحصائيات المحسنة */}
-                <div className="space-y-4">
-                  <div className="text-center mb-6">
-                    <h4 className="text-lg font-black text-white mb-2">الإحصائيات التفصيلية</h4>
-                    <div className="w-12 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
-                  </div>
-                  
-                  {/* الإحصائيات الأساسية */}
-                  <div className="grid grid-cols-1 gap-3">
-                    <div className="flex items-center justify-between bg-gradient-to-r from-slate-800/60 to-slate-700/60 rounded-2xl p-4 border border-slate-600/30 hover:border-blue-500/40 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-500/20 rounded-xl">
-                          <img src={finishingIcon} alt="Finishing" className="w-6 h-6 rounded-lg" />
-                        </div>
-                        <span className="text-white font-semibold">Finishing</span>
-                      </div>
-                      <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 px-3 py-1 rounded-full">
-                        <span className="text-blue-400 font-black text-lg">{selectedPlayer.finishing || 0}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between bg-gradient-to-r from-slate-800/60 to-slate-700/60 rounded-2xl p-4 border border-slate-600/30 hover:border-blue-500/40 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-green-500/20 rounded-xl">
-                          <img src={passingIcon} alt="Passing" className="w-6 h-6 rounded-lg" />
-                        </div>
-                        <span className="text-white font-semibold">Passing</span>
-                      </div>
-                      <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-3 py-1 rounded-full">
-                        <span className="text-green-400 font-black text-lg">{selectedPlayer.passing || 0}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between bg-gradient-to-r from-slate-800/60 to-slate-700/60 rounded-2xl p-4 border border-slate-600/30 hover:border-blue-500/40 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-purple-500/20 rounded-xl">
-                          <img src={dribblingIcon} alt="Dribbling" className="w-6 h-6 rounded-lg" />
-                        </div>
-                        <span className="text-white font-semibold">Dribbling</span>
-                      </div>
-                      <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 px-3 py-1 rounded-full">
-                        <span className="text-purple-400 font-black text-lg">{selectedPlayer.dribbling || 0}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between bg-gradient-to-r from-slate-800/60 to-slate-700/60 rounded-2xl p-4 border border-slate-600/30 hover:border-blue-500/40 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-orange-500/20 rounded-xl">
-                          <img src={dexterityIcon} alt="Dexterity" className="w-6 h-6 rounded-lg" />
-                        </div>
-                        <span className="text-white font-semibold">Dexterity</span>
-                      </div>
-                      <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 px-3 py-1 rounded-full">
-                        <span className="text-orange-400 font-black text-lg">{selectedPlayer.dexterity || 0}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between bg-gradient-to-r from-slate-800/60 to-slate-700/60 rounded-2xl p-4 border border-slate-600/30 hover:border-blue-500/40 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-red-500/20 rounded-xl">
-                          <img src={lowerBodyStrengthIcon} alt="Lower Body Strength" className="w-6 h-6 rounded-lg" />
-                        </div>
-                        <span className="text-white font-semibold">Lower Body Strength</span>
-                      </div>
-                      <div className="bg-gradient-to-r from-red-500/20 to-pink-500/20 px-3 py-1 rounded-full">
-                        <span className="text-red-400 font-black text-lg">{selectedPlayer.lowerBodyStrength || 0}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between bg-gradient-to-r from-slate-800/60 to-slate-700/60 rounded-2xl p-4 border border-slate-600/30 hover:border-blue-500/40 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-cyan-500/20 rounded-xl">
-                          <img src={aerialStrengthIcon} alt="Aerial Strength" className="w-6 h-6 rounded-lg" />
-                        </div>
-                        <span className="text-white font-semibold">Aerial Strength</span>
-                      </div>
-                      <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-3 py-1 rounded-full">
-                        <span className="text-cyan-400 font-black text-lg">{selectedPlayer.aerialStrength || 0}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between bg-gradient-to-r from-slate-800/60 to-slate-700/60 rounded-2xl p-4 border border-slate-600/30 hover:border-blue-500/40 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-yellow-500/20 rounded-xl">
-                          <img src={defendingIcon} alt="Defending" className="w-6 h-6 rounded-lg" />
-                        </div>
-                        <span className="text-white font-semibold">Defending</span>
-                      </div>
-                      <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 px-3 py-1 rounded-full">
-                        <span className="text-yellow-400 font-black text-lg">{selectedPlayer.defending || 0}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between bg-gradient-to-r from-slate-800/60 to-slate-700/60 rounded-2xl p-4 border border-slate-600/30 hover:border-blue-500/40 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-indigo-500/20 rounded-xl">
-                          <img src={gk1Icon} alt="GK 1" className="w-6 h-6 rounded-lg" />
-                        </div>
-                        <span className="text-white font-semibold">GK 1</span>
-                      </div>
-                      <div className="bg-gradient-to-r from-indigo-500/20 to-purple-500/20 px-3 py-1 rounded-full">
-                        <span className="text-indigo-400 font-black text-lg">{selectedPlayer.gk1 || 0}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between bg-gradient-to-r from-slate-800/60 to-slate-700/60 rounded-2xl p-4 border border-slate-600/30 hover:border-blue-500/40 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-teal-500/20 rounded-xl">
-                          <img src={gk2Icon} alt="GK 2" className="w-6 h-6 rounded-lg" />
-                        </div>
-                        <span className="text-white font-semibold">GK 2</span>
-                      </div>
-                      <div className="bg-gradient-to-r from-teal-500/20 to-cyan-500/20 px-3 py-1 rounded-full">
-                        <span className="text-teal-400 font-black text-lg">{selectedPlayer.gk2 || 0}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between bg-gradient-to-r from-slate-800/60 to-slate-700/60 rounded-2xl p-4 border border-slate-600/30 hover:border-blue-500/40 transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-emerald-500/20 rounded-xl">
-                          <img src={gk3Icon} alt="GK 3" className="w-6 h-6 rounded-lg" />
-                        </div>
-                        <span className="text-white font-semibold">GK 3</span>
-                      </div>
-                      <div className="bg-gradient-to-r from-emerald-500/20 to-green-500/20 px-3 py-1 rounded-full">
-                        <span className="text-emerald-400 font-black text-lg">{selectedPlayer.gk3 || 0}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* البوستر المحسن */}
-                {selectedPlayer.booster && selectedPlayer.booster !== 'No Booster' && (
-                  <div className="mt-8 text-center">
-                    <div className="bg-gradient-to-r from-purple-500/20 via-pink-500/30 to-purple-500/20 rounded-3xl p-4 border-2 border-purple-500/40 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/10 to-transparent animate-pulse"></div>
-                      <div className="relative z-10">
-                        <div className="flex items-center justify-center gap-2 mb-2">
-                          <Sparkles className="w-5 h-5 text-purple-400" />
-                          <h4 className="text-sm text-slate-300 font-bold">البوستر المضاف</h4>
-                          <Sparkles className="w-5 h-5 text-purple-400" />
-                        </div>
-                        <span className="text-lg font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                          {selectedPlayer.booster}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
         {/* النافذة المنبثقة للإشعارات */}
         {showNotificationPopup && (
           <NotificationPopup
@@ -799,5 +543,7 @@ function App() {
 }
 
 export default App
+
+
 
 
