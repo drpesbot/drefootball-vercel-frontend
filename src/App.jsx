@@ -47,7 +47,8 @@ function App() {
         navigator.serviceWorker
           .register("/firebase-messaging-sw.js")
           .then((registration) => {
-            console.log('✅ Service Worker registered successfully:', registration);
+            console.log("✅ Service Worker registered successfully:", registration);
+            messaging.useServiceWorker(registration);
           })
           .catch((err) => {
             console.log('❌ Service Worker registration failed:', err);
