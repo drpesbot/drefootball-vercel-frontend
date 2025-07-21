@@ -79,7 +79,7 @@ const PlayerModal = ({ player, onClose }) => {
               <img
                 src={player.image}
                 alt={player.name}
-                className="w-48 h-auto object-cover object-center rounded-xl border-2 border-blue-500/50 shadow-lg"
+                className="w-32 h-auto object-cover object-center rounded-xl border-2 border-blue-500/50 shadow-lg"
               />
               <div className="absolute inset-0 rounded-xl border-2 border-white/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse shadow-lg shadow-white/30"></div>
             </div>
