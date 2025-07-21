@@ -25,5 +25,14 @@ export default defineConfig({
       'efootball-mobile-app.onrender.com',
       'dreafootball.onrender.com'
     ]
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: './index.html',
+        sw: './public/firebase-messaging-sw.js'
+      }
+    }
   }
 })
+
