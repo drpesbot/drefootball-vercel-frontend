@@ -100,13 +100,11 @@ const PlayerModal = ({ player, onClose }) => {
             </p>
           </div>
 
-          {player.poster && (
+          {player.booster && player.booster !== 'No Booster' && (
             <div className="mb-4 relative">
-              <img
-                src={player.poster}
-                alt={`${player.name} poster`}
-                className="w-full h-auto object-cover object-center rounded-xl border-2 border-blue-500/50 shadow-lg"
-              />
+              <p className="text-sm text-slate-300 font-semibold mb-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                Booster: <span className="font-bold text-white">{player.booster}</span>
+              </p>
             </div>
           )}
 

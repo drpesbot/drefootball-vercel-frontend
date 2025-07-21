@@ -2,17 +2,13 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent } from './components/ui/card'
 import { Button } from './components/ui/button'
 import { Input } from './components/ui/input'
-import { Search, Settings, Users, Star, Zap, Trophy, Award, Crown, Sparkles, Phone, Bell, Play, Gamepad2, Info, X } from 'lucide-react'
+import { Search, Settings, Users, Star, Zap, Trophy, Award, Crown, Sparkles, Phone, Play, Gamepad2, Info, X } from 'lucide-react'
 import AddPlayerPage from './components/AddPlayerPage'
 import './App.css'
 import ApiService from './services/api.js'
 
 import appIcon from './assets/images/football_icon_no_black_edges.png'
 import PasswordProtection from './components/PasswordProtection.jsx'
-// import NotificationPopup from './components/NotificationPopup.jsx'; // تم إزالة استيراد مكون الشاشة المنبثقة
-
-import { requestNotificationPermission } from './firebase.jsx';
-
 
 // استيراد الأيقونات
 import finishingIcon from './assets/icons/finishing.jpg'
@@ -36,85 +32,11 @@ function App() {
   const [selectedPlayer, setSelectedPlayer] = useState(null)
   const [showPlayerModal, setShowPlayerModal] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  // const [showNotificationPopup, setShowNotificationPopup] = useState(false); // تم إزالة حالة التحكم في ظهور النافذة المنبثقة
-  const [showToast, setShowToast] = useState(false); // حالة للتحكم في ظهور رسالة التوست
 
   // تحميل اللاعبين من API عند بدء التطبيق
   useEffect(() => {
     loadPlayers();
-    // checkNotificationStatus(); // تم إزالة التحقق من حالة الإشعارات
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker
-          .register("/firebase-messaging-sw.js")
-          .then((registration) => {
-            console.log("✅ Service Worker registered successfully:", registration);
-            // messaging.useServiceWorker(registration); // تم إزالة هذا السطر لأنه يتم التعامل معه في firebase.js
-          })
-          .catch((err) => {
-            console.log('❌ Service Worker registration failed:', err);
-          });
-      });
-    }
   }, [])
-
-  // تم إزالة دالة checkNotificationStatus بالكامل
-  // const checkNotificationStatus = async () => {
-  //   const permission = Notification.permission;
-  //   const hasSeenPopup = localStorage.getItem('notificationPopupSeen');
-
-  //   // إذا لم يرَ المستخدم النافذة من قبل وليس لديه إذن مُمنوح
-  //   if (!hasSeenPopup && permission !== 'granted') {
-  //     setShowNotificationPopup(true);
-  //   }
-  // };
-
-  // تم إزالة دالة handleEnableNotificationsClick بالكامل
-  // const handleEnableNotificationsClick = async () => {
-  //   console.log("Clicked 'تفعيل الإشعارات' button"); // سجل تشخيصي جديد
-  //   if (Notification.permission === 'granted') {
-  //     setShowToast(true);
-  //     setTimeout(() => setShowToast(false), 3000); // إخفاء التوست بعد 3 ثوانٍ
-  //   } else {
-  //     setShowNotificationPopup(true);
-  //   }
-  // };
-
-  // تم إزالة دالة handleNotificationPopupContinue بالكامل
-  // const handleNotificationPopupContinue = async () => {
-  //   console.log("🚀 Continue clicked - handleNotificationPopupContinue called");
-  //   console.log("🔔 Notification permission requested");
-  //   console.log("بدء عملية تفعيل الإشعارات...");
-    
-  //   // إضافة تنبيه للمستخدم
-  //   alert("تم النقر على زر المتابعة - سيتم طلب إذن الإشعارات الآن");
-    
-  //   try {
-  //     console.log("📞 Calling requestNotificationPermission function...");
-  //     // طلب إذن الإشعارات وحفظ التوكن
-  //     const token = await requestNotificationPermission();
-      
-  //     if (token) {
-  //       console.log("✅ تم تفعيل الإشعارات بنجاح وحفظ التوكن:", token);
-  //       alert("تم تفعيل الإشعارات بنجاح! التوكن: " + token.substring(0, 20) + "...");
-  //       // لا نغلق النافذة المنبثقة - يجب على المستخدم إغلاقها يدوياً
-  //     } else {
-  //       console.log("❌ فشل في الحصول على التوكن");
-  //       alert("فشل في الحصول على التوكن");
-  //     }
-  //   } catch (error) {
-  //     console.error("❌ خطأ في تفعيل الإشعارات:", error);
-  //     alert("خطأ في تفعيل الإشعارات: " + error.message);
-  //   }
-  // };
-
-  // تم إزالة دالة handleNotificationPopupClose بالكامل
-  // const handleNotificationPopupClose = () => {
-  //   console.log("Closing notification popup"); // سجل تشخيصي جديد
-  //   setShowNotificationPopup(false); // إخفاء النافذة المنبثقة
-  //   localStorage.setItem('notificationPopupSeen', 'true'); // تسجيل أن المستخدم رأى النافذة
-  // };
 
   // دالة لتحميل اللاعبين من API مع ترتيب عشوائي جديد في كل مرة
   const loadPlayers = async () => {
@@ -357,19 +279,6 @@ function App() {
 
           {/* الأزرار المحسنة */}
           <div className="flex flex-col gap-4 items-center">
-            {/* تم إزالة زر تفعيل الإشعارات بالكامل */}
-            {/* <Button 
-              onClick={handleEnableNotificationsClick} // تم تغيير الدالة المستدعاة
-              className="bg-gradient-to-r from-green-400 via-lime-400 to-green-500 hover:from-green-500 hover:via-lime-500 hover:to-green-600 text-black font-black py-3 px-8 text-base rounded-full shadow-2xl shadow-green-400/60 transition-all duration-300 hover:scale-105 relative overflow-hidden group border-2 border-green-300/50 hover:border-green-200/70"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-              <div className="flex items-center justify-center gap-3 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
-                <Bell className="w-5 h-5" />
-                <span>تفعيل الإشعارات</span>
-                <Sparkles className="w-5 h-5" />
-              </div>
-            </Button> */}
-
             {/* الزر الثانوي - تواصل معنا */}
             <Button 
               onClick={handleContactUs}
@@ -529,21 +438,6 @@ function App() {
           </div>
         )}
 
-        {/* تم إزالة النافذة المنبثقة للإشعارات بالكامل */}
-        {/* {showNotificationPopup && (
-          <NotificationPopup
-            onClose={handleNotificationPopupClose}
-            handleNotificationPopupContinue={handleNotificationPopupContinue}
-          />
-        )} */}
-
-        {/* رسالة التوست */}
-        {showToast && (
-          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-300 z-50">
-            Notifications are already enabled ✅
-          </div>
-        )}
-
         {showPlayerModal && (
           <PlayerModal player={selectedPlayer} onClose={closePlayerModal} />
         )}
@@ -553,11 +447,4 @@ function App() {
 }
 
 export default App
-
-
-
-
-
-
-
 
