@@ -11,7 +11,7 @@ import appIcon from './assets/images/football_icon_no_black_edges.png'
 import PasswordProtection from './components/PasswordProtection.jsx'
 // import NotificationPopup from './components/NotificationPopup.jsx'; // تم إزالة استيراد مكون الشاشة المنبثقة
 
-// import { requestNotificationPermission } from './firebase'; // تم إزالة استيراد دالة طلب الإذن
+import { requestNotificationPermission } from './firebase.jsx';
 
 
 // استيراد الأيقونات
