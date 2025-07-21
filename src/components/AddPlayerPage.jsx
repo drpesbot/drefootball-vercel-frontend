@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X, Bell, Send, Users, Eye, BarChart3 } from 'lucide-react'
 import ApiService from '../services/api.js'
-import { requestNotificationPermission, onMessageListener } from '../firebase.js'
+import { requestNotificationPermission, onMessageListener } from '../firebase.jsx'
 
 import appIcon from '../assets/images/app_icon.jpg'
 

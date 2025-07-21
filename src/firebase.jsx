@@ -4,8 +4,7 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app\'s Firebase configuration
+// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDKeJxpUximZQGJNRg9pYnu82WlwWWL26A",
   authDomain: "drefootball-push.firebaseapp.com",
@@ -31,12 +30,8 @@ try {
 
 // دالة لتسجيل Service Worker بشكل صحيح
 const registerServiceWorker = async () => {
-  if (
-    'serviceWorker' in navigator
-  ) {
-      console.log("🔧 تسجيل Service Worker...");
-      const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-        scope: '/'
+  if ('serviceWorker' in navigator) {
+      console.log("🔧 تسجيل Service Worker...");      const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js", {        scope: '/'
       });
       
       console.log("✅ تم تسجيل Service Worker بنجاح:", registration);
@@ -222,12 +217,12 @@ export const onMessageListener = () =>
           const { title, body } = payload.notification;
           
           // إنشاء إشعار مخصص
-          if (Notification.permission === \'granted\') {
+          if (Notification.permission === 'granted') {
             new Notification(title, {
-              body: body,
-              icon: \'/firebase-logo.png\',
-              badge: \'/firebase-logo.png\',
-              tag: \'fcm-notification\',
+              b              icon: 
+                '/firebase-logo.png',
+              badge: 
+                '/firebase-logo.png',      tag: 'fcm-notification',
               requireInteraction: true
             });
           }
