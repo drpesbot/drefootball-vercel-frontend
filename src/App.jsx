@@ -9,9 +9,9 @@ import ApiService from './services/api.js'
 
 import appIcon from './assets/images/football_icon_no_black_edges.png'
 import PasswordProtection from './components/PasswordProtection.jsx'
-import NotificationPopup from './components/NotificationPopup.jsx'; // استيراد مكون الشاشة المنبثقة
+// import NotificationPopup from './components/NotificationPopup.jsx'; // تم إزالة استيراد مكون الشاشة المنبثقة
 
-import { requestNotificationPermission } from './firebase';
+// import { requestNotificationPermission } from './firebase'; // تم إزالة استيراد دالة طلب الإذن
 
 
 // استيراد الأيقونات
@@ -34,13 +34,13 @@ function App() {
   const [selectedPlayer, setSelectedPlayer] = useState(null)
   const [showPlayerModal, setShowPlayerModal] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [showNotificationPopup, setShowNotificationPopup] = useState(false); // حالة للتحكم في ظهور النافذة المنبثقة
+  // const [showNotificationPopup, setShowNotificationPopup] = useState(false); // تم إزالة حالة التحكم في ظهور النافذة المنبثقة
   const [showToast, setShowToast] = useState(false); // حالة للتحكم في ظهور رسالة التوست
 
   // تحميل اللاعبين من API عند بدء التطبيق
   useEffect(() => {
     loadPlayers();
-    checkNotificationStatus();
+    // checkNotificationStatus(); // تم إزالة التحقق من حالة الإشعارات
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -57,58 +57,62 @@ function App() {
     }
   }, [])
 
-  const checkNotificationStatus = async () => {
-    const permission = Notification.permission;
-    const hasSeenPopup = localStorage.getItem('notificationPopupSeen');
+  // تم إزالة دالة checkNotificationStatus بالكامل
+  // const checkNotificationStatus = async () => {
+  //   const permission = Notification.permission;
+  //   const hasSeenPopup = localStorage.getItem('notificationPopupSeen');
 
-    // إذا لم يرَ المستخدم النافذة من قبل وليس لديه إذن مُمنوح
-    if (!hasSeenPopup && permission !== 'granted') {
-      setShowNotificationPopup(true);
-    }
-  };
+  //   // إذا لم يرَ المستخدم النافذة من قبل وليس لديه إذن مُمنوح
+  //   if (!hasSeenPopup && permission !== 'granted') {
+  //     setShowNotificationPopup(true);
+  //   }
+  // };
 
-  const handleEnableNotificationsClick = async () => {
-    console.log("Clicked 'تفعيل الإشعارات' button"); // سجل تشخيصي جديد
-    if (Notification.permission === 'granted') {
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000); // إخفاء التوست بعد 3 ثوانٍ
-    } else {
-      setShowNotificationPopup(true);
-    }
-  };
+  // تم إزالة دالة handleEnableNotificationsClick بالكامل
+  // const handleEnableNotificationsClick = async () => {
+  //   console.log("Clicked 'تفعيل الإشعارات' button"); // سجل تشخيصي جديد
+  //   if (Notification.permission === 'granted') {
+  //     setShowToast(true);
+  //     setTimeout(() => setShowToast(false), 3000); // إخفاء التوست بعد 3 ثوانٍ
+  //   } else {
+  //     setShowNotificationPopup(true);
+  //   }
+  // };
 
-  const handleNotificationPopupContinue = async () => {
-    console.log("🚀 Continue clicked - handleNotificationPopupContinue called");
-    console.log("🔔 Notification permission requested");
-    console.log("بدء عملية تفعيل الإشعارات...");
+  // تم إزالة دالة handleNotificationPopupContinue بالكامل
+  // const handleNotificationPopupContinue = async () => {
+  //   console.log("🚀 Continue clicked - handleNotificationPopupContinue called");
+  //   console.log("🔔 Notification permission requested");
+  //   console.log("بدء عملية تفعيل الإشعارات...");
     
-    // إضافة تنبيه للمستخدم
-    alert("تم النقر على زر المتابعة - سيتم طلب إذن الإشعارات الآن");
+  //   // إضافة تنبيه للمستخدم
+  //   alert("تم النقر على زر المتابعة - سيتم طلب إذن الإشعارات الآن");
     
-    try {
-      console.log("📞 Calling requestNotificationPermission function...");
-      // طلب إذن الإشعارات وحفظ التوكن
-      const token = await requestNotificationPermission();
+  //   try {
+  //     console.log("📞 Calling requestNotificationPermission function...");
+  //     // طلب إذن الإشعارات وحفظ التوكن
+  //     const token = await requestNotificationPermission();
       
-      if (token) {
-        console.log("✅ تم تفعيل الإشعارات بنجاح وحفظ التوكن:", token);
-        alert("تم تفعيل الإشعارات بنجاح! التوكن: " + token.substring(0, 20) + "...");
-        // لا نغلق النافذة المنبثقة - يجب على المستخدم إغلاقها يدوياً
-      } else {
-        console.log("❌ فشل في الحصول على التوكن");
-        alert("فشل في الحصول على التوكن");
-      }
-    } catch (error) {
-      console.error("❌ خطأ في تفعيل الإشعارات:", error);
-      alert("خطأ في تفعيل الإشعارات: " + error.message);
-    }
-  };
+  //     if (token) {
+  //       console.log("✅ تم تفعيل الإشعارات بنجاح وحفظ التوكن:", token);
+  //       alert("تم تفعيل الإشعارات بنجاح! التوكن: " + token.substring(0, 20) + "...");
+  //       // لا نغلق النافذة المنبثقة - يجب على المستخدم إغلاقها يدوياً
+  //     } else {
+  //       console.log("❌ فشل في الحصول على التوكن");
+  //       alert("فشل في الحصول على التوكن");
+  //     }
+  //   } catch (error) {
+  //     console.error("❌ خطأ في تفعيل الإشعارات:", error);
+  //     alert("خطأ في تفعيل الإشعارات: " + error.message);
+  //   }
+  // };
 
-  const handleNotificationPopupClose = () => {
-    console.log("Closing notification popup"); // سجل تشخيصي جديد
-    setShowNotificationPopup(false); // إخفاء النافذة المنبثقة
-    localStorage.setItem('notificationPopupSeen', 'true'); // تسجيل أن المستخدم رأى النافذة
-  };
+  // تم إزالة دالة handleNotificationPopupClose بالكامل
+  // const handleNotificationPopupClose = () => {
+  //   console.log("Closing notification popup"); // سجل تشخيصي جديد
+  //   setShowNotificationPopup(false); // إخفاء النافذة المنبثقة
+  //   localStorage.setItem('notificationPopupSeen', 'true'); // تسجيل أن المستخدم رأى النافذة
+  // };
 
   // دالة لتحميل اللاعبين من API مع ترتيب عشوائي جديد في كل مرة
   const loadPlayers = async () => {
@@ -351,8 +355,8 @@ function App() {
 
           {/* الأزرار المحسنة */}
           <div className="flex flex-col gap-4 items-center">
-            {/* زر تفعيل الإشعارات الجديد */}
-            <Button 
+            {/* تم إزالة زر تفعيل الإشعارات بالكامل */}
+            {/* <Button 
               onClick={handleEnableNotificationsClick} // تم تغيير الدالة المستدعاة
               className="bg-gradient-to-r from-green-400 via-lime-400 to-green-500 hover:from-green-500 hover:via-lime-500 hover:to-green-600 text-black font-black py-3 px-8 text-base rounded-full shadow-2xl shadow-green-400/60 transition-all duration-300 hover:scale-105 relative overflow-hidden group border-2 border-green-300/50 hover:border-green-200/70"
             >
@@ -362,7 +366,7 @@ function App() {
                 <span>تفعيل الإشعارات</span>
                 <Sparkles className="w-5 h-5" />
               </div>
-            </Button>
+            </Button> */}
 
             {/* الزر الثانوي - تواصل معنا */}
             <Button 
@@ -456,7 +460,7 @@ function App() {
                           <img 
                             src={player.image} 
                             alt={player.name}
-                            className="relative w-20 h-28 sm:w-24 sm:h-32 md:w-28 md:h-36 object-cover object-center rounded-xl border-2 border-blue-500/50 group-hover:border-blue-400/80 transition-all duration-500 shadow-xl"
+                            className="relative w-28 h-36 sm:w-32 sm:h-40 md:w-36 md:h-44 object-cover object-center rounded-xl border-2 border-blue-500/50 group-hover:border-blue-400/80 transition-all duration-500 shadow-xl"
                             style={{
                               objectFit: 'cover',
                               objectPosition: 'center center',
@@ -523,13 +527,13 @@ function App() {
           </div>
         )}
 
-        {/* النافذة المنبثقة للإشعارات */}
-        {showNotificationPopup && (
+        {/* تم إزالة النافذة المنبثقة للإشعارات بالكامل */}
+        {/* {showNotificationPopup && (
           <NotificationPopup
             onClose={handleNotificationPopupClose}
             handleNotificationPopupContinue={handleNotificationPopupContinue}
           />
-        )}
+        )} */}
 
         {/* رسالة التوست */}
         {showToast && (
@@ -543,6 +547,8 @@ function App() {
 }
 
 export default App
+
+
 
 
 
