@@ -63,22 +63,29 @@ function App() {
   };
 
   const handleNotificationPopupContinue = async () => {
-    console.log("Continue clicked");
+    console.log("🚀 Continue clicked - handleNotificationPopupContinue called");
     console.log("🔔 Notification permission requested");
     console.log("بدء عملية تفعيل الإشعارات...");
     
+    // إضافة تنبيه للمستخدم
+    alert("تم النقر على زر المتابعة - سيتم طلب إذن الإشعارات الآن");
+    
     try {
+      console.log("📞 Calling requestNotificationPermission function...");
       // طلب إذن الإشعارات وحفظ التوكن
       const token = await requestNotificationPermission();
       
       if (token) {
-        console.log("تم تفعيل الإشعارات بنجاح وحفظ التوكن:", token);
+        console.log("✅ تم تفعيل الإشعارات بنجاح وحفظ التوكن:", token);
+        alert("تم تفعيل الإشعارات بنجاح! التوكن: " + token.substring(0, 20) + "...");
         // لا نغلق النافذة المنبثقة - يجب على المستخدم إغلاقها يدوياً
       } else {
-        console.log("فشل في الحصول على التوكن");
+        console.log("❌ فشل في الحصول على التوكن");
+        alert("فشل في الحصول على التوكن");
       }
     } catch (error) {
-      console.error("خطأ في تفعيل الإشعارات:", error);
+      console.error("❌ خطأ في تفعيل الإشعارات:", error);
+      alert("خطأ في تفعيل الإشعارات: " + error.message);
     }
   };
 
