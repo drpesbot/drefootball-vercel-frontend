@@ -561,7 +561,3 @@ export default App
 
 
 
-import PlayerModal from './components/PlayerModal';
-
-
-
