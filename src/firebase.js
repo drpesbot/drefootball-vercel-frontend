@@ -17,13 +17,35 @@ export const VAPID_KEY = "BCag4MVhMLnkq40eH2yVCtwi_jbvnxMVKgTmQE5bKbYYtUJpCAkW4I
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+
+// Initialize messaging with error handling
+let messaging;
+try {
+  messaging = getMessaging(app);
+} catch (error) {
+  console.error("Error initializing Firebase messaging:", error);
+}
 
 // طلب إذن الإشعارات والحصول على التوكن
 export const requestNotificationPermission = async () => {
   try {
     console.log("🔔 Notification permission requested");
     console.log("🔔 بدء طلب إذن الإشعارات...");
+    
+    // التحقق من دعم المتصفح للإشعارات
+    if (!("Notification" in window)) {
+      throw new Error("هذا المتصفح لا يدعم الإشعارات");
+    }
+
+    // التحقق من دعم Service Worker
+    if (!("serviceWorker" in navigator)) {
+      throw new Error("هذا المتصفح لا يدعم Service Worker");
+    }
+
+    // التحقق من تهيئة messaging
+    if (!messaging) {
+      throw new Error("فشل في تهيئة Firebase messaging");
+    }
     
     // طلب الإذن من المستخدم
     const permission = await Notification.requestPermission();
@@ -32,44 +54,50 @@ export const requestNotificationPermission = async () => {
     if (permission === 'granted') {
       console.log("✅ تم منح إذن الإشعارات");
       
-      // الحصول على التوكن
-      const currentToken = await getToken(messaging, {
-        vapidKey: VAPID_KEY,
-      });
-      
-      if (currentToken) {
-        console.log("🔑 FCM Token:", currentToken);
+      try {
+        // الحصول على التوكن مع معالجة الأخطاء
+        const currentToken = await getToken(messaging, {
+          vapidKey: VAPID_KEY,
+        });
         
-        // إرسال التوكن إلى الـ Backend
-        try {
-          console.log("📤 إرسال التوكن إلى الـ Backend...");
-          const response = await fetch("https://pop-srne.onrender.com/api/save-token", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ token: currentToken }),
-          });
+        if (currentToken) {
+          console.log("🔑 FCM Token:", currentToken);
           
-          const responseData = await response.json();
-          console.log("📥 استجابة الـ Backend:", responseData);
-          
-          if (response.ok) {
-            console.log("✅ تم حفظ التوكن بنجاح في الـ Backend");
-            alert("تم تفعيل الإشعارات بنجاح! ✅");
-          } else {
-            console.error("❌ فشل في حفظ التوكن:", response.statusText, responseData);
-            alert("فشل في حفظ التوكن: " + response.statusText);
+          // إرسال التوكن إلى الـ Backend
+          try {
+            console.log("📤 إرسال التوكن إلى الـ Backend...");
+            const response = await fetch("https://pop-srne.onrender.com/api/save-token", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ token: currentToken }),
+            });
+            
+            const responseData = await response.json();
+            console.log("📥 استجابة الـ Backend:", responseData);
+            
+            if (response.ok) {
+              console.log("✅ تم حفظ التوكن بنجاح في الـ Backend");
+              alert("تم تفعيل الإشعارات بنجاح! ✅");
+            } else {
+              console.error("❌ فشل في حفظ التوكن:", response.statusText, responseData);
+              alert("فشل في حفظ التوكن: " + response.statusText);
+            }
+          } catch (error) {
+            console.error("❌ خطأ في إرسال التوكن إلى الـ Backend:", error);
+            alert("خطأ في الاتصال بالخادم: " + error.message);
           }
-        } catch (error) {
-          console.error("❌ خطأ في إرسال التوكن إلى الـ Backend:", error);
-          alert("خطأ في الاتصال بالخادم: " + error.message);
+          
+          return currentToken;
+        } else {
+          console.log("❌ لم يتم الحصول على التوكن");
+          alert("فشل في الحصول على توكن الجهاز. تأكد من تفعيل الإشعارات في إعدادات المتصفح.");
+          return null;
         }
-        
-        return currentToken;
-      } else {
-        console.log("❌ لم يتم الحصول على التوكن");
-        alert("فشل في الحصول على توكن الجهاز");
+      } catch (tokenError) {
+        console.error("❌ خطأ في الحصول على التوكن:", tokenError);
+        alert("خطأ في الحصول على توكن الجهاز: " + tokenError.message);
         return null;
       }
     } else {
@@ -87,11 +115,16 @@ export const requestNotificationPermission = async () => {
 // الاستماع للرسائل في المقدمة
 export const onMessageListener = () =>
   new Promise((resolve) => {
-    onMessage(messaging, (payload) => {
-      console.log("تم استلام رسالة في المقدمة:", payload);
-      resolve(payload);
-    });
+    if (messaging) {
+      onMessage(messaging, (payload) => {
+        console.log("تم استلام رسالة في المقدمة:", payload);
+        resolve(payload);
+      });
+    } else {
+      console.error("Messaging not initialized");
+    }
   });
 
 export { messaging };
+
 
