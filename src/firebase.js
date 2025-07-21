@@ -1,15 +1,18 @@
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
-// Your web app's Firebase configuration
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app\'s Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDKeJxpUximZQGJNRg9pYnu82WlwWWL26A",
   authDomain: "drefootball-push.firebaseapp.com",
   projectId: "drefootball-push",
   storageBucket: "drefootball-push.firebasestorage.app",
   messagingSenderId: "679680926337",
-  appId: "1:679680926337:web:ee4635a25b5008cf8a6380",
-  measurementId: "G-T6XDC93ZJ8"
+  appId: "1:679680926337:web:ee4635a25b5008cf8a6380"
 };
 
 // VAPID public key for FCM
@@ -28,11 +31,11 @@ try {
 
 // دالة لتسجيل Service Worker بشكل صحيح
 const registerServiceWorker = async () => {
-  if ('serviceWorker' in navigator) {
+  if (\'serviceWorker\' in navigator) {
     try {
       console.log("🔧 تسجيل Service Worker...");
-      const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-        scope: '/'
+      const registration = await navigator.serviceWorker.register(\'/firebase-messaging-sw.js\', {
+        scope: \'/\'
       });
       
       console.log("✅ تم تسجيل Service Worker بنجاح:", registration);
@@ -41,8 +44,8 @@ const registerServiceWorker = async () => {
       if (registration.installing) {
         console.log("⏳ Service Worker قيد التثبيت...");
         await new Promise((resolve) => {
-          registration.installing.addEventListener('statechange', () => {
-            if (registration.installing.state === 'installed') {
+          registration.installing.addEventListener(\'statechange\', () => {
+            if (registration.installing.state === \'installed\') {
               resolve();
             }
           });
@@ -51,7 +54,7 @@ const registerServiceWorker = async () => {
       
       if (registration.waiting) {
         console.log("⏳ Service Worker في انتظار التفعيل...");
-        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        registration.waiting.postMessage({ type: \'SKIP_WAITING\' });
       }
       
       if (registration.active) {
@@ -158,7 +161,7 @@ export const requestNotificationPermission = async () => {
     const permission = await Notification.requestPermission();
     console.log("📋 نتيجة طلب الإذن:", permission);
     
-    if (permission === 'granted') {
+    if (permission === \'granted\') {
       console.log("✅ تم منح إذن الإشعارات");
       
       try {
@@ -219,12 +222,12 @@ export const onMessageListener = () =>
           const { title, body } = payload.notification;
           
           // إنشاء إشعار مخصص
-          if (Notification.permission === 'granted') {
+          if (Notification.permission === \'granted\') {
             new Notification(title, {
               body: body,
-              icon: '/firebase-logo.png',
-              badge: '/firebase-logo.png',
-              tag: 'fcm-notification',
+              icon: \'/firebase-logo.png\',
+              badge: \'/firebase-logo.png\',
+              tag: \'fcm-notification\',
               requireInteraction: true
             });
           }
