@@ -31,7 +31,10 @@ try {
 // دالة لتسجيل Service Worker بشكل صحيح
 const registerServiceWorker = async () => {
   if ('serviceWorker' in navigator) {
-      console.log("🔧 تسجيل Service Worker...");      const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js", {        scope: '/'
+    try {
+      console.log("🔧 تسجيل Service Worker...");
+      const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js", {
+        scope: '/'
       });
       
       console.log("✅ تم تسجيل Service Worker بنجاح:", registration);
@@ -50,7 +53,8 @@ const registerServiceWorker = async () => {
       
       if (registration.waiting) {
         console.log("⏳ Service Worker في انتظار التفعيل...");
-        registration.waiting.postMessage({ type: 'SKIP_WAITING' });     }
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
       
       if (registration.active) {
         console.log("✅ Service Worker نشط ومستعد");
@@ -219,10 +223,12 @@ export const onMessageListener = () =>
           // إنشاء إشعار مخصص
           if (Notification.permission === 'granted') {
             new Notification(title, {
-              b              icon: 
+              body: body,
+              icon: 
                 '/firebase-logo.png',
               badge: 
-                '/firebase-logo.png',      tag: 'fcm-notification',
+                '/firebase-logo.png',
+              tag: 'fcm-notification',
               requireInteraction: true
             });
           }
@@ -236,6 +242,8 @@ export const onMessageListener = () =>
   });
 
 export { messaging };
+
+
 
 
 
