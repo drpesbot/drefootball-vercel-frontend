@@ -31,11 +31,12 @@ try {
 
 // دالة لتسجيل Service Worker بشكل صحيح
 const registerServiceWorker = async () => {
-  if (\'serviceWorker\' in navigator) {
-    try {
+  if (
+    'serviceWorker' in navigator
+  ) {
       console.log("🔧 تسجيل Service Worker...");
-      const registration = await navigator.serviceWorker.register(\'/firebase-messaging-sw.js\', {
-        scope: \'/\'
+      const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+        scope: '/'
       });
       
       console.log("✅ تم تسجيل Service Worker بنجاح:", registration);
@@ -44,8 +45,8 @@ const registerServiceWorker = async () => {
       if (registration.installing) {
         console.log("⏳ Service Worker قيد التثبيت...");
         await new Promise((resolve) => {
-          registration.installing.addEventListener(\'statechange\', () => {
-            if (registration.installing.state === \'installed\') {
+          registration.installing.addEventListener('statechange', () => {
+            if (registration.installing.state === 'installed') {
               resolve();
             }
           });
@@ -54,8 +55,7 @@ const registerServiceWorker = async () => {
       
       if (registration.waiting) {
         console.log("⏳ Service Worker في انتظار التفعيل...");
-        registration.waiting.postMessage({ type: \'SKIP_WAITING\' });
-      }
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });     }
       
       if (registration.active) {
         console.log("✅ Service Worker نشط ومستعد");
@@ -161,7 +161,7 @@ export const requestNotificationPermission = async () => {
     const permission = await Notification.requestPermission();
     console.log("📋 نتيجة طلب الإذن:", permission);
     
-    if (permission === \'granted\') {
+    if (permission === 'granted') {
       console.log("✅ تم منح إذن الإشعارات");
       
       try {
