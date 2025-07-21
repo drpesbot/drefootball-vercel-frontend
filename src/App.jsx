@@ -41,6 +41,19 @@ function App() {
   useEffect(() => {
     loadPlayers();
     checkNotificationStatus();
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('/firebase-messaging-sw.js')
+          .then((registration) => {
+            console.log('✅ Service Worker registered successfully:', registration);
+          })
+          .catch((err) => {
+            console.log('❌ Service Worker registration failed:', err);
+          });
+      });
+    }
   }, [])
 
   const checkNotificationStatus = async () => {
