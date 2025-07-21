@@ -101,8 +101,8 @@ const PlayerModal = ({ player, onClose }) => {
           </div>
 
           {player.booster && player.booster !== 'No Booster' && (
-            <div className="mb-4 relative">
-              <p className="text-sm text-slate-300 font-semibold mb-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+            <div className="mb-4 relative bg-pink-500/20 rounded-lg p-3 border border-pink-400/50 shadow-md">
+              <p className="text-sm text-white font-bold mb-0" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
                 Booster: <span className="font-bold text-white">{player.booster}</span>
               </p>
             </div>
