@@ -32,16 +32,16 @@ const PlayerModal = ({ player, onClose }) => {
   };
 
   const statNames = {
-    finishing: 'الإنهاء',
-    passing: 'التمرير',
-    dribbling: 'المراوغة',
-    dexterity: 'الرشاقة',
-    lowerBodyStrength: 'قوة الجزء السفلي',
-    aerialStrength: 'القوة الهوائية',
-    defending: 'الدفاع',
-    gk1: 'حارس مرمى 1',
-    gk2: 'حارس مرمى 2',
-    gk3: 'حارس مرمى 3',
+    finishing: 'Finishing',
+    passing: 'Passing',
+    dribbling: 'Dribbling',
+    dexterity: 'Dexterity',
+    lowerBodyStrength: 'Lower Body Strength',
+    aerialStrength: 'Aerial Strength',
+    defending: 'Defending',
+    gk1: 'GK 1',
+    gk2: 'GK 2',
+    gk3: 'GK 3',
   };
 
   const calculateOverallRating = (playerStats) => {
@@ -96,7 +96,7 @@ const PlayerModal = ({ player, onClose }) => {
               <Zap className="w-5 h-5 text-yellow-400" />
             </div>
             <p className="text-sm text-slate-300 font-semibold" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
-              القوة الإجمالية
+              Overall Rating
             </p>
           </div>
 
@@ -133,6 +133,8 @@ const PlayerModal = ({ player, onClose }) => {
 };
 
 export default PlayerModal;
+
+
 
 
 
