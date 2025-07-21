@@ -68,6 +68,67 @@ const registerServiceWorker = async () => {
   }
 };
 
+// دالة لإرسال التوكن إلى الـ Backend
+const sendTokenToBackend = async (token) => {
+  try {
+    console.log("📤 إرسال التوكن إلى الـ Backend...");
+    const response = await fetch("https://pop-srne.onrender.com/api/save-token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token: token }),
+    });
+    
+    const responseData = await response.json();
+    console.log("📥 استجابة الـ Backend:", responseData);
+    
+    if (response.ok) {
+      console.log("✅ تم حفظ التوكن بنجاح في الـ Backend");
+      return true;
+    } else {
+      console.error("❌ فشل في حفظ التوكن:", response.statusText, responseData);
+      return false;
+    }
+  } catch (error) {
+    console.error("❌ خطأ في إرسال التوكن إلى الـ Backend:", error);
+    return false;
+  }
+};
+
+// دالة لاختبار التوكن الجديد
+const testNewToken = async (token) => {
+  try {
+    console.log("🧪 اختبار التوكن الجديد...");
+    const testResponse = await fetch("https://pop-srne.onrender.com/api/send-to-token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ 
+        token: token,
+        title: "🎉 تم تفعيل الإشعارات بنجاح!",
+        body: "مرحباً! التوكن الجديد يعمل بشكل مثالي ✅"
+      }),
+    });
+    
+    const testData = await testResponse.json();
+    console.log("🧪 نتيجة اختبار التوكن:", testData);
+    
+    if (testResponse.ok) {
+      alert("🎉 تم تفعيل الإشعارات بنجاح! ستصلك رسالة اختبار الآن.");
+      return true;
+    } else {
+      alert("⚠️ تم حفظ التوكن لكن فشل في إرسال رسالة الاختبار: " + testData.error);
+      return false;
+    }
+  } catch (error) {
+    console.error("❌ خطأ في إرسال رسالة الاختبار:", error);
+    alert("❌ خطأ في الاتصال بالخادم لاختبار التوكن: " + error.message);
+    return false;
+  }
+};
+
 // طلب إذن الإشعارات والحصول على التوكن مع تحسينات
 export const requestNotificationPermission = async () => {
   try {
@@ -118,51 +179,9 @@ export const requestNotificationPermission = async () => {
           }
           
           // إرسال التوكن إلى الـ Backend
-          try {
-            console.log("📤 إرسال التوكن إلى الـ Backend...");
-            const response = await fetch("https://pop-srne.onrender.com/api/save-token", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ token: currentToken }),
-            });
-            
-            const responseData = await response.json();
-            console.log("📥 استجابة الـ Backend:", responseData);
-            
-            if (response.ok) {
-              console.log("✅ تم حفظ التوكن بنجاح في الـ Backend");
-              
-              // اختبار التوكن فوراً
-              console.log("🧪 اختبار التوكن الجديد...");
-              const testResponse = await fetch("https://pop-srne.onrender.com/api/send-to-token", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ 
-                  token: currentToken,
-                  title: "🎉 تم تفعيل الإشعارات بنجاح!",
-                  body: "مرحباً! التوكن الجديد يعمل بشكل مثالي ✅"
-                }),
-              });
-              
-              const testData = await testResponse.json();
-              console.log("🧪 نتيجة اختبار التوكن:", testData);
-              
-              if (testResponse.ok) {
-                alert("🎉 تم تفعيل الإشعارات بنجاح! ستصلك رسالة اختبار الآن.");
-              } else {
-                alert("⚠️ تم حفظ التوكن لكن فشل في إرسال رسالة الاختبار: " + testData.error);
-              }
-            } else {
-              console.error("❌ فشل في حفظ التوكن:", response.statusText, responseData);
-              alert("❌ فشل في حفظ التوكن: " + response.statusText);
-            }
-          } catch (error) {
-            console.error("❌ خطأ في إرسال التوكن إلى الـ Backend:", error);
-            alert("❌ خطأ في الاتصال بالخادم: " + error.message);
+          const saved = await sendTokenToBackend(currentToken);
+          if (saved) {
+            await testNewToken(currentToken);
           }
           
           return currentToken;
@@ -219,4 +238,6 @@ export const onMessageListener = () =>
   });
 
 export { messaging };
+
+
 
