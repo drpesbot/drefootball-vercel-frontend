@@ -131,6 +131,15 @@ const PlayerModal = ({ player, onClose }) => {
               return null;
             })}
           </div>
+          <div className="mt-6">
+            <Button
+              onClick={onClose}
+              className="w-full bg-red-600/80 hover:bg-red-700/90 text-white font-bold py-3 rounded-full shadow-lg"
+              style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}
+            >
+              الرجوع
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
