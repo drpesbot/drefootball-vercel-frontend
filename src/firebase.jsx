@@ -31,40 +31,35 @@ try {
 // دالة لتسجيل Service Worker بشكل صحيح
 const registerServiceWorker = async () => {
   if ('serviceWorker' in navigator) {
-    try {
-      console.log("🔧 تسجيل Service Worker...");
-      const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js", {
-        scope: '/'
-      });
-      
-      console.log("✅ تم تسجيل Service Worker بنجاح:", registration);
-      
-      // انتظار حتى يصبح Service Worker نشطاً
-      if (registration.installing) {
-        console.log("⏳ Service Worker قيد التثبيت...");
-        await new Promise((resolve) => {
-          registration.installing.addEventListener('statechange', () => {
-            if (registration.installing.state === 'installed') {
-              resolve();
-            }
-          });
+    console.log("🔧 تسجيل Service Worker...");
+    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js", {
+      scope: '/'
+    });
+    
+    console.log("✅ تم تسجيل Service Worker بنجاح:", registration);
+    
+    // انتظار حتى يصبح Service Worker نشطاً
+    if (registration.installing) {
+      console.log("⏳ Service Worker قيد التثبيت...");
+      await new Promise((resolve) => {
+        registration.installing.addEventListener('statechange', () => {
+          if (registration.installing.state === 'installed') {
+            resolve();
+          }
         });
-      }
-      
-      if (registration.waiting) {
-        console.log("⏳ Service Worker في انتظار التفعيل...");
-        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-      }
-      
-      if (registration.active) {
-        console.log("✅ Service Worker نشط ومستعد");
-      }
-      
-      return registration;
-    } catch (error) {
-      console.error("❌ فشل في تسجيل Service Worker:", error);
-      throw error;
+      });
     }
+    
+    if (registration.waiting) {
+      console.log("⏳ Service Worker في انتظار التفعيل...");
+      registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+    }
+    
+    if (registration.active) {
+      console.log("✅ Service Worker نشط ومستعد");
+    }
+    
+    return registration;
   } else {
     throw new Error("Service Worker غير مدعوم في هذا المتصفح");
   }
@@ -242,6 +237,8 @@ export const onMessageListener = () =>
   });
 
 export { messaging };
+
+
 
 
 
