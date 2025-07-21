@@ -100,6 +100,16 @@ const PlayerModal = ({ player, onClose }) => {
             </p>
           </div>
 
+          {player.poster && (
+            <div className="mb-4 relative">
+              <img
+                src={player.poster}
+                alt={`${player.name} poster`}
+                className="w-full h-auto object-cover object-center rounded-xl border-2 border-blue-500/50 shadow-lg"
+              />
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-3 text-sm text-left">
             {Object.keys(statIcons).map((statKey) => {
               const statValue = player[statKey];
@@ -123,5 +133,7 @@ const PlayerModal = ({ player, onClose }) => {
 };
 
 export default PlayerModal;
+
+
 
 
