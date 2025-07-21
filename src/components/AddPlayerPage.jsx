@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button.jsx'
 import { Input } from '@/components/ui/input.jsx'
 import { Label } from '@/components/ui/label.jsx'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx'
+import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from '@/components/ui/select.jsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
-import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X, Bell, Send, Users, Eye, BarChart3 } from 'lucide-react'
+import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X, Users } from 'lucide-react'
 import ApiService from '../services/api.js'
-import { requestNotificationPermission, onMessageListener } from '../firebase.jsx'
 
 import appIcon from '../assets/images/app_icon.jpg'
 
@@ -44,78 +43,12 @@ function AddPlayerPage({ onBack }) {
   const [successMessage, setSuccessMessage] = useState('')
   const [showAllPlayers, setShowAllPlayers] = useState(false)
   const [allPlayers, setAllPlayers] = useState([])
-  const [notificationMessage, setNotificationMessage] = useState('')
-  const [showNotificationForm, setShowNotificationForm] = useState(false)
-  const [showSubscribersCount, setShowSubscribersCount] = useState(false)
-  const [subscribersCount, setSubscribersCount] = useState(0)
   const [editingPlayerId, setEditingPlayerId] = useState(null)
 
   // تحميل عدد المشتركين عند بدء التطبيق وطلب إذن الإشعارات
   useEffect(() => {
-    loadSubscribersCount()
-    
-    // طلب إذن الإشعارات عند تحميل التطبيق
-    const initializeNotifications = async () => {
-      try {
-        await requestNotificationPermission()
-        
-        // الاستماع للرسائل في المقدمة
-        onMessageListener()
-          .then((payload) => {
-            console.log('تم استلام إشعار:', payload)
-            // يمكنك إضافة منطق لعرض الإشعار هنا
-            if (payload.notification) {
-              // عرض إشعار مخصص أو استخدام المتصفح
-              new Notification(payload.notification.title, {
-                body: payload.notification.body,
-                icon: payload.notification.image || '/app_icon.png'
-              })
-            }
-          })
-          .catch((err) => console.log('خطأ في استلام الرسالة:', err))
-      } catch (error) {
-        console.error('خطأ في تهيئة الإشعارات:', error)
-      }
-    }
-    
-    initializeNotifications()
+    // لا يوجد تحميل لعدد المشتركين أو طلب إذن إشعارات هنا بعد الآن
   }, [])
-
-  const loadSubscribersCount = async () => {
-    try {
-      console.log('🔄 تحميل عدد المشتركين من الخلفية...');
-      
-      // محاولة الحصول على عدد التوكنات الفعلية
-      const tokensResponse = await ApiService.getNotificationTokens();
-      console.log('📊 استجابة التوكنات:', tokensResponse);
-      
-      if (tokensResponse && Array.isArray(tokensResponse.tokens)) {
-        const actualCount = tokensResponse.tokens.length;
-        setSubscribersCount(actualCount);
-        console.log('✅ تم تحميل عدد المشتركين الفعلي:', actualCount);
-        return;
-      }
-      
-      // إذا فشل، جرب الطريقة القديمة
-      const response = await ApiService.getNotificationSubscribers();
-      console.log('📈 استجابة العدد التقليدي:', response);
-      
-      if (response && typeof response.count === 'number') {
-        setSubscribersCount(response.count);
-        console.log('✅ تم تحميل عدد المشتركين من الخلفية:', response.count);
-      } else {
-        throw new Error('Invalid response format from backend');
-      }
-    } catch (error) {
-      console.error('❌ خطأ في تحميل عدد المشتركين من الخلفية:', error);
-      
-      // Fallback to localStorage if backend fails
-      const localTokens = JSON.parse(localStorage.getItem('userNotificationTokens') || '[]');
-      const localCount = localTokens.length;
-      setSubscribersCount(localCount);
-      console.log('🔄 استخدام العدد المحلي:', localCount);
-    }
-  }
 
   const handleInputChange = (field, value) => {
     // التحقق من أن القيمة بين 0 و 150
@@ -134,10 +67,9 @@ function AddPlayerPage({ onBack }) {
     }
   }
 
-  // دالة لعرض عدد المشتركين في الإشعارات
+  // دالة لعرض عدد المشتركين في الإشعارات (تم إزالتها من الواجهة)
   const handleShowSubscribersCount = () => {
-    loadSubscribersCount() // تحديث العدد قبل العرض
-    setShowSubscribersCount(true)
+    // لا يوجد منطق هنا بعد الآن
   }
 
   // دالة لعرض جميع اللاعبين
@@ -289,187 +221,9 @@ function AddPlayerPage({ onBack }) {
     return Math.round(total / stats.length)
   }
 
-  // دالة لإرسال الإشعارات اليدوية المحسنة
+  // دالة لإرسال الإشعارات اليدوية المحسنة (تم إزالتها من الواجهة)
   const handleSendNotification = async () => {
-    if (!notificationMessage.trim()) {
-      alert('يجب إدخال رسالة الإشعار')
-      return
-    }
-
-    console.log('🚀 بدء عملية إرسال الإشعار...');
-    console.log('📝 محتوى الإشعار:', notificationMessage);
-
-    try {
-      // أولاً: محاولة إرسال الإشعار عبر الخلفية للمشتركين الفعليين
-      console.log('📡 محاولة إرسال الإشعار عبر الخلفية...');
-      
-      const notificationData = {
-        title: 'eFootball Mobile - إشعار جديد',
-        message: notificationMessage,
-        icon: '/favicon.ico',
-        url: window.location.origin
-      };
-
-      try {
-        const backendResponse = await ApiService.sendNotificationToSubscribers(notificationData);
-        console.log('✅ تم إرسال الإشعار عبر الخلفية بنجاح:', backendResponse);
-        
-        if (backendResponse && backendResponse.success) {
-          setSuccessMessage(`✅ تم إرسال الإشعار بنجاح إلى ${backendResponse.recipientsCount || 'جميع'} المشتركين`);
-          setNotificationMessage('');
-          setTimeout(() => setSuccessMessage(''), 5000);
-          return;
-        }
-      } catch (backendError) {
-        console.warn('⚠️ فشل الإرسال عبر الخلفية، سيتم المحاولة محلياً:', backendError);
-      }
-
-      // ثانياً: الإرسال المحلي كبديل
-      console.log('🔄 محاولة الإرسال المحلي...');
-      
-      // التحقق من دعم الإشعارات في المتصفح
-      if (!('Notification' in window)) {
-        console.error('❌ هذا المتصفح لا يدعم الإشعارات');
-        alert('هذا المتصفح لا يدعم الإشعارات');
-        return;
-      }
-
-      // التحقق من إذن الإشعارات
-      if (Notification.permission === 'denied') {
-        console.error('❌ الإشعارات محظورة في هذا المتصفح');
-        alert('الإشعارات محظورة في هذا المتصفح. يرجى تفعيلها من إعدادات المتصفح.');
-        return;
-      }
-
-      // طلب الإذن إذا لم يكن ممنوحاً
-      if (Notification.permission === 'default') {
-        console.log('🔔 طلب إذن الإشعارات...');
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-          console.error('❌ تم رفض إذن الإشعارات');
-          alert('يجب السماح بالإشعارات لإرسال الرسائل');
-          return;
-        }
-      }
-
-      console.log('✅ إذن الإشعارات متاح');
-
-      // الحصول على قائمة التوكنات المحفوظة
-      const savedTokens = JSON.parse(localStorage.getItem('userNotificationTokens') || '[]');
-      const subscribersCount = parseInt(localStorage.getItem('notificationSubscribers') || '0');
-      
-      console.log('👥 عدد المشتركين المسجلين:', subscribersCount);
-      console.log('🔑 عدد التوكنات المحفوظة:', savedTokens.length);
-      console.log('📋 التوكنات:', savedTokens);
-
-      if (subscribersCount === 0) {
-        console.warn('⚠️ لا يوجد مشتركين مسجلين');
-        alert('لا يوجد مشتركين مسجلين في الإشعارات بعد. يرجى تفعيل الإشعارات أولاً من الصفحة الرئيسية.');
-        return;
-      }
-
-      // إرسال الإشعار للمستخدم الحالي (كمثال)
-      console.log('📤 إرسال الإشعار...');
-      
-      const notification = new Notification('🔔 eFootball Mobile - إشعار جديد', {
-        body: notificationMessage,
-        icon: appIcon,
-        badge: appIcon,
-        tag: 'efootball-manual-notification',
-        requireInteraction: true,
-        timestamp: Date.now(),
-        data: {
-          url: window.location.origin,
-          timestamp: new Date().toISOString()
-        }
-      });
-
-      // معالجة أحداث الإشعار
-      notification.onclick = function(event) {
-        console.log('🖱️ تم النقر على الإشعار');
-        event.preventDefault();
-        window.focus();
-        notification.close();
-      };
-
-      notification.onshow = function() {
-        console.log('👁️ تم عرض الإشعار بنجاح');
-      };
-
-      notification.onerror = function(error) {
-        console.error('❌ خطأ في عرض الإشعار:', error);
-      };
-
-      // محاولة إرسال الإشعار عبر Service Worker (إذا كان متاحاً)
-      if ('serviceWorker' in navigator) {
-        try {
-          const registration = await navigator.serviceWorker.getRegistration();
-          if (registration) {
-            console.log('📡 إرسال الإشعار عبر Service Worker...');
-            await registration.showNotification('🔔 eFootball Mobile - إشعار جديد', {
-              body: notificationMessage,
-              icon: appIcon,
-              badge: appIcon,
-              tag: 'efootball-sw-notification',
-              requireInteraction: true,
-              timestamp: Date.now(),
-              data: {
-                url: window.location.origin,
-                timestamp: new Date().toISOString()
-              }
-            });
-            console.log('✅ تم إرسال الإشعار عبر Service Worker');
-          }
-        } catch (swError) {
-          console.log('⚠️ لم يتم إرسال الإشعار عبر Service Worker:', swError.message);
-        }
-      }
-
-      // حفظ سجل الإشعار المرسل
-      const notificationLog = JSON.parse(localStorage.getItem('sentNotifications') || '[]');
-      notificationLog.push({
-        id: Date.now(),
-        message: notificationMessage,
-        timestamp: new Date().toISOString(),
-        recipientsCount: subscribersCount,
-        tokensCount: savedTokens.length
-      });
-      
-      // الاحتفاظ بآخر 50 إشعار فقط
-      if (notificationLog.length > 50) {
-        notificationLog.splice(0, notificationLog.length - 50);
-      }
-      
-      localStorage.setItem('sentNotifications', JSON.stringify(notificationLog));
-
-      console.log('✅ تم إرسال الإشعار بنجاح');
-      console.log('📊 إحصائيات الإرسال:', {
-        message: notificationMessage,
-        subscribersCount: subscribersCount,
-        tokensCount: savedTokens.length,
-        timestamp: new Date().toISOString()
-      });
-
-      // عرض رسالة نجاح
-      setSuccessMessage(`✅ تم إرسال الإشعار بنجاح إلى ${subscribersCount} مشترك`);
-      setNotificationMessage('');
-      setShowNotificationForm(false);
-
-      // إخفاء الرسالة بعد 5 ثوان
-      setTimeout(() => {
-        setSuccessMessage('');
-      }, 5000);
-
-    } catch (error) {
-      console.error('❌ خطأ شامل في إرسال الإشعار:', error);
-      console.error('📋 تفاصيل الخطأ:', {
-        name: error.name,
-        message: error.message,
-        stack: error.stack
-      });
-      
-      alert(`حدث خطأ في إرسال الإشعار: ${error.message}`);
-    }
+    // لا يوجد منطق هنا بعد الآن
   }
 
   const boosterOptions = [
@@ -544,22 +298,24 @@ function AddPlayerPage({ onBack }) {
                 <Trash2 className="w-3 h-3 mr-1" />
                 حذف لاعب
               </Button>
-              <Button 
+              {/* تم إزالة زر إرسال إشعار يدوي */}
+              {/* <Button 
                 variant="outline" 
                 className="bg-purple-600/20 border-purple-500 text-purple-300 hover:bg-purple-600/30 text-xs py-1 px-2 h-7"
                 onClick={() => setShowNotificationForm(true)}
               >
                 <Send className="w-3 h-3 mr-1" />
                 إرسال إشعار يدوي
-              </Button>
-              <Button 
+              </Button> */}
+              {/* تم إزالة زر League Subscribers */}
+              {/* <Button 
                 variant="outline" 
                 className="bg-orange-600/20 border-orange-500 text-orange-300 hover:bg-orange-600/30 text-xs py-1 px-2 h-7"
                 onClick={handleShowSubscribersCount}
               >
                 <Users className="w-3 h-3 mr-1" />
                 League Subscribers
-              </Button>
+              </Button> */}
             </div>
           </CardContent>
         </Card>
@@ -849,12 +605,11 @@ function AddPlayerPage({ onBack }) {
           </div>
         )}
 
-        {/* النافذة المنبثقة لإرسال الإشعارات اليدوية */}
-        {showNotificationForm && (
+        {/* النافذة المنبثقة لإرسال الإشعارات اليدوية (تم إزالتها) */}
+        {/* {showNotificationForm && (
           <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
             <Card className="bg-gradient-to-br from-gray-800/95 via-gray-900/95 to-black/95 border border-gray-600/50 backdrop-blur-2xl max-w-md w-full shadow-2xl relative">
               <CardContent className="p-6 relative z-10">
-                {/* زر الإغلاق */}
                 <div className="flex justify-between items-center mb-6">
                   <div className="flex items-center gap-2">
                     <Bell className="w-6 h-6 text-orange-400" />
@@ -870,7 +625,6 @@ function AddPlayerPage({ onBack }) {
                   </button>
                 </div>
 
-                {/* نموذج الإشعار */}
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="notificationMessage" className="text-white text-lg font-semibold mb-3 block">
@@ -914,14 +668,13 @@ function AddPlayerPage({ onBack }) {
               </CardContent>
             </Card>
           </div>
-        )}
+        )} */}
 
-        {/* النافذة المنبثقة لعرض عدد المشتركين */}
-        {showSubscribersCount && (
+        {/* النافذة المنبثقة لعرض عدد المشتركين (تم إزالتها) */}
+        {/* {showSubscribersCount && (
           <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
             <Card className="bg-gradient-to-br from-gray-800/95 via-gray-900/95 to-black/95 border border-gray-600/50 backdrop-blur-2xl max-w-md w-full shadow-2xl relative">
               <CardContent className="p-6 relative z-10">
-                {/* زر الإغلاق */}
                 <div className="flex justify-between items-center mb-6">
                   <div className="flex items-center gap-2">
                     <BarChart3 className="w-6 h-6 text-purple-400" />
@@ -937,9 +690,7 @@ function AddPlayerPage({ onBack }) {
                   </button>
                 </div>
 
-                {/* عرض الإحصائيات */}
                 <div className="space-y-6">
-                  {/* عدد المشتركين */}
                   <div className="bg-gradient-to-r from-purple-500/20 via-pink-500/30 to-purple-500/20 rounded-3xl p-6 border-2 border-purple-500/40 relative overflow-hidden text-center">
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/10 to-transparent animate-pulse"></div>
                     <div className="relative z-10">
@@ -956,7 +707,6 @@ function AddPlayerPage({ onBack }) {
                     </div>
                   </div>
 
-                  {/* معلومات إضافية */}
                   <div className="bg-gradient-to-r from-blue-500/20 via-cyan-500/30 to-blue-500/20 rounded-2xl p-4 border border-blue-500/40">
                     <div className="flex items-center gap-2 mb-3">
                       <Eye className="w-5 h-5 text-blue-400" />
@@ -978,7 +728,6 @@ function AddPlayerPage({ onBack }) {
                     </div>
                   </div>
 
-                  {/* زر تحديث العدد */}
                   <Button 
                     onClick={loadSubscribersCount}
                     className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold py-3 text-lg rounded-xl shadow-lg"
@@ -990,7 +739,7 @@ function AddPlayerPage({ onBack }) {
               </CardContent>
             </Card>
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Toast Message */}
@@ -1013,4 +762,5 @@ function AddPlayerPage({ onBack }) {
 }
 
 export default AddPlayerPage
+
 
