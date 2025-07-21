@@ -73,7 +73,7 @@ const PlayerModal = ({ player, onClose }) => {
         >
           <X className="w-5 h-5" />
         </Button>
-        <CardContent className="p-6 text-center relative">
+        <CardContent className="p-6 text-center relative overflow-y-auto max-h-[90vh]">
           {player.image && (
             <div className="mb-4 relative flex justify-center">
               <img
@@ -111,7 +111,7 @@ const PlayerModal = ({ player, onClose }) => {
           )}
 
           <h4 className="text-xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-3" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
-            Detailed Statistics
+            إحصائيات لاعب
           </h4>
 
           <div className="space-y-3 text-sm text-left">
