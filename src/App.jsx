@@ -23,6 +23,7 @@ import gk2Icon from './assets/icons/gk2.jpg'
 import gk3Icon from './assets/icons/gk3.jpg'
 
 import PlayerModal from './components/PlayerModal';
+import WelcomeModal from './components/WelcomeModal';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -32,10 +33,17 @@ function App() {
   const [selectedPlayer, setSelectedPlayer] = useState(null)
   const [showPlayerModal, setShowPlayerModal] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false)
 
   // تحميل اللاعبين من API عند بدء التطبيق
   useEffect(() => {
     loadPlayers();
+    
+    // التحقق من عرض الشاشة الترحيبية
+    const hasSeenWelcome = localStorage.getItem('efootball_welcome_seen');
+    if (!hasSeenWelcome) {
+      setShowWelcomeModal(true);
+    }
   }, [])
 
   // دالة لتحميل اللاعبين من API مع ترتيب عشوائي جديد في كل مرة
@@ -102,6 +110,18 @@ function App() {
   const closePlayerModal = () => {
     setShowPlayerModal(false)
     setSelectedPlayer(null)
+  }
+
+  // دالة لإغلاق الشاشة الترحيبية
+  const closeWelcomeModal = () => {
+    setShowWelcomeModal(false)
+    localStorage.setItem('efootball_welcome_seen', 'true')
+  }
+
+  // دالة لفتح رابط تيليجرام
+  const handleTelegramClick = () => {
+    window.open('https://t.me/pes224', '_blank')
+    closeWelcomeModal()
   }
 
   const handleSearch = (term = searchTerm) => {
@@ -441,11 +461,17 @@ function App() {
         {showPlayerModal && (
           <PlayerModal player={selectedPlayer} onClose={closePlayerModal} />
         )}
+
+        {showWelcomeModal && (
+          <WelcomeModal 
+            onClose={closeWelcomeModal} 
+            onTelegramClick={handleTelegramClick} 
+          />
+        )}
       </div>
     </div>
   )
 }
 
 export default App
-
 
