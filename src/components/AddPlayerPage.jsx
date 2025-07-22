@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label.jsx'
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from '@/components/ui/select.jsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
 import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X, Users, Eye, EyeOff, MessageSquare, Phone, Search } from 'lucide-react'
-import ApiService from '../services/api.js'
+import { ApiService } from '../services/api.js'
 
 import appIcon from '../assets/images/app_icon.jpg'
 
