@@ -1,8 +1,8 @@
-const express = require('express');
-const cors = require('cors');
-const AWS = require('aws-sdk');
-const multer = require('multer');
-const { v4: uuidv4 } = require('uuid');
+const express = require("express");
+const cors = require("cors");
+const AWS = require("aws-sdk");
+const multer = require("multer");
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 
@@ -10,8 +10,8 @@ const app = express();
 function sanitize(data) {
     if (Array.isArray(data)) {
         return data.map(sanitize);
-    } else if (data !== null && typeof data === 'object') {
-        if (data.constructor && data.constructor.name === 'Decimal') {
+    } else if (data !== null && typeof data === "object") {
+        if (data.constructor && data.constructor.name === "Decimal") {
             return data % 1 === 0 ? parseInt(data.toString()) : parseFloat(data.toString());
         }
         const result = {};
@@ -31,15 +31,15 @@ app.use(express.json());
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION || 'us-east-1'
+  region: process.env.AWS_REGION || "us-east-1"
 });
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
 
-const TABLE_NAME = 'drefotball_players';
-const SETTINGS_TABLE_NAME = 'drefotball_settings'; // جدول جديد للإعدادات
-const BUCKET_NAME = 'drefotball-player-images';
+const TABLE_NAME = "drefotball_players";
+const SETTINGS_TABLE_NAME = "drefotball_settings"; // جدول جديد للإعدادات
+const BUCKET_NAME = "drefotball-player-images";
 
 // Configure multer for file uploads
 const upload = multer({
@@ -48,6 +48,18 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
 });
+
+// Middleware for authentication
+const authenticate = (req, res, next) => {
+  const { password } = req.body;
+  const adminPassword = process.env.ADMIN_PASSWORD || 'killer8speed';
+  
+  if (password === adminPassword) {
+    next();
+  } else {
+    res.status(401).json({ success: false, message: 'Invalid password' });
+  }
+};
 
 // Authentication endpoint
 app.post('/api/auth', async (req, res) => {
@@ -67,7 +79,7 @@ app.post('/api/auth', async (req, res) => {
 });
 
 // Get all players
-app.get('/api/players', async (req, res) => {
+app.get("/api/players", async (req, res) => {
     try {
         const params = {
             TableName: TABLE_NAME
@@ -77,20 +89,15 @@ app.get('/api/players', async (req, res) => {
         const sanitizedPlayers = sanitize(result.Items);
         res.json(sanitizedPlayers);
     } catch (error) {
-        console.error('Error fetching players:', error);
-        res.status(500).json({ error: 'Failed to fetch players' });
+        console.error("Error fetching players:", error);
+        res.status(500).json({ error: "Failed to fetch players" });
     }
 });
 
 // Add new player
-app.post('/api/players', async (req, res) => {
+app.post("/api/players", authenticate, async (req, res) => {
   try {
-    const { password, player } = req.body;
-    const adminPassword = process.env.ADMIN_PASSWORD || 'killer8speed';
-    
-    if (password !== adminPassword) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
+    const { player } = req.body;
 
     const playerId = Date.now().toString();
     const playerData = {
@@ -108,20 +115,15 @@ app.post('/api/players', async (req, res) => {
     const sanitizedPlayer = sanitize(playerData);
     res.json({ success: true, player: sanitizedPlayer });
   } catch (error) {
-    console.error('Error adding player:', error);
-    res.status(500).json({ error: 'Failed to add player' });
+    console.error("Error adding player:", error);
+    res.status(500).json({ error: "Failed to add player" });
   }
 });
 
 // Update player
-app.put('/api/players/:id', async (req, res) => {
+app.put("/api/players/:id", authenticate, async (req, res) => {
   try {
-    const { password, player } = req.body;
-    const adminPassword = process.env.ADMIN_PASSWORD || 'killer8speed';
-    
-    if (password !== adminPassword) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
+    const { player } = req.body;
 
     const { id } = req.params;
     const playerData = {
@@ -139,21 +141,14 @@ app.put('/api/players/:id', async (req, res) => {
     const sanitizedPlayer = sanitize(playerData);
     res.json({ success: true, player: sanitizedPlayer });
   } catch (error) {
-    console.error('Error updating player:', error);
-    res.status(500).json({ error: 'Failed to update player' });
+    console.error("Error updating player:", error);
+    res.status(500).json({ error: "Failed to update player" });
   }
 });
 
 // Delete player
-app.delete('/api/players/:id', async (req, res) => {
+app.delete("/api/players/:id", authenticate, async (req, res) => {
   try {
-    const { password } = req.body;
-    const adminPassword = process.env.ADMIN_PASSWORD || 'killer8speed';
-    
-    if (password !== adminPassword) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     const { id } = req.params;
 
     const params = {
@@ -162,25 +157,18 @@ app.delete('/api/players/:id', async (req, res) => {
     };
 
     await dynamodb.delete(params).promise();
-    res.json({ success: true, message: 'Player deleted successfully' });
+    res.json({ success: true, message: "Player deleted successfully" });
   } catch (error) {
-    console.error('Error deleting player:', error);
-    res.status(500).json({ error: 'Failed to delete player' });
+    console.error("Error deleting player:", error);
+    res.status(500).json({ error: "Failed to delete player" });
   }
 });
 
 // Upload image
-app.post('/api/upload', upload.single('image'), async (req, res) => {
+app.post("/api/upload", authenticate, upload.single("image"), async (req, res) => {
   try {
-    const { password } = req.body;
-    const adminPassword = process.env.ADMIN_PASSWORD || 'killer8speed';
-    
-    if (password !== adminPassword) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+      return res.status(400).json({ error: "No file uploaded" });
     }
 
     const fileName = `${uuidv4()}-${req.file.originalname}`;
@@ -195,55 +183,52 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
     const result = await s3.upload(uploadParams).promise();
     res.json({ success: true, imageUrl: result.Location });
   } catch (error) {
-    console.error('Error uploading image:', error);
-    res.status(500).json({ error: 'Failed to upload image' });
+    console.error("Error uploading image:", error);
+    res.status(500).json({ error: "Failed to upload image" });
   }
 });
 
 // Get settings
-app.get('/api/settings', async (req, res) => {
+app.get("/api/settings", async (req, res) => {
   try {
     const params = {
       TableName: SETTINGS_TABLE_NAME,
-      Key: { id: 'global_settings' }
+      Key: { id: "global_settings" }
     };
     const result = await dynamodb.get(params).promise();
-    const settings = result.Item || { id: 'global_settings', showWelcomeModal: true, showContactButton: true };
+    const settings = result.Item || { id: "global_settings", showWelcomeModal: true, showContactButton: true };
     res.json(settings);
   } catch (error) {
-    console.error('Error fetching settings:', error);
-    res.status(500).json({ error: 'Failed to fetch settings' });
+    console.error("Error fetching settings:", error);
+    res.status(500).json({ error: "Failed to fetch settings" });
   }
 });
 
 // Update settings
-app.post('/api/settings', async (req, res) => {
+app.post("/api/settings", authenticate, async (req, res) => {
   try {
-    const { password, settings } = req.body;
-    const adminPassword = process.env.ADMIN_PASSWORD || 'killer8speed';
-    
-    if (password !== adminPassword) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
+    const { settings } = req.body;
 
     const params = {
       TableName: SETTINGS_TABLE_NAME,
-      Item: { id: 'global_settings', ...settings }
+      Item: { id: "global_settings", ...settings }
     };
     await dynamodb.put(params).promise();
     res.json({ success: true, settings });
   } catch (error) {
-    console.error('Error updating settings:', error);
-    res.status(500).json({ error: 'Failed to update settings' });
+    console.error("Error updating settings:", error);
+    res.status(500).json({ error: "Failed to update settings" });
   }
 });
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+app.get("/api/health", (req, res) => {
+  res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
 // Export the Express app
 module.exports = app;
+
+
 
 

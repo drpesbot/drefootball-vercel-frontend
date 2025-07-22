@@ -98,10 +98,7 @@ function AddPlayerPage({ onBack }) {
   const handleDeletePlayer = async (playerId) => {
     if (window.confirm('هل أنت متأكد من حذف هذا اللاعب؟')) {
       try {
-        // يجب توفير كلمة المرور هنا
-        const password = prompt('الرجاء إدخال كلمة المرور:');
-        if (!password) return;
-        await ApiService.deletePlayer(playerId, password);
+        await ApiService.deletePlayer(playerId);
         // إعادة تحميل قائمة اللاعبين
         const updatedPlayers = await ApiService.getPlayers();
         setAllPlayers(updatedPlayers);
@@ -147,14 +144,11 @@ function AddPlayerPage({ onBack }) {
     }
 
     try {
-      const password = prompt('الرجاء إدخال كلمة المرور:');
-      if (!password) return;
-
       let imageUrl = imagePreview; // استخدام الصورة الحالية إذا لم يتم تغييرها
       
       // رفع الصورة إلى S3 إذا كانت موجودة وجديدة
       if (playerData.image && typeof playerData.image !== 'string') {
-        const uploadResult = await ApiService.uploadImage(password, playerData.image);
+        const uploadResult = await ApiService.uploadImage(playerData.image);
         imageUrl = uploadResult.imageUrl;
       }
 
@@ -178,12 +172,12 @@ function AddPlayerPage({ onBack }) {
 
       if (editingPlayerId) {
         // تعديل لاعب موجود
-        await ApiService.updatePlayer(editingPlayerId, password, finalData);
+        await ApiService.updatePlayer(editingPlayerId, finalData);
         setSuccessMessage('تم تعديل اللاعب بنجاح ✅');
         setEditingPlayerId(null);
       } else {
         // إضافة لاعب جديد
-        await ApiService.addPlayer(password, finalData);
+        await ApiService.addPlayer(finalData);
         setSuccessMessage('تم إضافة اللاعب بنجاح ✅');
       }
 
@@ -243,11 +237,9 @@ function AddPlayerPage({ onBack }) {
 
   // دوال التحكم في العناصر
   const toggleWelcomeModal = async () => {
-    const password = prompt('الرجاء إدخال كلمة المرور:');
-    if (!password) return;
     try {
       const newSettings = { ...globalSettings, showWelcomeModal: !globalSettings.showWelcomeModal };
-      await ApiService.updateSettings(password, newSettings);
+      await ApiService.updateSettings(newSettings);
       setGlobalSettings(newSettings);
       setSuccessMessage('تم تحديث إعدادات الشاشة الترحيبية بنجاح ✅');
       setTimeout(() => setSuccessMessage(''), 3000);
@@ -258,11 +250,9 @@ function AddPlayerPage({ onBack }) {
   };
 
   const toggleContactButton = async () => {
-    const password = prompt('الرجاء إدخال كلمة المرور:');
-    if (!password) return;
     try {
       const newSettings = { ...globalSettings, showContactButton: !globalSettings.showContactButton };
-      await ApiService.updateSettings(password, newSettings);
+      await ApiService.updateSettings(newSettings);
       setGlobalSettings(newSettings);
       setSuccessMessage('تم تحديث إعدادات زر التواصل بنجاح ✅');
       setTimeout(() => setSuccessMessage(''), 3000);

@@ -16,14 +16,14 @@ class ApiService {
   }
 
   // دالة لإضافة لاعب جديد
-  static async addPlayer(password, player) {
+  static async addPlayer(player) {
     try {
       const response = await fetch(`${API_BASE_URL}/players`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ password, player }),
+        body: JSON.stringify({ player }),
       });
       
       if (!response.ok) {
@@ -38,14 +38,14 @@ class ApiService {
   }
 
   // دالة لتحديث لاعب
-  static async updatePlayer(id, password, player) {
+  static async updatePlayer(id, player) {
     try {
       const response = await fetch(`${API_BASE_URL}/players/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ password, player }),
+        body: JSON.stringify({ player }),
       });
       
       if (!response.ok) {
@@ -60,14 +60,13 @@ class ApiService {
   }
 
   // دالة لحذف لاعب
-  static async deletePlayer(id, password) {
+  static async deletePlayer(id) {
     try {
       const response = await fetch(`${API_BASE_URL}/players/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ password }),
       });
       
       if (!response.ok) {
@@ -82,11 +81,10 @@ class ApiService {
   }
 
   // دالة لرفع صورة
-  static async uploadImage(password, file) {
+  static async uploadImage(file) {
     try {
       const formData = new FormData();
       formData.append('image', file);
-      formData.append('password', password);
 
       const response = await fetch(`${API_BASE_URL}/upload`, {
         method: 'POST',
@@ -141,14 +139,14 @@ class ApiService {
   }
 
   // دالة لتحديث الإعدادات العامة
-  static async updateSettings(password, settings) {
+  static async updateSettings(settings) {
     try {
       const response = await fetch(`${API_BASE_URL}/settings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ password, settings }),
+        body: JSON.stringify({ settings }),
       });
       
       if (!response.ok) {
@@ -164,4 +162,5 @@ class ApiService {
 }
 
 export default ApiService;
+
 
