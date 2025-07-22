@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from './ui/button';
-import { X } from 'lucide-react';
+import { X, ArrowRight, Send, CheckCircle } from 'lucide-react'; // استيراد أيقونة CheckCircle
 
 const WelcomeModal = ({ onClose, onTelegramClick }) => {
   return (
@@ -26,20 +26,36 @@ const WelcomeModal = ({ onClose, onTelegramClick }) => {
             احصل على أحدث التحديثات، العروض، وتطويرات اللاعبين من خلال قناتنا الرسمية على تيليجرام.
           </p>
 
+          {/* المميزات المرقمة بعلامات صح خضراء */}
+          <div className="text-left mb-6 space-y-2">
+            <div className="flex items-center text-green-400 font-semibold" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+              <CheckCircle className="w-5 h-5 mr-2" />
+              <span>1. عروض حصرية وتحديثات يومية!</span>
+            </div>
+            <div className="flex items-center text-green-400 font-semibold" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+              <CheckCircle className="w-5 h-5 mr-2" />
+              <span>2. تطويرات لاعبين فريدة ومميزة!</span>
+            </div>
+            <div className="flex items-center text-green-400 font-semibold" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+              <CheckCircle className="w-5 h-5 mr-2" />
+              <span>3. مجتمع نشط ودعم مستمر!</span>
+            </div>
+          </div>
+
           <div className="flex flex-col space-y-4">
             <Button
               onClick={onClose}
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
               style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}
             >
-              انطلق إلى التطبيق
+              <ArrowRight className="w-5 h-5 ml-2" /> انطلق إلى التطبيق
             </Button>
             <Button
               onClick={onTelegramClick}
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
               style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}
             >
-              انضم معنا
+              <Send className="w-5 h-5 ml-2" /> انضم معنا
             </Button>
           </div>
         </div>
