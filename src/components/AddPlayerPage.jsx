@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input.jsx'
 import { Label } from '@/components/ui/label.jsx'
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from '@/components/ui/select.jsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
-import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X, Users } from 'lucide-react'
+import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X, Users, Eye, EyeOff, MessageSquare, Phone } from 'lucide-react'
 import ApiService from '../services/api.js'
 
 import appIcon from '../assets/images/app_icon.jpg'
@@ -21,7 +21,7 @@ import gk1Icon from '../assets/icons/gk1.jpg'
 import gk2Icon from '../assets/icons/gk2.jpg'
 import gk3Icon from '../assets/icons/gk3.jpg'
 
-function AddPlayerPage({ onBack }) {
+function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showContactButton, setShowContactButton }) {
   const [playerData, setPlayerData] = useState({
     name: '',
     image: null,
@@ -199,568 +199,560 @@ function AddPlayerPage({ onBack }) {
       
     } catch (error) {
       console.error('Error saving player:', error);
-      alert('حدث خطأ أثناء حفظ اللاعب. يرجى المحاولة مرة أخرى.');
+      alert('حدث خطأ أثناء حفظ اللاعب');
     }
+  }
+
+  // دالة لإلغاء التعديل
+  const handleCancelEdit = () => {
+    setEditingPlayerId(null);
+    setPlayerData({
+      name: '',
+      image: null,
+      overallRating: '',
+      finishing: '',
+      passing: '',
+      dribbling: '',
+      dexterity: '',
+      lowerBodyStrength: '',
+      aerialStrength: '',
+      defending: '',
+      gk1: '',
+      gk2: '',
+      gk3: '',
+      booster: 'No Booster'
+    });
+    setImagePreview(null);
   };
 
-  // دالة لحساب القوة الإجمالية للاعب
-  const calculateOverallRating = (playerStats) => {
-    const stats = [
-      playerStats.finishing || 0,
-      playerStats.passing || 0,
-      playerStats.dribbling || 0,
-      playerStats.dexterity || 0,
-      playerStats.lowerBodyStrength || 0,
-      playerStats.aerialStrength || 0,
-      playerStats.defending || 0,
-      playerStats.gk1 || 0,
-      playerStats.gk2 || 0,
-      playerStats.gk3 || 0
-    ]
-    const total = stats.reduce((sum, stat) => sum + stat, 0)
-    return Math.round(total / stats.length)
-  }
+  // دوال التحكم في العناصر
+  const toggleWelcomeModal = () => {
+    setShowWelcomeModal(!showWelcomeModal);
+  };
 
-  // دالة لإرسال الإشعارات اليدوية المحسنة (تم إزالتها من الواجهة)
-  const handleSendNotification = async () => {
-    // لا يوجد منطق هنا بعد الآن
-  }
+  const toggleContactButton = () => {
+    setShowContactButton(!showContactButton);
+  };
 
+  // قائمة البوسترات المتاحة
   const boosterOptions = [
-    'No Booster', 'Aerial +1', 'Agility +1', 'Ball-carrying +1', 'Crossing +1',
-    'Defending +1', 'Duelling +1', 'Fantasista +1', 'Free-kick Taking +1',
-    'Goalkeeping +1', 'Hard Worker +1', 'Passing +1', 'Physicality +1',
-    'Saving +1', 'Shooting +1', 'Shutdown +1', "Striker's Instinct +1", 'Technique +1'
+    'No Booster',
+    'Aerial +1',
+    'Agility +1',
+    'Ball-carrying +1',
+    'Crossing +1',
+    'Defending +1',
+    'Duelling +1',
+    'Fantasista +1',
+    'Free-kick Taking +1',
+    'Goalkeeping +1',
+    'Hard Worker +1',
+    'Passing +1',
+    'Physicality +1',
+    'Saving +1',
+    'Shooting +1',
+    'Shutdown +1',
+    'Striker\'s Instinct +1',
+    'Technique +1'
   ]
 
-  return (
-    <div className="min-h-screen bg-black p-4">
-      <div className="max-w-2xl mx-auto">
-        {/* زر العودة */}
-        <Button 
-          onClick={onBack}
-          variant="ghost" 
-          className="mb-4 text-white hover:bg-gray-800"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          العودة للصفحة الرئيسية
-        </Button>
-
-        {/* الرأس */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <img src={appIcon} alt="App Icon" className="w-16 h-16 rounded-full" />
-            </div>
+  // إذا كان يعرض جميع اللاعبين
+  if (showAllPlayers) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white p-4">
+        <div className="max-w-6xl mx-auto">
+          {/* الشريط العلوي */}
+          <div className="flex items-center justify-between mb-6">
+            <Button 
+              onClick={() => setShowAllPlayers(false)}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              العودة
+            </Button>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              جميع اللاعبين ({allPlayers.length})
+            </h1>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
-            {editingPlayerId ? 'تعديل اللاعب' : 'eFootball Mobile'}
-          </h1>
-          <p className="text-blue-200">
-            {editingPlayerId ? 'قم بتعديل بيانات اللاعب' : 'إضافة لاعب جديد'}
-          </p>
+
+          {/* شبكة اللاعبين */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {allPlayers.map((player) => (
+              <Card key={player.id} className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-600/50 backdrop-blur-sm hover:border-blue-500/50 transition-all duration-300">
+                <CardContent className="p-4">
+                  {/* صورة اللاعب */}
+                  {player.image && (
+                    <div className="mb-4">
+                      <img 
+                        src={player.image} 
+                        alt={player.name}
+                        className="w-full h-48 object-cover rounded-lg border-2 border-blue-500/30"
+                      />
+                    </div>
+                  )}
+                  
+                  {/* اسم اللاعب */}
+                  <h3 className="text-lg font-bold text-yellow-400 mb-2 text-center">
+                    {player.name}
+                  </h3>
+                  
+                  {/* القوة الإجمالية */}
+                  <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg p-3 mb-4 text-center">
+                    <span className="text-2xl font-black text-yellow-300">
+                      {player.overallRating || 0}
+                    </span>
+                    <p className="text-xs text-slate-300">القوة الإجمالية</p>
+                  </div>
+                  
+                  {/* أزرار التحكم */}
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={() => handleEditPlayer(player)}
+                      className="flex-1 bg-blue-600/80 hover:bg-blue-700/80 text-white py-2 rounded-lg transition-all duration-300"
+                    >
+                      <Edit className="w-4 h-4 mr-1" />
+                      تعديل
+                    </Button>
+                    <Button 
+                      onClick={() => handleDeletePlayer(player.id)}
+                      className="flex-1 bg-red-600/80 hover:bg-red-700/80 text-white py-2 rounded-lg transition-all duration-300"
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      حذف
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white relative overflow-hidden">
+      {/* خلفية محسنة */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-gray-900/98 to-black/95"></div>
+        <div className="absolute top-16 left-8 w-80 h-80 bg-gradient-to-r from-blue-600/30 to-purple-600/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-16 right-8 w-72 h-72 bg-gradient-to-r from-emerald-600/25 to-cyan-600/25 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8 relative z-10">
+        {/* الشريط العلوي */}
+        <div className="flex items-center justify-between mb-8">
+          <Button 
+            onClick={onBack}
+            className="bg-gradient-to-r from-slate-700/95 to-slate-600/95 hover:from-slate-600/95 hover:to-slate-500/95 text-white px-6 py-3 rounded-full shadow-lg transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-slate-500/50"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            العودة للرئيسية
+          </Button>
+          
+          <div className="flex items-center gap-3">
+            <Settings className="w-6 h-6 text-yellow-400" />
+            <h1 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-500 bg-clip-text text-transparent" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+              لوحة التحكم
+            </h1>
+          </div>
         </div>
 
-        {/* لوحة التحكم مصغرة للموبايل */}
-        <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm mb-4">
-          <CardHeader className="p-3">
-            <CardTitle className="text-white flex items-center gap-2 text-sm">
-              <Settings className="w-4 h-4 text-yellow-400" />
-              لوحة التحكم
+        {/* رسالة النجاح */}
+        {successMessage && (
+          <div className="mb-6 p-4 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/50 rounded-xl text-green-300 text-center font-semibold backdrop-blur-sm">
+            {successMessage}
+          </div>
+        )}
+
+        {/* قسم التحكم في العناصر */}
+        <Card className="mb-8 bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-2 border-purple-500/50 backdrop-blur-xl shadow-2xl">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+              <Settings className="w-5 h-5 text-purple-400" />
+              إعدادات التحكم في الواجهة
             </CardTitle>
-            <CardDescription className="text-gray-300 text-xs">
-              إدارة اللاعبين المحفوظين والإشعارات
+            <CardDescription className="text-slate-400" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+              تحكم في ظهور العناصر في الصفحة الرئيسية
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-3">
-            <div className="flex flex-wrap gap-2">
-              <Button 
-                variant="outline" 
-                className="bg-blue-600/20 border-blue-500 text-blue-300 hover:bg-blue-600/30 text-xs py-1 px-2 h-7"
-                onClick={handleShowAllPlayers}
-              >
-                <User className="w-3 h-3 mr-1" />
-                عرض جميع اللاعبين
-              </Button>
-              <Button 
-                variant="outline" 
-                className="bg-green-600/20 border-green-500 text-green-300 hover:bg-green-600/30 text-xs py-1 px-2 h-7"
-                onClick={handleShowAllPlayers}
-              >
-                <Edit className="w-3 h-3 mr-1" />
-                تعديل لاعب
-              </Button>
-              <Button 
-                variant="outline" 
-                className="bg-red-600/20 border-red-500 text-red-300 hover:bg-red-600/30 text-xs py-1 px-2 h-7"
-                onClick={handleShowAllPlayers}
-              >
-                <Trash2 className="w-3 h-3 mr-1" />
-                حذف لاعب
-              </Button>
-              {/* تم إزالة زر إرسال إشعار يدوي */}
-              {/* <Button 
-                variant="outline" 
-                className="bg-purple-600/20 border-purple-500 text-purple-300 hover:bg-purple-600/30 text-xs py-1 px-2 h-7"
-                onClick={() => setShowNotificationForm(true)}
-              >
-                <Send className="w-3 h-3 mr-1" />
-                إرسال إشعار يدوي
-              </Button> */}
-              {/* تم إزالة زر League Subscribers */}
-              {/* <Button 
-                variant="outline" 
-                className="bg-orange-600/20 border-orange-500 text-orange-300 hover:bg-orange-600/30 text-xs py-1 px-2 h-7"
-                onClick={handleShowSubscribersCount}
-              >
-                <Users className="w-3 h-3 mr-1" />
-                League Subscribers
-              </Button> */}
+          <CardContent className="space-y-6">
+            {/* التحكم في الشاشة الترحيبية */}
+            <div className="p-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl border border-blue-500/30">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="welcomeModal"
+                    checked={showWelcomeModal}
+                    onChange={toggleWelcomeModal}
+                    className="w-5 h-5 text-blue-600 bg-slate-700 border-slate-600 rounded focus:ring-blue-500 focus:ring-2"
+                  />
+                  <MessageSquare className="w-5 h-5 text-blue-400" />
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="welcomeModal" className="font-semibold text-blue-300 cursor-pointer" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    الشاشة الترحيبية المنبثقة
+                  </label>
+                  <p className="text-sm text-slate-400" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    تظهر للمستخدمين عند دخول الموقع
+                  </p>
+                </div>
+                <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                  showWelcomeModal 
+                    ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
+                    : 'bg-red-600/20 text-red-300 border border-red-500/30'
+                }`}>
+                  {showWelcomeModal ? 'مفعلة' : 'معطلة'}
+                </div>
+              </div>
+            </div>
+
+            {/* التحكم في زر التواصل معنا */}
+            <div className="p-4 bg-gradient-to-r from-red-600/20 to-pink-600/20 rounded-xl border border-red-500/30">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="contactButton"
+                    checked={showContactButton}
+                    onChange={toggleContactButton}
+                    className="w-5 h-5 text-red-600 bg-slate-700 border-slate-600 rounded focus:ring-red-500 focus:ring-2"
+                  />
+                  <Phone className="w-5 h-5 text-red-400" />
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="contactButton" className="font-semibold text-red-300 cursor-pointer" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    زر "تواصل معنا"
+                  </label>
+                  <p className="text-sm text-slate-400" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    يظهر في الصفحة الرئيسية
+                  </p>
+                </div>
+                <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                  showContactButton 
+                    ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
+                    : 'bg-red-600/20 text-red-300 border border-red-500/30'
+                }`}>
+                  {showContactButton ? 'مفعل' : 'معطل'}
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* رسالة النجاح */}
-        {successMessage && (
-          <div className="mb-6 p-4 bg-green-600/20 border border-green-500 rounded-lg text-center">
-            <p className="text-green-300 font-semibold text-lg">{successMessage}</p>
-          </div>
-        )}
+        {/* أزرار الإدارة */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          <Button 
+            onClick={handleShowAllPlayers}
+            className="bg-gradient-to-r from-blue-600/80 to-purple-600/80 hover:from-blue-700/80 hover:to-purple-700/80 text-white py-4 px-6 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-blue-500/30"
+          >
+            <Users className="w-5 h-5 mr-2" />
+            <span className="font-semibold" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+              عرض جميع اللاعبين
+            </span>
+          </Button>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
-          {/* اسم اللاعب مصغر */}
-          <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardContent className="p-3">
-              <Label htmlFor="name" className="text-white text-sm font-semibold mb-2 block">
-                اسم اللاعب *
-              </Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="أدخل اسم اللاعب"
-                value={playerData.name}
-                onChange={(e) => setPlayerData(prev => ({ ...prev, name: e.target.value }))}
-                required
-                className="bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500 h-8 text-sm"
-              />
-            </CardContent>
-          </Card>
+        {/* نموذج إضافة/تعديل اللاعب */}
+        <Card className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-2 border-blue-500/50 backdrop-blur-xl shadow-2xl">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+              <Crown className="w-5 h-5 text-yellow-400" />
+              {editingPlayerId ? 'تعديل لاعب' : 'إضافة لاعب جديد'}
+            </CardTitle>
+            <CardDescription className="text-slate-400" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+              {editingPlayerId ? 'قم بتعديل بيانات اللاعب' : 'أدخل بيانات اللاعب الجديد'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* إلغاء التعديل */}
+              {editingPlayerId && (
+                <div className="flex justify-end">
+                  <Button 
+                    type="button"
+                    onClick={handleCancelEdit}
+                    className="bg-gray-600/80 hover:bg-gray-700/80 text-white px-4 py-2 rounded-lg"
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    إلغاء التعديل
+                  </Button>
+                </div>
+              )}
 
-          {/* القوة الإجمالية للاعب مصغر */}
-          <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardContent className="p-3">
-              <Label htmlFor="overallRating" className="text-white text-sm font-semibold mb-2 block">
-                القوة الإجمالية للاعب (Overall Rating) *
-              </Label>
-              <Input
-                id="overallRating"
-                type="number"
-                placeholder="أدخل القوة الإجمالية (0-150)"
-                value={playerData.overallRating}
-                onChange={(e) => handleInputChange('overallRating', e.target.value)}
-                className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 h-8 text-sm"
-                min="0"
-                max="150"
-                required
-              />
-              <p className="text-gray-400 text-xs mt-1">القيمة يجب أن تكون بين 0 و 150</p>
-            </CardContent>
-          </Card>
-
-          {/* رفع صورة اللاعب مصغر */}
-          <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardContent className="p-3">
-              <Label className="text-white text-sm font-semibold mb-2 block">
-                صورة اللاعب
-              </Label>
-              <div className="flex flex-col items-center">
-                {imagePreview ? (
-                  <div className="mb-2">
-                    <img src={imagePreview} alt="معاينة" className="w-20 h-24 object-cover rounded-lg border-2 border-gray-600" />
-                  </div>
-                ) : (
-                  <div className="w-20 h-24 bg-gray-700 rounded-lg border-2 border-dashed border-gray-500 flex items-center justify-center mb-2">
-                    <Camera className="w-5 h-5 text-gray-400" />
-                  </div>
-                )}
-                <Label htmlFor="image" className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs">
-                  <Upload className="w-3 h-3" />
-                  اضغط لرفع الصورة
+              {/* اسم اللاعب */}
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-white font-semibold flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                  <User className="w-4 h-4 text-blue-400" />
+                  اسم اللاعب
                 </Label>
-                <p className="text-xs text-gray-400 mt-1">PNG, JPG أو GIF</p>
                 <Input
-                  id="image"
-                  type="file"
-                  onChange={handleImageUpload}
-                  className="hidden"
+                  id="name"
+                  type="text"
+                  value={playerData.name}
+                  onChange={(e) => setPlayerData(prev => ({ ...prev, name: e.target.value }))}
+                  className="bg-slate-700/50 border-slate-600/50 text-white placeholder-slate-400 focus:border-blue-500/50 focus:ring-blue-500/20 rounded-lg"
+                  placeholder="أدخل اسم اللاعب"
+                  style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}
                 />
               </div>
-            </CardContent>
-          </Card>
 
-          {/* الإحصائيات الأساسية مصغر */}
-          <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardHeader className="p-3 pb-2">
-              <CardTitle className="text-white text-sm">الإحصائيات الأساسية</CardTitle>
-              <CardDescription className="text-gray-300 text-xs">القيم من 0 إلى 150</CardDescription>
-            </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-2 p-3 pt-0">
-              {[
-                { key: 'finishing', label: 'Finishing', icon: finishingIcon },
-                { key: 'passing', label: 'Passing', icon: passingIcon },
-                { key: 'dribbling', label: 'Dribbling', icon: dribblingIcon },
-                { key: 'dexterity', label: 'Dexterity', icon: dexterityIcon },
-                { key: 'lowerBodyStrength', label: 'Lower Body Strength', icon: lowerBodyIcon },
-                { key: 'aerialStrength', label: 'Aerial Strength', icon: aerialIcon },
-                { key: 'defending', label: 'Defending', icon: defendingIcon }
-              ].map(({ key, label, icon }) => (
-                <div key={key} className="space-y-1">
-                  <Label className="text-white flex items-center gap-1.5 text-xs">
-                    <img src={icon} alt={label} className="w-3 h-3 rounded" />
-                    {label}
-                  </Label>
-                  <Input
-                    type="number"
-                    min="0"
-                    max="150"
-                    placeholder="0"
-                    value={playerData[key]}
-                    onChange={(e) => handleInputChange(key, e.target.value)}
-                    className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 h-7 text-xs"
-                  />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* إحصائيات حراسة المرمى مصغر */}
-          <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardHeader className="p-3 pb-2">
-              <CardTitle className="text-white text-sm">إحصائيات حراسة المرمى</CardTitle>
-              <CardDescription className="text-gray-300 text-xs">القيم من 0 إلى 150</CardDescription>
-            </CardHeader>
-            <CardContent className="grid grid-cols-3 gap-2 p-3 pt-0">
-              {[
-                { key: 'gk1', label: 'GK 1', icon: gk1Icon },
-                { key: 'gk2', label: 'GK 2', icon: gk2Icon },
-                { key: 'gk3', label: 'GK 3', icon: gk3Icon }
-              ].map(({ key, label, icon }) => (
-                <div key={key} className="space-y-1">
-                  <Label className="text-white flex items-center gap-1.5 text-xs">
-                    <img src={icon} alt={label} className="w-3 h-3 rounded" />
-                    {label}
-                  </Label>
-                  <Input
-                    type="number"
-                    min="0"
-                    max="150"
-                    placeholder="0"
-                    value={playerData[key]}
-                    onChange={(e) => handleInputChange(key, e.target.value)}
-                    className="bg-gray-700/50 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 h-7 text-xs"
-                  />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* البوستر مصغر */}
-          <Card className="bg-gray-800/80 border-gray-600 backdrop-blur-sm">
-            <CardHeader className="p-3 pb-2">
-              <CardTitle className="text-white flex items-center gap-2 text-sm">
-                <Crown className="w-3 h-3 text-yellow-400" />
-                البوستر
-              </CardTitle>
-              <CardDescription className="text-gray-300 text-xs">اختر بوستر واحد للاعب</CardDescription>
-            </CardHeader>
-            <CardContent className="p-3 pt-0">
-              <Select value={playerData.booster} onValueChange={(value) => setPlayerData(prev => ({ ...prev, booster: value }))}>
-                <SelectTrigger className="bg-gray-700/50 border-gray-500 text-white h-8 text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-600">
-                  {boosterOptions.map((option) => (
-                    <SelectItem key={option} value={option} className="text-white hover:bg-gray-700 text-xs">
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </CardContent>
-          </Card>
-
-          {/* زر الإرسال مصغر */}
-          <Button 
-            type="submit" 
-            className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-2 text-sm rounded-xl shadow-lg"
-          >
-            {editingPlayerId ? 'تعديل اللاعب' : 'إضافة اللاعب'}
-          </Button>
-        </form>
-
-        {/* الشاشة المنبثقة لعرض جميع اللاعبين */}
-        {showAllPlayers && (
-          <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-            <Card className="bg-gradient-to-br from-gray-800/95 via-gray-900/95 to-black/95 border border-gray-600/50 backdrop-blur-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
-              <CardContent className="p-6 relative z-10">
-                {/* زر الإغلاق */}
-                <div className="flex justify-between items-center mb-6">
-                  <div className="flex items-center gap-2">
-                    <User className="w-6 h-6 text-blue-400" />
-                    <h2 className="text-xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                      جميع اللاعبين المحفوظين
-                    </h2>
-                  </div>
-                  <button 
-                    onClick={() => setShowAllPlayers(false)}
-                    className="bg-gradient-to-r from-red-500/20 to-red-600/20 hover:from-red-500/30 hover:to-red-600/30 p-2 rounded-full transition-all duration-300 border border-red-500/30 hover:border-red-400/50"
-                  >
-                    <X className="w-5 h-5 text-red-400" />
-                  </button>
-                </div>
-
-                {/* عرض اللاعبين */}
-                {allPlayers.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {allPlayers.map((player, index) => (
-                      <Card 
-                        key={index}
-                        className="bg-gradient-to-br from-gray-800/60 via-gray-900/70 to-gray-800/60 border border-gray-600/40 backdrop-blur-xl hover:border-blue-500/60 transition-all duration-300 hover:scale-105 group relative overflow-hidden shadow-xl hover:shadow-2xl"
-                      >
-                        <CardContent className="p-5 text-center relative z-10">
-                          {/* صورة اللاعب */}
-                          {player.image && (
-                            <div className="mb-4">
-                              <div className="relative inline-block">
-                                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
-                                <img 
-                                  src={player.image} 
-                                  alt={player.name}
-                                  className="relative w-16 h-16 rounded-full object-cover border-2 border-blue-500/40 group-hover:border-blue-400/60 transition-all duration-300"
-                                />
-                              </div>
-                            </div>
-                          )}
-                          
-                          {/* اسم اللاعب */}
-                          <h3 className="text-lg font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-3 group-hover:from-blue-300 group-hover:to-purple-300 transition-all duration-300">
-                            {player.name}
-                          </h3>
-                          
-                          {/* البوستر - تحت اسم اللاعب مباشرة */}
-                          {player.booster && player.booster !== 'No Booster' && (
-                            <div className="bg-gradient-to-r from-purple-500/20 via-pink-500/30 to-purple-500/20 rounded-xl p-2 border border-purple-500/30 mb-3">
-                              <p className="text-xs text-purple-400 font-semibold">{player.booster}</p>
-                            </div>
-                          )}
-                          
-                          {/* القوة الإجمالية */}
-                          <div className="bg-gradient-to-r from-yellow-500/20 via-orange-500/30 to-yellow-500/20 rounded-2xl p-3 border border-yellow-500/30 group-hover:border-yellow-400/50 transition-all duration-300 mb-3">
-                            <div className="flex items-center justify-center gap-2 mb-1">
-                              <span className="text-2xl font-black bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                                {calculateOverallRating(player)}
-                              </span>
-                            </div>
-                            <p className="text-xs text-gray-400 font-semibold">القوة الإجمالية</p>
-                          </div>
-
-                          {/* أزرار التعديل والحذف */}
-                          <div className="flex gap-2 mt-4">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="flex-1 bg-green-600/20 border-green-500 text-green-300 hover:bg-green-600/30"
-                              onClick={() => handleEditPlayer(player)}
-                            >
-                              <Edit className="w-3 h-3 mr-1" />
-                              تعديل
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="flex-1 bg-red-600/20 border-red-500 text-red-300 hover:bg-red-600/30"
-                              onClick={() => handleDeletePlayer(player.id)}
-                            >
-                              <Trash2 className="w-3 h-3 mr-1" />
-                              حذف
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-16">
-                    <div className="relative inline-block mb-6">
-                      <div className="w-24 h-24 bg-gradient-to-br from-gray-700/50 to-gray-800/50 rounded-full flex items-center justify-center backdrop-blur-sm border border-gray-600/30">
-                        <User className="w-12 h-12 text-gray-500" />
-                      </div>
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-300 mb-2">لا توجد لاعبين محفوظين</h3>
-                    <p className="text-gray-500 text-sm">قم بإضافة لاعبين أولاً</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* النافذة المنبثقة لإرسال الإشعارات اليدوية (تم إزالتها) */}
-        {/* {showNotificationForm && (
-          <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-            <Card className="bg-gradient-to-br from-gray-800/95 via-gray-900/95 to-black/95 border border-gray-600/50 backdrop-blur-2xl max-w-md w-full shadow-2xl relative">
-              <CardContent className="p-6 relative z-10">
-                <div className="flex justify-between items-center mb-6">
-                  <div className="flex items-center gap-2">
-                    <Bell className="w-6 h-6 text-orange-400" />
-                    <h2 className="text-xl font-black bg-gradient-to-r from-orange-400 to-yellow-400 bg-clip-text text-transparent">
-                      إرسال إشعار يدوي
-                    </h2>
-                  </div>
-                  <button 
-                    onClick={() => setShowNotificationForm(false)}
-                    className="bg-gradient-to-r from-red-500/20 to-red-600/20 hover:from-red-500/30 hover:to-red-600/30 p-2 rounded-full transition-all duration-300 border border-red-500/30 hover:border-red-400/50"
-                  >
-                    <X className="w-5 h-5 text-red-400" />
-                  </button>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="notificationMessage" className="text-white text-lg font-semibold mb-3 block">
-                      رسالة الإشعار
-                    </Label>
-                    <textarea
-                      id="notificationMessage"
-                      placeholder="اكتب رسالة الإشعار هنا..."
-                      value={notificationMessage}
-                      onChange={(e) => setNotificationMessage(e.target.value)}
-                      className="w-full h-32 bg-gray-700/50 border border-gray-500 text-white placeholder-gray-400 focus:border-orange-400 rounded-lg p-3 resize-none"
-                      maxLength={200}
+              {/* رفع صورة اللاعب */}
+              <div className="space-y-2">
+                <Label htmlFor="image" className="text-white font-semibold flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                  <Camera className="w-4 h-4 text-green-400" />
+                  صورة اللاعب
+                </Label>
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <Input
+                      id="image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="bg-slate-700/50 border-slate-600/50 text-white file:bg-blue-600/80 file:text-white file:border-none file:rounded-md file:px-4 file:py-2 file:mr-4 hover:file:bg-blue-700/80 transition-all duration-300"
                     />
-                    <p className="text-gray-400 text-sm mt-2">
-                      {notificationMessage.length}/200 حرف
-                    </p>
                   </div>
-
-                  <div className="bg-gradient-to-r from-orange-500/20 via-yellow-500/30 to-orange-500/20 rounded-xl p-4 border border-orange-500/30">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Bell className="w-4 h-4 text-orange-400" />
-                      <span className="text-orange-400 font-semibold text-sm">معاينة الإشعار</span>
+                  {imagePreview && (
+                    <div className="w-16 h-20 rounded-lg overflow-hidden border-2 border-blue-500/50">
+                      <img 
+                        src={imagePreview} 
+                        alt="معاينة" 
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                    <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-600/30">
-                      <p className="text-white font-semibold text-sm mb-1">eFootball Mobile - إشعار جديد</p>
-                      <p className="text-gray-300 text-sm">
-                        {notificationMessage || 'رسالة الإشعار ستظهر هنا...'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <Button 
-                    onClick={handleSendNotification}
-                    disabled={!notificationMessage.trim()}
-                    className="w-full bg-gradient-to-r from-orange-500 to-yellow-600 hover:from-orange-600 hover:to-yellow-700 text-white font-bold py-3 text-lg rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Send className="w-5 h-5 mr-2" />
-                    إرسال الإشعار للمشتركين
-                  </Button>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        )} */}
-
-        {/* النافذة المنبثقة لعرض عدد المشتركين (تم إزالتها) */}
-        {/* {showSubscribersCount && (
-          <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-            <Card className="bg-gradient-to-br from-gray-800/95 via-gray-900/95 to-black/95 border border-gray-600/50 backdrop-blur-2xl max-w-md w-full shadow-2xl relative">
-              <CardContent className="p-6 relative z-10">
-                <div className="flex justify-between items-center mb-6">
-                  <div className="flex items-center gap-2">
-                    <BarChart3 className="w-6 h-6 text-purple-400" />
-                    <h2 className="text-xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                      إحصائيات الإشعارات
-                    </h2>
-                  </div>
-                  <button 
-                    onClick={() => setShowSubscribersCount(false)}
-                    className="bg-gradient-to-r from-red-500/20 to-red-600/20 hover:from-red-500/30 hover:to-red-600/30 p-2 rounded-full transition-all duration-300 border border-red-500/30 hover:border-red-400/50"
-                  >
-                    <X className="w-5 h-5 text-red-400" />
-                  </button>
-                </div>
-
-                <div className="space-y-6">
-                  <div className="bg-gradient-to-r from-purple-500/20 via-pink-500/30 to-purple-500/20 rounded-3xl p-6 border-2 border-purple-500/40 relative overflow-hidden text-center">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/10 to-transparent animate-pulse"></div>
-                    <div className="relative z-10">
-                      <div className="flex items-center justify-center gap-3 mb-4">
-                        <Users className="w-8 h-8 text-purple-400" />
-                        <h3 className="text-lg font-bold text-white">عدد المشتركين في الإشعارات</h3>
-                      </div>
-                      <div className="bg-gradient-to-r from-purple-600/30 to-pink-600/30 rounded-2xl p-4 border border-purple-500/50">
-                        <span className="text-5xl font-black bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
-                          {subscribersCount}
-                        </span>
-                        <p className="text-purple-200 font-semibold mt-2">مشترك</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-gradient-to-r from-blue-500/20 via-cyan-500/30 to-blue-500/20 rounded-2xl p-4 border border-blue-500/40">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Eye className="w-5 h-5 text-blue-400" />
-                      <h4 className="text-white font-semibold">معلومات الإشعارات</h4>
-                    </div>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">حالة الإشعارات:</span>
-                        <span className="text-green-400 font-semibold">
-                          {Notification.permission === 'granted' ? 'مفعلة' : 'غير مفعلة'}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-300">دعم المتصفح:</span>
-                        <span className="text-blue-400 font-semibold">
-                          {'Notification' in window ? 'مدعوم' : 'غير مدعوم'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Button 
-                    onClick={loadSubscribersCount}
-                    className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold py-3 text-lg rounded-xl shadow-lg"
-                  >
-                    <BarChart3 className="w-5 h-5 mr-2" />
-                    تحديث الإحصائيات
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )} */}
-      </div>
-
-      {/* Toast Message */}
-      {successMessage && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-bottom duration-300">
-          <div className="bg-gradient-to-r from-green-500/90 to-emerald-500/90 backdrop-blur-xl border border-green-400/50 rounded-2xl px-6 py-4 shadow-2xl shadow-green-500/25">
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm">✓</span>
               </div>
-              <span className="text-white font-semibold text-sm">
-                {successMessage}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
+
+              {/* القوة الإجمالية */}
+              <div className="space-y-2">
+                <Label htmlFor="overallRating" className="text-white font-semibold flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                  <Crown className="w-4 h-4 text-yellow-400" />
+                  القوة الإجمالية (اختياري)
+                </Label>
+                <Input
+                  id="overallRating"
+                  type="number"
+                  min="0"
+                  max="150"
+                  value={playerData.overallRating}
+                  onChange={(e) => handleInputChange('overallRating', e.target.value)}
+                  className="bg-slate-700/50 border-slate-600/50 text-white placeholder-slate-400 focus:border-yellow-500/50 focus:ring-yellow-500/20 rounded-lg"
+                  placeholder="0-150"
+                />
+              </div>
+
+              {/* الإحصائيات */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {/* Finishing */}
+                <div className="space-y-2">
+                  <Label className="text-white font-semibold text-sm flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    <img src={finishingIcon} alt="Finishing" className="w-4 h-4 rounded" />
+                    Finishing
+                  </Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="150"
+                    value={playerData.finishing}
+                    onChange={(e) => handleInputChange('finishing', e.target.value)}
+                    className="bg-slate-700/50 border-slate-600/50 text-white text-sm rounded-lg"
+                    placeholder="0-150"
+                  />
+                </div>
+
+                {/* Passing */}
+                <div className="space-y-2">
+                  <Label className="text-white font-semibold text-sm flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    <img src={passingIcon} alt="Passing" className="w-4 h-4 rounded" />
+                    Passing
+                  </Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="150"
+                    value={playerData.passing}
+                    onChange={(e) => handleInputChange('passing', e.target.value)}
+                    className="bg-slate-700/50 border-slate-600/50 text-white text-sm rounded-lg"
+                    placeholder="0-150"
+                  />
+                </div>
+
+                {/* Dribbling */}
+                <div className="space-y-2">
+                  <Label className="text-white font-semibold text-sm flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    <img src={dribblingIcon} alt="Dribbling" className="w-4 h-4 rounded" />
+                    Dribbling
+                  </Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="150"
+                    value={playerData.dribbling}
+                    onChange={(e) => handleInputChange('dribbling', e.target.value)}
+                    className="bg-slate-700/50 border-slate-600/50 text-white text-sm rounded-lg"
+                    placeholder="0-150"
+                  />
+                </div>
+
+                {/* Dexterity */}
+                <div className="space-y-2">
+                  <Label className="text-white font-semibold text-sm flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    <img src={dexterityIcon} alt="Dexterity" className="w-4 h-4 rounded" />
+                    Dexterity
+                  </Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="150"
+                    value={playerData.dexterity}
+                    onChange={(e) => handleInputChange('dexterity', e.target.value)}
+                    className="bg-slate-700/50 border-slate-600/50 text-white text-sm rounded-lg"
+                    placeholder="0-150"
+                  />
+                </div>
+
+                {/* Lower Body Strength */}
+                <div className="space-y-2">
+                  <Label className="text-white font-semibold text-sm flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    <img src={lowerBodyIcon} alt="Lower Body Strength" className="w-4 h-4 rounded" />
+                    Lower Body Strength
+                  </Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="150"
+                    value={playerData.lowerBodyStrength}
+                    onChange={(e) => handleInputChange('lowerBodyStrength', e.target.value)}
+                    className="bg-slate-700/50 border-slate-600/50 text-white text-sm rounded-lg"
+                    placeholder="0-150"
+                  />
+                </div>
+
+                {/* Aerial Strength */}
+                <div className="space-y-2">
+                  <Label className="text-white font-semibold text-sm flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    <img src={aerialIcon} alt="Aerial Strength" className="w-4 h-4 rounded" />
+                    Aerial Strength
+                  </Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="150"
+                    value={playerData.aerialStrength}
+                    onChange={(e) => handleInputChange('aerialStrength', e.target.value)}
+                    className="bg-slate-700/50 border-slate-600/50 text-white text-sm rounded-lg"
+                    placeholder="0-150"
+                  />
+                </div>
+
+                {/* Defending */}
+                <div className="space-y-2">
+                  <Label className="text-white font-semibold text-sm flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    <img src={defendingIcon} alt="Defending" className="w-4 h-4 rounded" />
+                    Defending
+                  </Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="150"
+                    value={playerData.defending}
+                    onChange={(e) => handleInputChange('defending', e.target.value)}
+                    className="bg-slate-700/50 border-slate-600/50 text-white text-sm rounded-lg"
+                    placeholder="0-150"
+                  />
+                </div>
+
+                {/* GK 1 */}
+                <div className="space-y-2">
+                  <Label className="text-white font-semibold text-sm flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    <img src={gk1Icon} alt="GK 1" className="w-4 h-4 rounded" />
+                    GK 1
+                  </Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="150"
+                    value={playerData.gk1}
+                    onChange={(e) => handleInputChange('gk1', e.target.value)}
+                    className="bg-slate-700/50 border-slate-600/50 text-white text-sm rounded-lg"
+                    placeholder="0-150"
+                  />
+                </div>
+
+                {/* GK 2 */}
+                <div className="space-y-2">
+                  <Label className="text-white font-semibold text-sm flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    <img src={gk2Icon} alt="GK 2" className="w-4 h-4 rounded" />
+                    GK 2
+                  </Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="150"
+                    value={playerData.gk2}
+                    onChange={(e) => handleInputChange('gk2', e.target.value)}
+                    className="bg-slate-700/50 border-slate-600/50 text-white text-sm rounded-lg"
+                    placeholder="0-150"
+                  />
+                </div>
+
+                {/* GK 3 */}
+                <div className="space-y-2">
+                  <Label className="text-white font-semibold text-sm flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    <img src={gk3Icon} alt="GK 3" className="w-4 h-4 rounded" />
+                    GK 3
+                  </Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="150"
+                    value={playerData.gk3}
+                    onChange={(e) => handleInputChange('gk3', e.target.value)}
+                    className="bg-slate-700/50 border-slate-600/50 text-white text-sm rounded-lg"
+                    placeholder="0-150"
+                  />
+                </div>
+              </div>
+
+              {/* البوستر */}
+              <div className="space-y-2">
+                <Label htmlFor="booster" className="text-white font-semibold flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                  <Crown className="w-4 h-4 text-purple-400" />
+                  البوستر
+                </Label>
+                <Select value={playerData.booster} onValueChange={(value) => setPlayerData(prev => ({ ...prev, booster: value }))}>
+                  <SelectTrigger className="bg-slate-700/50 border-slate-600/50 text-white focus:border-purple-500/50 focus:ring-purple-500/20 rounded-lg">
+                    <SelectValue placeholder="اختر البوستر" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-800 border-slate-600 text-white">
+                    {boosterOptions.map((booster) => (
+                      <SelectItem key={booster} value={booster} className="hover:bg-slate-700 focus:bg-slate-700">
+                        {booster}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* زر الحفظ */}
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-green-600/80 to-emerald-600/80 hover:from-green-700/80 hover:to-emerald-700/80 text-white py-3 px-6 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 font-semibold text-lg"
+                style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}
+              >
+                <Upload className="w-5 h-5 mr-2" />
+                {editingPlayerId ? 'تحديث اللاعب' : 'إضافة اللاعب'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
 
 export default AddPlayerPage
-
 

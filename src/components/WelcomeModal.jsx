@@ -5,12 +5,12 @@ import { X, Send, CheckCircle } from 'lucide-react';
 const WelcomeModal = ({ onClose, onTelegramClick }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-4 animate-fade-in">
-      <div className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-green-500/50 rounded-2xl shadow-2xl p-6 w-full max-w-sm mx-auto overflow-hidden animate-scale-in">
+      <div className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-green-500/50 rounded-2xl shadow-2xl p-6 w-full max-w-xs mx-auto overflow-hidden animate-scale-in">
         
         {/* تأثير الفلاش المائل البطيء المحسن */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-2xl">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent transform -skew-y-12 -translate-x-full animate-[slide-flash_8s_ease-in-out_infinite] opacity-70"></div>
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-green-400/15 to-transparent transform -skew-y-12 -translate-x-full animate-[slide-flash_8s_ease-in-out_infinite_2s] opacity-50"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent transform -skew-y-12 -translate-x-full animate-[slide-flash_12s_ease-in-out_infinite] opacity-70"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-green-400/15 to-transparent transform -skew-y-12 -translate-x-full animate-[slide-flash_12s_ease-in-out_infinite_2s] opacity-50"></div>
         </div>
 
         {/* تأثيرات إضاءة خلفية فخمة */}
@@ -25,7 +25,7 @@ const WelcomeModal = ({ onClose, onTelegramClick }) => {
           <X className="w-4 h-4" />
         </Button>
 
-        <div className="relative z-10 text-center">
+        <div className="relative z-10 text-center flex flex-col h-full">
           {/* العنوان الفخم مع تأثيرات مبهرة */}
           <div className="mb-4">
             <h2 className="text-2xl font-black bg-gradient-to-r from-green-400 via-lime-400 to-green-500 bg-clip-text text-transparent mb-1 animate-pulse" style={{ 
@@ -64,7 +64,7 @@ const WelcomeModal = ({ onClose, onTelegramClick }) => {
           </div>
 
           {/* الزر الأول في الوسط - انطلق إلى التطبيق */}
-          <div className="mb-4">
+          <div className="flex-grow flex items-center justify-center mb-4">
             <Button
               onClick={onClose}
               className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 text-white font-black py-3 text-base rounded-xl shadow-2xl transition-all duration-500 transform hover:scale-105 hover:shadow-blue-500/50 border border-blue-400/30 relative overflow-hidden"
@@ -121,4 +121,5 @@ const WelcomeModal = ({ onClose, onTelegramClick }) => {
 };
 
 export default WelcomeModal;
+
 

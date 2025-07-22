@@ -33,7 +33,25 @@ function App() {
   const [selectedPlayer, setSelectedPlayer] = useState(null)
   const [showPlayerModal, setShowPlayerModal] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [showWelcomeModal, setShowWelcomeModal] = useState(true) // تظهر في كل مرة
+  
+  // إعدادات التحكم في العناصر
+  const [showWelcomeModal, setShowWelcomeModal] = useState(() => {
+    const saved = localStorage.getItem('showWelcomeModal');
+    return saved !== null ? JSON.parse(saved) : true;
+  })
+  const [showContactButton, setShowContactButton] = useState(() => {
+    const saved = localStorage.getItem('showContactButton');
+    return saved !== null ? JSON.parse(saved) : true;
+  })
+
+  // حفظ الإعدادات في localStorage عند تغييرها
+  useEffect(() => {
+    localStorage.setItem('showWelcomeModal', JSON.stringify(showWelcomeModal));
+  }, [showWelcomeModal]);
+
+  useEffect(() => {
+    localStorage.setItem('showContactButton', JSON.stringify(showContactButton));
+  }, [showContactButton]);
 
   // تحميل اللاعبين من API عند بدء التطبيق
   useEffect(() => {
@@ -156,7 +174,13 @@ function App() {
 
   // عرض صفحة إضافة اللاعب
   if (currentPage === 'admin') {
-    return <AddPlayerPage onBack={handleBackToHome} />
+    return <AddPlayerPage 
+      onBack={handleBackToHome} 
+      showWelcomeModal={showWelcomeModal}
+      setShowWelcomeModal={setShowWelcomeModal}
+      showContactButton={showContactButton}
+      setShowContactButton={setShowContactButton}
+    />
   }
 
   // الصفحة الرئيسية
@@ -292,17 +316,19 @@ function App() {
 
           {/* الأزرار المحسنة */}
           <div className="flex flex-col gap-4 items-center">
-            {/* الزر الثانوي - تواصل معنا */}
-            <Button 
-              onClick={handleContactUs}
-              className="bg-gradient-to-r from-red-500/80 to-red-600/80 hover:from-red-600/90 hover:to-red-700/90 text-white font-bold py-3 px-8 text-sm rounded-full shadow-xl shadow-red-500/40 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-red-400/40 hover:border-red-300/60"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-              <div className="flex items-center justify-center gap-2 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
-                <Phone className="w-4 h-4" />
-                <span>تواصل معنا</span>
-              </div>
-            </Button>
+            {/* الزر الثانوي - تواصل معنا - يظهر فقط إذا كان مفعلاً */}
+            {showContactButton && (
+              <Button 
+                onClick={handleContactUs}
+                className="bg-gradient-to-r from-red-500/80 to-red-600/80 hover:from-red-600/90 hover:to-red-700/90 text-white font-bold py-3 px-8 text-sm rounded-full shadow-xl shadow-red-500/40 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-red-400/40 hover:border-red-300/60"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                <div className="flex items-center justify-center gap-2 relative z-10" style={{ fontFamily: '"Cairo", "Tajawal", sans-serif' }}>
+                  <Phone className="w-4 h-4" />
+                  <span>تواصل معنا</span>
+                </div>
+              </Button>
+            )}
           </div>
         </div>
 
