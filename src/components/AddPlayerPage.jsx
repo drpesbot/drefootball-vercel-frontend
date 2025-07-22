@@ -21,7 +21,7 @@ import gk1Icon from '../assets/icons/gk1.jpg'
 import gk2Icon from '../assets/icons/gk2.jpg'
 import gk3Icon from '../assets/icons/gk3.jpg'
 
-function AddPlayerPage({ onBack }) {
+function AddPlayerPage({ onBack, showWelcomeModal, showContactButton, loadSettings }) {
   const [playerData, setPlayerData] = useState({
     name: '',
     image: null,
@@ -45,10 +45,6 @@ function AddPlayerPage({ onBack }) {
   const [allPlayers, setAllPlayers] = useState([])
   const [editingPlayerId, setEditingPlayerId] = useState(null)
   const [searchTerm, setSearchTerm] = useState(''); // حالة جديدة لشريط البحث
-
-  // دوال التحكم في العناصر (تعمل محليًا فقط)
-  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
-  const [showContactButton, setShowContactButton] = useState(true);
 
   const handleInputChange = (field, value) => {
     // التحقق من أن القيمة بين 0 و 150
@@ -226,12 +222,24 @@ function AddPlayerPage({ onBack }) {
   };
 
   // دوال التحكم في العناصر
-  const toggleWelcomeModal = () => {
-    setShowWelcomeModal(prev => !prev);
+  const toggleWelcomeModal = async () => {
+    try {
+      await ApiService.updateSettings({ welcomeScreen: !showWelcomeModal, contactUsButton: showContactButton });
+      loadSettings(); // إعادة تحميل الإعدادات بعد التحديث
+    } catch (error) {
+      console.error('Error updating welcome modal setting:', error);
+      alert('حدث خطأ أثناء تحديث إعدادات الشاشة الترحيبية');
+    }
   };
 
-  const toggleContactButton = () => {
-    setShowContactButton(prev => !prev);
+  const toggleContactButton = async () => {
+    try {
+      await ApiService.updateSettings({ welcomeScreen: showWelcomeModal, contactUsButton: !showContactButton });
+      loadSettings(); // إعادة تحميل الإعدادات بعد التحديث
+    } catch (error) {
+      console.error('Error updating contact button setting:', error);
+      alert('حدث خطأ أثناء تحديث إعدادات زر التواصل');
+    }
   };
 
   // قائمة البوسترات المتاحة
@@ -772,5 +780,7 @@ function AddPlayerPage({ onBack }) {
 }
 
 export default AddPlayerPage
+
+
 
 

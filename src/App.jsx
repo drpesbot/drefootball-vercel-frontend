@@ -47,8 +47,8 @@ function App() {
   const loadSettings = async () => {
     try {
       const settings = await ApiService.getSettings();
-      setShowWelcomeModal(settings.showWelcomeModal !== false);
-      setShowContactButton(settings.showContactButton !== false);
+      setShowWelcomeModal(settings.welcomeScreen !== false);
+      setShowContactButton(settings.contactUsButton !== false);
     } catch (error) {
       console.error('Error loading settings:', error);
       // في حالة فشل تحميل الإعدادات، استخدم القيم الافتراضية
@@ -182,6 +182,9 @@ function App() {
   if (currentPage === 'admin') {
     return <AddPlayerPage 
       onBack={handleBackToHome} 
+      showWelcomeModal={showWelcomeModal}
+      showContactButton={showContactButton}
+      loadSettings={loadSettings}
     />
   }
 
@@ -254,7 +257,7 @@ function App() {
               />
               {/* فلاش متحرك على الصورة محسن */}
               <div className="absolute inset-0 rounded-full overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent transform -skew-x-12 -translate-x-full animate-[flash_3s_ease-in-out_infinite] pointer-events-none"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent transform -skew-x-12 -translate-x-full animate-[flash_3s_ease-in-out_infinite] pointer-events-none"></div>
               </div>
               {/* هالة خارجية متحركة محسنة */}
               <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-pulse"></div>
@@ -495,4 +498,8 @@ function App() {
 }
 
 export default App
+
+
+
+
 

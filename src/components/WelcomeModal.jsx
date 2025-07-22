@@ -2,7 +2,9 @@ import React from 'react';
 import { Button } from './ui/button';
 import { X, Send, CheckCircle } from 'lucide-react';
 
-const WelcomeModal = ({ onClose, onTelegramClick }) => {
+const WelcomeModal = ({ onClose, onTelegramClick, showWelcomeModal }) => {
+  if (!showWelcomeModal) return null; // لا تعرض المودال إذا كانت الإعدادات العالمية معطلة
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-4 animate-fade-in">
       <div className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-green-500/50 rounded-2xl shadow-2xl p-6 w-full max-w-xs mx-auto overflow-hidden animate-scale-in">
@@ -121,5 +123,7 @@ const WelcomeModal = ({ onClose, onTelegramClick }) => {
 };
 
 export default WelcomeModal;
+
+
 
 
