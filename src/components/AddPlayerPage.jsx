@@ -390,97 +390,8 @@ function AddPlayerPage({ onBack, showWelcomeModal, showContactButton, loadSettin
           </div>
         )}
 
-        {/* قسم التحكم في العناصر */}
-        <Card className="mb-8 bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-2 border-purple-500/50 backdrop-blur-xl shadow-2xl">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
-              <Settings className="w-5 h-5 text-purple-400" />
-              إعدادات التحكم في الواجهة
-            </CardTitle>
-            <CardDescription className="text-slate-400" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
-              تحكم في ظهور العناصر في الصفحة الرئيسية
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* التحكم في الشاشة الترحيبية */}
-            <div className="p-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl border border-blue-500/30">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    id="welcomeModal"
-                    checked={showWelcomeModal}
-                    onChange={toggleWelcomeModal}
-                    className="w-5 h-5 text-blue-600 bg-slate-700 border-slate-600 rounded focus:ring-blue-500 focus:ring-2"
-                  />
-                  <MessageSquare className="w-5 h-5 text-blue-400" />
-                </div>
-                <div className="flex-1">
-                  <label htmlFor="welcomeModal" className="font-semibold text-blue-300 cursor-pointer" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
-                    الشاشة الترحيبية المنبثقة
-                  </label>
-                  <p className="text-sm text-slate-400" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
-                    تظهر للمستخدمين عند دخول الموقع
-                  </p>
-                </div>
-                <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                  showWelcomeModal 
-                    ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
-                    : 'bg-red-600/20 text-red-300 border border-red-500/30'
-                }`}>
-                  {showWelcomeModal ? 'مفعلة' : 'معطلة'}
-                </div>
-              </div>
-            </div>
-
-            {/* التحكم في زر التواصل معنا */}
-            <div className="p-4 bg-gradient-to-r from-red-600/20 to-pink-600/20 rounded-xl border border-red-500/30">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    id="contactButton"
-                    checked={showContactButton}
-                    onChange={toggleContactButton}
-                    className="w-5 h-5 text-red-600 bg-slate-700 border-slate-600 rounded focus:ring-red-500 focus:ring-2"
-                  />
-                  <Phone className="w-5 h-5 text-red-400" />
-                </div>
-                <div className="flex-1">
-                  <label htmlFor="contactButton" className="font-semibold text-red-300 cursor-pointer" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
-                    زر "تواصل معنا"
-                  </label>
-                  <p className="text-sm text-slate-400" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
-                    يظهر في الصفحة الرئيسية
-                  </p>
-                </div>
-                <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                  showContactButton 
-                    ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
-                    : 'bg-red-600/20 text-red-300 border border-red-500/30'
-                }`}>
-                  {showContactButton ? 'مفعل' : 'معطل'}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* أزرار الإدارة */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-          <Button 
-            onClick={handleShowAllPlayers}
-            className="bg-gradient-to-r from-blue-600/80 to-purple-600/80 hover:from-blue-700/80 hover:to-purple-700/80 text-white py-4 px-6 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-blue-500/30"
-          >
-            <Users className="w-5 h-5 mr-2" />
-            <span className="font-semibold" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
-              عرض جميع اللاعبين
-            </span>
-          </Button>
-        </div>
-
         {/* نموذج إضافة/تعديل اللاعب */}
-        <Card className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-2 border-blue-500/50 backdrop-blur-xl shadow-2xl">
+        <Card className="mb-8 bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-2 border-blue-500/50 backdrop-blur-xl shadow-2xl">
           <CardHeader>
             <CardTitle className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
               <Crown className="w-5 h-5 text-yellow-400" />
@@ -774,13 +685,99 @@ function AddPlayerPage({ onBack, showWelcomeModal, showContactButton, loadSettin
             </form>
           </CardContent>
         </Card>
+
+        {/* أزرار الإدارة */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          <Button 
+            onClick={handleShowAllPlayers}
+            className="bg-gradient-to-r from-blue-600/80 to-purple-600/80 hover:from-blue-700/80 hover:to-purple-700/80 text-white py-4 px-6 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-blue-500/30"
+          >
+            <Users className="w-5 h-5 mr-2" />
+            <span className="font-semibold" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+              عرض جميع اللاعبين
+            </span>
+          </Button>
+        </div>
+
+        {/* قسم التحكم في العناصر */}
+        <Card className="mb-8 bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-2 border-purple-500/50 backdrop-blur-xl shadow-2xl">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+              <Settings className="w-5 h-5 text-purple-400" />
+              إعدادات التحكم في الواجهة
+            </CardTitle>
+            <CardDescription className="text-slate-400" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+              تحكم في ظهور العناصر في الصفحة الرئيسية
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* التحكم في الشاشة الترحيبية */}
+            <div className="p-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl border border-blue-500/30">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="welcomeModal"
+                    checked={showWelcomeModal}
+                    onChange={toggleWelcomeModal}
+                    className="w-5 h-5 text-blue-600 bg-slate-700 border-slate-600 rounded focus:ring-blue-500 focus:ring-2"
+                  />
+                  <MessageSquare className="w-5 h-5 text-blue-400" />
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="welcomeModal" className="font-semibold text-blue-300 cursor-pointer" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    الشاشة الترحيبية المنبثقة
+                  </label>
+                  <p className="text-sm text-slate-400" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    تظهر للمستخدمين عند دخول الموقع
+                  </p>
+                </div>
+                <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                  showWelcomeModal 
+                    ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
+                    : 'bg-red-600/20 text-red-300 border border-red-500/30'
+                }`}>
+                  {showWelcomeModal ? 'مفعلة' : 'معطلة'}
+                </div>
+              </div>
+            </div>
+
+            {/* التحكم في زر التواصل معنا */}
+            <div className="p-4 bg-gradient-to-r from-red-600/20 to-pink-600/20 rounded-xl border border-red-500/30">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="contactButton"
+                    checked={showContactButton}
+                    onChange={toggleContactButton}
+                    className="w-5 h-5 text-red-600 bg-slate-700 border-slate-600 rounded focus:ring-red-500 focus:ring-2"
+                  />
+                  <Phone className="w-5 h-5 text-red-400" />
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="contactButton" className="font-semibold text-red-300 cursor-pointer" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    زر "تواصل معنا"
+                  </label>
+                  <p className="text-sm text-slate-400" style={{ fontFamily: '"Cairo", "Noto Sans Arabic", sans-serif' }}>
+                    يظهر في الصفحة الرئيسية
+                  </p>
+                </div>
+                <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                  showContactButton 
+                    ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
+                    : 'bg-red-600/20 text-red-300 border border-red-500/30'
+                }`}>
+                  {showContactButton ? 'مفعل' : 'معطل'}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
 }
 
 export default AddPlayerPage
-
-
-
 
