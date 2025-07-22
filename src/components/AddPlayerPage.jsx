@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input.jsx'
 import { Label } from '@/components/ui/label.jsx'
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from '@/components/ui/select.jsx'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx'
-import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X, Users, Eye, EyeOff, MessageSquare, Phone } from 'lucide-react'
+import { Upload, Crown, User, Camera, Edit, Trash2, Settings, ArrowLeft, X, Users, Eye, EyeOff, MessageSquare, Phone, Search } from 'lucide-react'
 import ApiService from '../services/api.js'
 
 import appIcon from '../assets/images/app_icon.jpg'
@@ -44,6 +44,7 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
   const [showAllPlayers, setShowAllPlayers] = useState(false)
   const [allPlayers, setAllPlayers] = useState([])
   const [editingPlayerId, setEditingPlayerId] = useState(null)
+  const [searchTerm, setSearchTerm] = useState(''); // حالة جديدة لشريط البحث
 
   // تحميل عدد المشتركين عند بدء التطبيق وطلب إذن الإشعارات
   useEffect(() => {
@@ -256,6 +257,11 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
     'Technique +1'
   ]
 
+  // فلترة اللاعبين بناءً على شريط البحث
+  const filteredPlayers = allPlayers.filter(player =>
+    player.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   // إذا كان يعرض جميع اللاعبين
   if (showAllPlayers) {
     return (
@@ -271,13 +277,25 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
               العودة
             </Button>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              جميع اللاعبين ({allPlayers.length})
+              جميع اللاعبين ({filteredPlayers.length})
             </h1>
+          </div>
+
+          {/* شريط البحث */}
+          <div className="relative mb-6">
+            <Input
+              type="text"
+              placeholder="ابحث عن لاعب..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-slate-700/50 border-slate-600/50 text-white placeholder-slate-400 focus:border-blue-500/50 focus:ring-blue-500/20 rounded-lg pl-10 pr-4 py-2"
+            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
           </div>
 
           {/* شبكة اللاعبين */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {allPlayers.map((player) => (
+            {filteredPlayers.map((player) => (
               <Card key={player.id} className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-600/50 backdrop-blur-sm hover:border-blue-500/50 transition-all duration-300">
                 <CardContent className="p-4">
                   {/* صورة اللاعب */}
@@ -755,4 +773,6 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
 }
 
 export default AddPlayerPage
+
+
 
