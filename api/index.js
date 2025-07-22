@@ -49,32 +49,20 @@ const upload = multer({
   },
 });
 
-// Middleware for authentication
-const authenticate = (req, res, next) => {
-  const { password } = req.body;
-  const adminPassword = process.env.ADMIN_PASSWORD || 'killer8speed';
-  
-  if (password === adminPassword) {
-    next();
-  } else {
-    res.status(401).json({ success: false, message: 'Invalid password' });
-  }
-};
-
 // Authentication endpoint
-app.post('/api/auth', async (req, res) => {
+app.post("/api/auth", async (req, res) => {
   try {
     const { password } = req.body;
-    const adminPassword = process.env.ADMIN_PASSWORD || 'killer8speed';
+    const adminPassword = process.env.ADMIN_PASSWORD || "killer8speed";
     
     if (password === adminPassword) {
-      res.json({ success: true, message: 'Authentication successful' });
+      res.json({ success: true, message: "Authentication successful" });
     } else {
-      res.status(401).json({ success: false, message: 'Invalid password' });
+      res.status(401).json({ success: false, message: "Invalid password" });
     }
   } catch (error) {
-    console.error('Auth error:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    console.error("Auth error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
@@ -95,7 +83,7 @@ app.get("/api/players", async (req, res) => {
 });
 
 // Add new player
-app.post("/api/players", authenticate, async (req, res) => {
+app.post("/api/players", async (req, res) => {
   try {
     const { player } = req.body;
 
@@ -121,7 +109,7 @@ app.post("/api/players", authenticate, async (req, res) => {
 });
 
 // Update player
-app.put("/api/players/:id", authenticate, async (req, res) => {
+app.put("/api/players/:id", async (req, res) => {
   try {
     const { player } = req.body;
 
@@ -147,7 +135,7 @@ app.put("/api/players/:id", authenticate, async (req, res) => {
 });
 
 // Delete player
-app.delete("/api/players/:id", authenticate, async (req, res) => {
+app.delete("/api/players/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -165,7 +153,7 @@ app.delete("/api/players/:id", authenticate, async (req, res) => {
 });
 
 // Upload image
-app.post("/api/upload", authenticate, upload.single("image"), async (req, res) => {
+app.post("/api/upload", upload.single("image"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
@@ -205,7 +193,7 @@ app.get("/api/settings", async (req, res) => {
 });
 
 // Update settings
-app.post("/api/settings", authenticate, async (req, res) => {
+app.post("/api/settings", async (req, res) => {
   try {
     const { settings } = req.body;
 
@@ -228,7 +216,5 @@ app.get("/api/health", (req, res) => {
 
 // Export the Express app
 module.exports = app;
-
-
 
 

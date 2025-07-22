@@ -45,20 +45,10 @@ function AddPlayerPage({ onBack }) {
   const [allPlayers, setAllPlayers] = useState([])
   const [editingPlayerId, setEditingPlayerId] = useState(null)
   const [searchTerm, setSearchTerm] = useState(''); // حالة جديدة لشريط البحث
-  const [globalSettings, setGlobalSettings] = useState({ showWelcomeModal: true, showContactButton: true });
 
-  // تحميل الإعدادات العالمية عند تحميل الصفحة
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const settings = await ApiService.getSettings();
-        setGlobalSettings(settings);
-      } catch (error) {
-        console.error('Error fetching global settings:', error);
-      }
-    };
-    fetchSettings();
-  }, []);
+  // دوال التحكم في العناصر (تعمل محليًا فقط)
+  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
+  const [showContactButton, setShowContactButton] = useState(true);
 
   const handleInputChange = (field, value) => {
     // التحقق من أن القيمة بين 0 و 150
@@ -236,30 +226,12 @@ function AddPlayerPage({ onBack }) {
   };
 
   // دوال التحكم في العناصر
-  const toggleWelcomeModal = async () => {
-    try {
-      const newSettings = { ...globalSettings, showWelcomeModal: !globalSettings.showWelcomeModal };
-      await ApiService.updateSettings(newSettings);
-      setGlobalSettings(newSettings);
-      setSuccessMessage('تم تحديث إعدادات الشاشة الترحيبية بنجاح ✅');
-      setTimeout(() => setSuccessMessage(''), 3000);
-    } catch (error) {
-      console.error('Error updating welcome modal setting:', error);
-      alert('حدث خطأ أثناء تحديث إعدادات الشاشة الترحيبية');
-    }
+  const toggleWelcomeModal = () => {
+    setShowWelcomeModal(prev => !prev);
   };
 
-  const toggleContactButton = async () => {
-    try {
-      const newSettings = { ...globalSettings, showContactButton: !globalSettings.showContactButton };
-      await ApiService.updateSettings(newSettings);
-      setGlobalSettings(newSettings);
-      setSuccessMessage('تم تحديث إعدادات زر التواصل بنجاح ✅');
-      setTimeout(() => setSuccessMessage(''), 3000);
-    } catch (error) {
-      console.error('Error updating contact button setting:', error);
-      alert('حدث خطأ أثناء تحديث إعدادات زر التواصل');
-    }
+  const toggleContactButton = () => {
+    setShowContactButton(prev => !prev);
   };
 
   // قائمة البوسترات المتاحة
@@ -429,7 +401,7 @@ function AddPlayerPage({ onBack }) {
                   <input
                     type="checkbox"
                     id="welcomeModal"
-                    checked={globalSettings.showWelcomeModal}
+                    checked={showWelcomeModal}
                     onChange={toggleWelcomeModal}
                     className="w-5 h-5 text-blue-600 bg-slate-700 border-slate-600 rounded focus:ring-blue-500 focus:ring-2"
                   />
@@ -444,11 +416,11 @@ function AddPlayerPage({ onBack }) {
                   </p>
                 </div>
                 <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                  globalSettings.showWelcomeModal 
+                  showWelcomeModal 
                     ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
                     : 'bg-red-600/20 text-red-300 border border-red-500/30'
                 }`}>
-                  {globalSettings.showWelcomeModal ? 'مفعلة' : 'معطلة'}
+                  {showWelcomeModal ? 'مفعلة' : 'معطلة'}
                 </div>
               </div>
             </div>
@@ -460,7 +432,7 @@ function AddPlayerPage({ onBack }) {
                   <input
                     type="checkbox"
                     id="contactButton"
-                    checked={globalSettings.showContactButton}
+                    checked={showContactButton}
                     onChange={toggleContactButton}
                     className="w-5 h-5 text-red-600 bg-slate-700 border-slate-600 rounded focus:ring-red-500 focus:ring-2"
                   />
@@ -475,11 +447,11 @@ function AddPlayerPage({ onBack }) {
                   </p>
                 </div>
                 <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                  globalSettings.showContactButton 
+                  showContactButton 
                     ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
                     : 'bg-red-600/20 text-red-300 border border-red-500/30'
                 }`}>
-                  {globalSettings.showContactButton ? 'مفعل' : 'معطل'}
+                  {showContactButton ? 'مفعل' : 'معطل'}
                 </div>
               </div>
             </div>
@@ -800,8 +772,5 @@ function AddPlayerPage({ onBack }) {
 }
 
 export default AddPlayerPage
-
-
-
 
 

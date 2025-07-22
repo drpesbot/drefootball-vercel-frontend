@@ -123,44 +123,7 @@ class ApiService {
       throw error;
     }
   }
-
-  // دالة لجلب الإعدادات العامة
-  static async getSettings() {
-    try {
-      const response = await fetch(`${API_BASE_URL}/settings`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch settings');
-      }
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching settings:', error);
-      throw error;
-    }
-  }
-
-  // دالة لتحديث الإعدادات العامة
-  static async updateSettings(settings) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/settings`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ settings }),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to update settings');
-      }
-      
-      return await response.json();
-    } catch (error) {
-      console.error('Error updating settings:', error);
-      throw error;
-    }
-  }
 }
 
 export default ApiService;
-
 
