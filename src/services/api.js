@@ -1,236 +1,167 @@
-// API service for communicating with the backend
-const API_BASE_URL = "https://drefootball-backend.onrender.com";
+const API_BASE_URL = 'https://efootball-three.vercel.app/api';
 
 class ApiService {
-  // Get all players
-  async getPlayers() {
+  // دالة لجلب جميع اللاعبين
+  static async getPlayers() {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/players`);
+      const response = await fetch(`${API_BASE_URL}/players`);
       if (!response.ok) {
-        throw new Error("Failed to fetch players");
+        throw new Error('Failed to fetch players');
       }
       return await response.json();
     } catch (error) {
-      console.error("Error fetching players:", error);
+      console.error('Error fetching players:', error);
       throw error;
     }
   }
 
-  // Add a new player
-  async addPlayer(playerData) {
+  // دالة لإضافة لاعب جديد
+  static async addPlayer(password, player) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/players`, {
-        method: "POST",
+      const response = await fetch(`${API_BASE_URL}/players`, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          password: "killer8speed",
-          player: playerData
-        }),
+        body: JSON.stringify({ password, player }),
       });
+      
       if (!response.ok) {
-        throw new Error("Failed to add player");
+        throw new Error('Failed to add player');
       }
+      
       return await response.json();
     } catch (error) {
-      console.error("Error adding player:", error);
+      console.error('Error adding player:', error);
       throw error;
     }
   }
 
-  // Update a player
-  async updatePlayer(playerId, playerData) {
+  // دالة لتحديث لاعب
+  static async updatePlayer(id, password, player) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/players/${playerId}`, {
-        method: "PUT",
+      const response = await fetch(`${API_BASE_URL}/players/${id}`, {
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          password: "killer8speed",
-          player: playerData
-        }),
+        body: JSON.stringify({ password, player }),
       });
+      
       if (!response.ok) {
-        throw new Error("Failed to update player");
+        throw new Error('Failed to update player');
       }
+      
       return await response.json();
     } catch (error) {
-      console.error("Error updating player:", error);
+      console.error('Error updating player:', error);
       throw error;
     }
   }
 
-  // Delete a player
-  async deletePlayer(playerId) {
+  // دالة لحذف لاعب
+  static async deletePlayer(id, password) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/players/${playerId}`, {
-        method: "DELETE",
+      const response = await fetch(`${API_BASE_URL}/players/${id}`, {
+        method: 'DELETE',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          password: "killer8speed"
-        }),
+        body: JSON.stringify({ password }),
       });
+      
       if (!response.ok) {
-        throw new Error("Failed to delete player");
+        throw new Error('Failed to delete player');
       }
+      
       return await response.json();
     } catch (error) {
-      console.error("Error deleting player:", error);
+      console.error('Error deleting player:', error);
       throw error;
     }
   }
 
-  // Upload image
-  async uploadImage(file) {
+  // دالة لرفع صورة
+  static async uploadImage(password, file) {
     try {
       const formData = new FormData();
-      formData.append("image", file);
-      formData.append("password", "killer8speed");
+      formData.append('image', file);
+      formData.append('password', password);
 
-      const response = await fetch(`${API_BASE_URL}/api/upload`, {
-        method: "POST",
+      const response = await fetch(`${API_BASE_URL}/upload`, {
+        method: 'POST',
         body: formData,
       });
+      
       if (!response.ok) {
-        throw new Error("Failed to upload image");
+        throw new Error('Failed to upload image');
       }
+      
       return await response.json();
     } catch (error) {
-      console.error("Error uploading image:", error);
+      console.error('Error uploading image:', error);
       throw error;
     }
   }
 
-  // Save notification token
-  async saveNotificationToken(token) {
+  // دالة للتحقق من كلمة المرور
+  static async authenticate(password) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/notifications/save-token`, {
-        method: "POST",
+      const response = await fetch(`${API_BASE_URL}/auth`, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          password: "killer8speed",
-          token: token,
-          timestamp: Date.now()
-        }),
+        body: JSON.stringify({ password }),
       });
+      
       if (!response.ok) {
-        throw new Error("Failed to save notification token");
+        throw new Error('Authentication failed');
       }
+      
       return await response.json();
     } catch (error) {
-      console.error("Error saving notification token:", error);
+      console.error('Error authenticating:', error);
       throw error;
     }
   }
 
-  // Get all notification tokens
-  async getNotificationTokens() {
+  // دالة لجلب الإعدادات العامة
+  static async getSettings() {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/notifications/tokens`, {
-        headers: {
-          "Content-Type": "application/json",
-        }
-      });
+      const response = await fetch(`${API_BASE_URL}/settings`);
       if (!response.ok) {
-        throw new Error("Failed to get notification tokens");
+        throw new Error('Failed to fetch settings');
       }
       return await response.json();
     } catch (error) {
-      console.error("Error getting notification tokens:", error);
+      console.error('Error fetching settings:', error);
       throw error;
     }
   }
 
-  // Send notification to all subscribers
-  async sendNotificationToSubscribers(notificationData) {
+  // دالة لتحديث الإعدادات العامة
+  static async updateSettings(password, settings) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/notifications/send-to-all`, {
-        method: "POST",
+      const response = await fetch(`${API_BASE_URL}/settings`, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          password: "killer8speed",
-          title: notificationData.title || "eFootball Mobile",
-          message: notificationData.message,
-          icon: notificationData.icon || "/favicon.ico",
-          url: notificationData.url || window.location.origin
-        }),
+        body: JSON.stringify({ password, settings }),
       });
+      
       if (!response.ok) {
-        throw new Error("Failed to send notification to subscribers");
+        throw new Error('Failed to update settings');
       }
+      
       return await response.json();
     } catch (error) {
-      console.error("Error sending notification to subscribers:", error);
-      throw error;
-    }
-  }
-
-  // Increment notification subscribers count
-  async incrementNotificationSubscribers() {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/notifications/increment-subscribers`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          password: "killer8speed",
-        }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to increment notification subscribers");
-      }
-      return await response.json();
-    } catch (error) {
-      console.error("Error incrementing notification subscribers:", error);
-      throw error;
-    }
-  }
-
-  // Get notification subscribers count
-  async getNotificationSubscribers() {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/notifications/subscribers`);
-      if (!response.ok) {
-        throw new Error("Failed to get notification subscribers");
-      }
-      return await response.json();
-    } catch (error) {
-      console.error("Error getting notification subscribers:", error);
-      throw error;
-    }
-  }
-
-  // Send manual notification
-  async sendManualNotification(message) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/notifications/send`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          password: "killer8speed",
-          message: message
-        }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to send notification");
-      }
-      return await response.json();
-    } catch (error) {
-      console.error("Error sending notification:", error);
+      console.error('Error updating settings:', error);
       throw error;
     }
   }
 }
 
-export default new ApiService();
+export default ApiService;
+

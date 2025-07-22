@@ -38,6 +38,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
 
 const TABLE_NAME = 'drefotball_players';
+const SETTINGS_TABLE_NAME = 'drefotball_settings'; // جدول جديد للإعدادات
 const BUCKET_NAME = 'drefotball-player-images';
 
 // Configure multer for file uploads
@@ -199,6 +200,44 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
   }
 });
 
+// Get settings
+app.get('/api/settings', async (req, res) => {
+  try {
+    const params = {
+      TableName: SETTINGS_TABLE_NAME,
+      Key: { id: 'global_settings' }
+    };
+    const result = await dynamodb.get(params).promise();
+    const settings = result.Item || { id: 'global_settings', showWelcomeModal: true, showContactButton: true };
+    res.json(settings);
+  } catch (error) {
+    console.error('Error fetching settings:', error);
+    res.status(500).json({ error: 'Failed to fetch settings' });
+  }
+});
+
+// Update settings
+app.post('/api/settings', async (req, res) => {
+  try {
+    const { password, settings } = req.body;
+    const adminPassword = process.env.ADMIN_PASSWORD || 'killer8speed';
+    
+    if (password !== adminPassword) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const params = {
+      TableName: SETTINGS_TABLE_NAME,
+      Item: { id: 'global_settings', ...settings }
+    };
+    await dynamodb.put(params).promise();
+    res.json({ success: true, settings });
+  } catch (error) {
+    console.error('Error updating settings:', error);
+    res.status(500).json({ error: 'Failed to update settings' });
+  }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
@@ -206,4 +245,5 @@ app.get('/api/health', (req, res) => {
 
 // Export the Express app
 module.exports = app;
+
 

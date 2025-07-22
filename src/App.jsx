@@ -34,24 +34,28 @@ function App() {
   const [showPlayerModal, setShowPlayerModal] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   
-  // إعدادات التحكم في العناصر
-  const [showWelcomeModal, setShowWelcomeModal] = useState(() => {
-    const saved = localStorage.getItem('showWelcomeModal');
-    return saved !== null ? JSON.parse(saved) : true;
-  })
-  const [showContactButton, setShowContactButton] = useState(() => {
-    const saved = localStorage.getItem('showContactButton');
-    return saved !== null ? JSON.parse(saved) : true;
-  })
+  // إعدادات التحكم في العناصر - تحميل من الخادم
+  const [showWelcomeModal, setShowWelcomeModal] = useState(true)
+  const [showContactButton, setShowContactButton] = useState(true)
 
-  // حفظ الإعدادات في localStorage عند تغييرها
+  // تحميل الإعدادات من الخادم عند بدء التطبيق
   useEffect(() => {
-    localStorage.setItem('showWelcomeModal', JSON.stringify(showWelcomeModal));
-  }, [showWelcomeModal]);
+    loadSettings();
+  }, []);
 
-  useEffect(() => {
-    localStorage.setItem('showContactButton', JSON.stringify(showContactButton));
-  }, [showContactButton]);
+  // دالة لتحميل الإعدادات من الخادم
+  const loadSettings = async () => {
+    try {
+      const settings = await ApiService.getSettings();
+      setShowWelcomeModal(settings.showWelcomeModal !== false);
+      setShowContactButton(settings.showContactButton !== false);
+    } catch (error) {
+      console.error('Error loading settings:', error);
+      // في حالة فشل تحميل الإعدادات، استخدم القيم الافتراضية
+      setShowWelcomeModal(true);
+      setShowContactButton(true);
+    }
+  };
 
   // تحميل اللاعبين من API عند بدء التطبيق
   useEffect(() => {
@@ -164,6 +168,8 @@ function App() {
     setCurrentPage('home')
     // إعادة تحميل اللاعبين من API مع ترتيب عشوائي جديد
     loadPlayers();
+    // إعادة تحميل الإعدادات
+    loadSettings();
   }
 
 
@@ -176,10 +182,6 @@ function App() {
   if (currentPage === 'admin') {
     return <AddPlayerPage 
       onBack={handleBackToHome} 
-      showWelcomeModal={showWelcomeModal}
-      setShowWelcomeModal={setShowWelcomeModal}
-      showContactButton={showContactButton}
-      setShowContactButton={setShowContactButton}
     />
   }
 

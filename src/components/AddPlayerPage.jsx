@@ -21,7 +21,7 @@ import gk1Icon from '../assets/icons/gk1.jpg'
 import gk2Icon from '../assets/icons/gk2.jpg'
 import gk3Icon from '../assets/icons/gk3.jpg'
 
-function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showContactButton, setShowContactButton }) {
+function AddPlayerPage({ onBack }) {
   const [playerData, setPlayerData] = useState({
     name: '',
     image: null,
@@ -45,11 +45,20 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
   const [allPlayers, setAllPlayers] = useState([])
   const [editingPlayerId, setEditingPlayerId] = useState(null)
   const [searchTerm, setSearchTerm] = useState(''); // حالة جديدة لشريط البحث
+  const [globalSettings, setGlobalSettings] = useState({ showWelcomeModal: true, showContactButton: true });
 
-  // تحميل عدد المشتركين عند بدء التطبيق وطلب إذن الإشعارات
+  // تحميل الإعدادات العالمية عند تحميل الصفحة
   useEffect(() => {
-    // لا يوجد تحميل لعدد المشتركين أو طلب إذن إشعارات هنا بعد الآن
-  }, [])
+    const fetchSettings = async () => {
+      try {
+        const settings = await ApiService.getSettings();
+        setGlobalSettings(settings);
+      } catch (error) {
+        console.error('Error fetching global settings:', error);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const handleInputChange = (field, value) => {
     // التحقق من أن القيمة بين 0 و 150
@@ -89,7 +98,10 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
   const handleDeletePlayer = async (playerId) => {
     if (window.confirm('هل أنت متأكد من حذف هذا اللاعب؟')) {
       try {
-        await ApiService.deletePlayer(playerId);
+        // يجب توفير كلمة المرور هنا
+        const password = prompt('الرجاء إدخال كلمة المرور:');
+        if (!password) return;
+        await ApiService.deletePlayer(playerId, password);
         // إعادة تحميل قائمة اللاعبين
         const updatedPlayers = await ApiService.getPlayers();
         setAllPlayers(updatedPlayers);
@@ -135,11 +147,14 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
     }
 
     try {
+      const password = prompt('الرجاء إدخال كلمة المرور:');
+      if (!password) return;
+
       let imageUrl = imagePreview; // استخدام الصورة الحالية إذا لم يتم تغييرها
       
       // رفع الصورة إلى S3 إذا كانت موجودة وجديدة
-      if (playerData.image) {
-        const uploadResult = await ApiService.uploadImage(playerData.image);
+      if (playerData.image && typeof playerData.image !== 'string') {
+        const uploadResult = await ApiService.uploadImage(password, playerData.image);
         imageUrl = uploadResult.imageUrl;
       }
 
@@ -163,12 +178,12 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
 
       if (editingPlayerId) {
         // تعديل لاعب موجود
-        await ApiService.updatePlayer(editingPlayerId, finalData);
+        await ApiService.updatePlayer(editingPlayerId, password, finalData);
         setSuccessMessage('تم تعديل اللاعب بنجاح ✅');
         setEditingPlayerId(null);
       } else {
         // إضافة لاعب جديد
-        await ApiService.addPlayer(finalData);
+        await ApiService.addPlayer(password, finalData);
         setSuccessMessage('تم إضافة اللاعب بنجاح ✅');
       }
 
@@ -227,12 +242,34 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
   };
 
   // دوال التحكم في العناصر
-  const toggleWelcomeModal = () => {
-    setShowWelcomeModal(!showWelcomeModal);
+  const toggleWelcomeModal = async () => {
+    const password = prompt('الرجاء إدخال كلمة المرور:');
+    if (!password) return;
+    try {
+      const newSettings = { ...globalSettings, showWelcomeModal: !globalSettings.showWelcomeModal };
+      await ApiService.updateSettings(password, newSettings);
+      setGlobalSettings(newSettings);
+      setSuccessMessage('تم تحديث إعدادات الشاشة الترحيبية بنجاح ✅');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (error) {
+      console.error('Error updating welcome modal setting:', error);
+      alert('حدث خطأ أثناء تحديث إعدادات الشاشة الترحيبية');
+    }
   };
 
-  const toggleContactButton = () => {
-    setShowContactButton(!showContactButton);
+  const toggleContactButton = async () => {
+    const password = prompt('الرجاء إدخال كلمة المرور:');
+    if (!password) return;
+    try {
+      const newSettings = { ...globalSettings, showContactButton: !globalSettings.showContactButton };
+      await ApiService.updateSettings(password, newSettings);
+      setGlobalSettings(newSettings);
+      setSuccessMessage('تم تحديث إعدادات زر التواصل بنجاح ✅');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (error) {
+      console.error('Error updating contact button setting:', error);
+      alert('حدث خطأ أثناء تحديث إعدادات زر التواصل');
+    }
   };
 
   // قائمة البوسترات المتاحة
@@ -402,7 +439,7 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
                   <input
                     type="checkbox"
                     id="welcomeModal"
-                    checked={showWelcomeModal}
+                    checked={globalSettings.showWelcomeModal}
                     onChange={toggleWelcomeModal}
                     className="w-5 h-5 text-blue-600 bg-slate-700 border-slate-600 rounded focus:ring-blue-500 focus:ring-2"
                   />
@@ -417,11 +454,11 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
                   </p>
                 </div>
                 <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                  showWelcomeModal 
+                  globalSettings.showWelcomeModal 
                     ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
                     : 'bg-red-600/20 text-red-300 border border-red-500/30'
                 }`}>
-                  {showWelcomeModal ? 'مفعلة' : 'معطلة'}
+                  {globalSettings.showWelcomeModal ? 'مفعلة' : 'معطلة'}
                 </div>
               </div>
             </div>
@@ -433,7 +470,7 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
                   <input
                     type="checkbox"
                     id="contactButton"
-                    checked={showContactButton}
+                    checked={globalSettings.showContactButton}
                     onChange={toggleContactButton}
                     className="w-5 h-5 text-red-600 bg-slate-700 border-slate-600 rounded focus:ring-red-500 focus:ring-2"
                   />
@@ -448,11 +485,11 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
                   </p>
                 </div>
                 <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                  showContactButton 
+                  globalSettings.showContactButton 
                     ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
                     : 'bg-red-600/20 text-red-300 border border-red-500/30'
                 }`}>
-                  {showContactButton ? 'مفعل' : 'معطل'}
+                  {globalSettings.showContactButton ? 'مفعل' : 'معطل'}
                 </div>
               </div>
             </div>
@@ -773,6 +810,8 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
 }
 
 export default AddPlayerPage
+
+
 
 
 
