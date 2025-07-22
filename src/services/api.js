@@ -92,3 +92,19 @@ export const updateSettings = async (settingsData) => {
   }
 };
 
+
+
+const ApiService = {
+  getPlayers,
+  addPlayer,
+  updatePlayer,
+  deletePlayer,
+  uploadImage,
+  authenticate,
+  getSettings,
+  updateSettings,
+};
+
+export default ApiService;
+
+
