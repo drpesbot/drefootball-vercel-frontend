@@ -34,20 +34,33 @@ function App() {
   const [showPlayerModal, setShowPlayerModal] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   
-  // إعدادات التحكم في العناصر
-  const [showWelcomeModal, setShowWelcomeModal] = useState(() => {
-    const saved = localStorage.getItem('showWelcomeModal');
-    return saved !== null ? JSON.parse(saved) : true;
+  // إعدادات التحكم في العناصر من الواجهة الخلفية
+  const [appSettings, setAppSettings] = useState({
+    showWelcomeModal: true,
+    showContactButton: true
   })
-  const [showContactButton, setShowContactButton] = useState(() => {
-    const saved = localStorage.getItem('showContactButton');
-    return saved !== null ? JSON.parse(saved) : true;
-  })
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false)
 
-  // حفظ الإعدادات في localStorage عند تغييرها
+  // تحميل الإعدادات من الواجهة الخلفية
   useEffect(() => {
-    localStorage.setItem('showWelcomeModal', JSON.stringify(showWelcomeModal));
-  }, [showWelcomeModal]);
+    const fetchSettings = async () => {
+      try {
+        const settings = await ApiService.getSettings();
+        setAppSettings(settings);
+        setShowWelcomeModal(settings.showWelcomeModal);
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+        // استخدام الإعدادات الافتراضية في حالة الخطأ
+        setAppSettings({
+          showWelcomeModal: true,
+          showContactButton: true
+        });
+        setShowWelcomeModal(true);
+      }
+    };
+    
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('showContactButton', JSON.stringify(showContactButton));
@@ -317,7 +330,7 @@ function App() {
           {/* الأزرار المحسنة */}
           <div className="flex flex-col gap-4 items-center">
             {/* الزر الثانوي - تواصل معنا - يظهر فقط إذا كان مفعلاً */}
-            {showContactButton && (
+            {appSettings.showContactButton && (
               <Button 
                 onClick={handleContactUs}
                 className="bg-gradient-to-r from-red-500/80 to-red-600/80 hover:from-red-600/90 hover:to-red-700/90 text-white font-bold py-3 px-8 text-sm rounded-full shadow-xl shadow-red-500/40 transition-all duration-300 hover:scale-105 relative overflow-hidden group border border-red-400/40 hover:border-red-300/60"

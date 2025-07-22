@@ -21,7 +21,7 @@ import gk1Icon from '../assets/icons/gk1.jpg'
 import gk2Icon from '../assets/icons/gk2.jpg'
 import gk3Icon from '../assets/icons/gk3.jpg'
 
-function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showContactButton, setShowContactButton }) {
+function AddPlayerPage({ onBack }) {
   const [playerData, setPlayerData] = useState({
     name: '',
     image: null,
@@ -46,10 +46,25 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
   const [editingPlayerId, setEditingPlayerId] = useState(null)
   const [searchTerm, setSearchTerm] = useState(''); // حالة جديدة لشريط البحث
 
-  // تحميل عدد المشتركين عند بدء التطبيق وطلب إذن الإشعارات
+  // إعدادات التحكم في العناصر
+  const [appSettings, setAppSettings] = useState({
+    showWelcomeModal: true,
+    showContactButton: true
+  })
+
+  // تحميل الإعدادات من الواجهة الخلفية
   useEffect(() => {
-    // لا يوجد تحميل لعدد المشتركين أو طلب إذن إشعارات هنا بعد الآن
-  }, [])
+    const fetchSettings = async () => {
+      try {
+        const settings = await ApiService.getSettings();
+        setAppSettings(settings);
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+    
+    fetchSettings();
+  }, []);
 
   const handleInputChange = (field, value) => {
     // التحقق من أن القيمة بين 0 و 150
@@ -227,12 +242,38 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
   };
 
   // دوال التحكم في العناصر
-  const toggleWelcomeModal = () => {
-    setShowWelcomeModal(!showWelcomeModal);
+  const toggleWelcomeModal = async () => {
+    const newSettings = {
+      ...appSettings,
+      showWelcomeModal: !appSettings.showWelcomeModal
+    };
+    
+    try {
+      await ApiService.updateSettings(newSettings);
+      setAppSettings(newSettings);
+      setSuccessMessage(`تم ${newSettings.showWelcomeModal ? 'تفعيل' : 'إلغاء'} الشاشة الترحيبية بنجاح ✅`);
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (error) {
+      console.error('Error updating settings:', error);
+      alert('حدث خطأ أثناء تحديث الإعدادات');
+    }
   };
 
-  const toggleContactButton = () => {
-    setShowContactButton(!showContactButton);
+  const toggleContactButton = async () => {
+    const newSettings = {
+      ...appSettings,
+      showContactButton: !appSettings.showContactButton
+    };
+    
+    try {
+      await ApiService.updateSettings(newSettings);
+      setAppSettings(newSettings);
+      setSuccessMessage(`تم ${newSettings.showContactButton ? 'تفعيل' : 'إلغاء'} زر التواصل معنا بنجاح ✅`);
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (error) {
+      console.error('Error updating settings:', error);
+      alert('حدث خطأ أثناء تحديث الإعدادات');
+    }
   };
 
   // قائمة البوسترات المتاحة
@@ -402,7 +443,7 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
                   <input
                     type="checkbox"
                     id="welcomeModal"
-                    checked={showWelcomeModal}
+                    checked={appSettings.showWelcomeModal}
                     onChange={toggleWelcomeModal}
                     className="w-5 h-5 text-blue-600 bg-slate-700 border-slate-600 rounded focus:ring-blue-500 focus:ring-2"
                   />
@@ -417,11 +458,11 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
                   </p>
                 </div>
                 <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                  showWelcomeModal 
+                  appSettings.showWelcomeModal 
                     ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
                     : 'bg-red-600/20 text-red-300 border border-red-500/30'
                 }`}>
-                  {showWelcomeModal ? 'مفعلة' : 'معطلة'}
+                  {appSettings.showWelcomeModal ? 'مفعلة' : 'معطلة'}
                 </div>
               </div>
             </div>
@@ -433,7 +474,7 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
                   <input
                     type="checkbox"
                     id="contactButton"
-                    checked={showContactButton}
+                    checked={appSettings.showContactButton}
                     onChange={toggleContactButton}
                     className="w-5 h-5 text-red-600 bg-slate-700 border-slate-600 rounded focus:ring-red-500 focus:ring-2"
                   />
@@ -448,11 +489,11 @@ function AddPlayerPage({ onBack, showWelcomeModal, setShowWelcomeModal, showCont
                   </p>
                 </div>
                 <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                  showContactButton 
+                  appSettings.showContactButton 
                     ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
                     : 'bg-red-600/20 text-red-300 border border-red-500/30'
                 }`}>
-                  {showContactButton ? 'مفعل' : 'معطل'}
+                  {appSettings.showContactButton ? 'مفعل' : 'معطل'}
                 </div>
               </div>
             </div>

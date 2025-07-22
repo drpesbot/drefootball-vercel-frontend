@@ -38,6 +38,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3();
 
 const TABLE_NAME = 'drefotball_players';
+const SETTINGS_TABLE_NAME = 'drefotball_settings';
 const BUCKET_NAME = 'drefotball-player-images';
 
 // Configure multer for file uploads
@@ -62,6 +63,64 @@ app.post('/api/auth', async (req, res) => {
   } catch (error) {
     console.error('Auth error:', error);
     res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+// Get app settings
+app.get('/api/settings', async (req, res) => {
+  try {
+    const params = {
+      TableName: SETTINGS_TABLE_NAME,
+      Key: { id: 'app_settings' }
+    };
+    
+    const result = await dynamodb.get(params).promise();
+    
+    // إعدادات افتراضية إذا لم توجد
+    const defaultSettings = {
+      showWelcomeModal: true,
+      showContactButton: true
+    };
+    
+    const settings = result.Item ? result.Item : defaultSettings;
+    res.json(settings);
+  } catch (error) {
+    console.error('Error fetching settings:', error);
+    // إرجاع الإعدادات الافتراضية في حالة الخطأ
+    res.json({
+      showWelcomeModal: true,
+      showContactButton: true
+    });
+  }
+});
+
+// Update app settings
+app.post('/api/settings', async (req, res) => {
+  try {
+    const { password, settings } = req.body;
+    const adminPassword = process.env.ADMIN_PASSWORD || 'killer8speed';
+    
+    if (password !== adminPassword) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const settingsData = {
+      id: 'app_settings',
+      showWelcomeModal: settings.showWelcomeModal,
+      showContactButton: settings.showContactButton,
+      updatedAt: new Date().toISOString()
+    };
+
+    const params = {
+      TableName: SETTINGS_TABLE_NAME,
+      Item: settingsData
+    };
+
+    await dynamodb.put(params).promise();
+    res.json({ success: true, settings: settingsData });
+  } catch (error) {
+    console.error('Error updating settings:', error);
+    res.status(500).json({ error: 'Failed to update settings' });
   }
 });
 

@@ -231,6 +231,43 @@ class ApiService {
       throw error;
     }
   }
+
+  // Get app settings
+  async getSettings() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/settings`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch settings");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching settings:", error);
+      throw error;
+    }
+  }
+
+  // Update app settings
+  async updateSettings(settings) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/settings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: "killer8speed",
+          settings: settings
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update settings");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error updating settings:", error);
+      throw error;
+    }
+  }
 }
 
 export default new ApiService();
