@@ -224,21 +224,21 @@ function AddPlayerPage({ onBack, showWelcomeModal, showContactButton, loadSettin
   // دوال التحكم في العناصر
   const toggleWelcomeModal = async () => {
     try {
-      await ApiService.updateSettings({ welcomeScreen: !showWelcomeModal, contactUsButton: showContactButton });
+      await ApiService.updateSettings({ welcomeScreen: true, contactUsButton: showContactButton });
       loadSettings(); // إعادة تحميل الإعدادات بعد التحديث
     } catch (error) {
-      console.error('Error updating welcome modal setting:', error);
-      alert('حدث خطأ أثناء تحديث إعدادات الشاشة الترحيبية');
+      console.error(\'Error updating welcome modal setting:\', error);
+      alert(\'حدث خطأ أثناء تحديث إعدادات الشاشة الترحيبية\');
     }
   };
 
   const toggleContactButton = async () => {
     try {
-      await ApiService.updateSettings({ welcomeScreen: showWelcomeModal, contactUsButton: !showContactButton });
+      await ApiService.updateSettings({ welcomeScreen: showWelcomeModal, contactUsButton: true });
       loadSettings(); // إعادة تحميل الإعدادات بعد التحديث
     } catch (error) {
-      console.error('Error updating contact button setting:', error);
-      alert('حدث خطأ أثناء تحديث إعدادات زر التواصل');
+      console.error(\'Error updating contact button setting:\', error);
+      alert(\'حدث خطأ أثناء تحديث إعدادات زر التواصل\');
     }
   };
 
