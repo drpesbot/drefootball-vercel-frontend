@@ -227,7 +227,7 @@ function AddPlayerPage({ onBack, showWelcomeModal, showContactButton, loadSettin
       await ApiService.updateSettings({ welcomeScreen: true, contactUsButton: showContactButton });
       loadSettings(); // إعادة تحميل الإعدادات بعد التحديث
     } catch (error) {
-      console.error(\'Error updating welcome modal setting:\', error);
+      console.error('Error updating welcome modal setting:', error);
       alert(\'حدث خطأ أثناء تحديث إعدادات الشاشة الترحيبية\');
     }
   };
@@ -237,7 +237,7 @@ function AddPlayerPage({ onBack, showWelcomeModal, showContactButton, loadSettin
       await ApiService.updateSettings({ welcomeScreen: showWelcomeModal, contactUsButton: true });
       loadSettings(); // إعادة تحميل الإعدادات بعد التحديث
     } catch (error) {
-      console.error(\'Error updating contact button setting:\', error);
+      console.error("Error updating contact button setting:", error);
       alert(\'حدث خطأ أثناء تحديث إعدادات زر التواصل\');
     }
   };
